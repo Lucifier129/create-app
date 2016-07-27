@@ -1,10 +1,14 @@
 {
   "name": "create-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "configuring once, rendering both client and server.",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:lib": "babel ./src --out-dir ./lib",
+    "build": "node build.js",
+    "deploy": "gulp deploy",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -21,5 +25,28 @@
   "bugs": {
     "url": "https://github.com/Lucifier129/create-app/issues"
   },
-  "homepage": "https://github.com/Lucifier129/create-app#readme"
+  "homepage": "https://github.com/Lucifier129/create-app#readme",
+  "devDependencies": {
+    "babel": "^5.8.35",
+    "babel-core": "^5.8.25",
+    "babel-jest": "^5.3.0",
+    "babel-loader": "^5.3.2",
+    "babel-runtime": "^5.8.25",
+    "bundle-loader": "^0.5.4",
+    "gulp": "^3.9.1",
+    "gulp-gh-pages": "^0.5.4",
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1",
+    "rollup": "^0.21.0",
+    "rollup-plugin-babel": "^1.0.0",
+    "rollup-plugin-replace": "^1.1.0",
+    "uglify-js": "^2.6.1",
+    "webpack": "^1.12.2"
+  },
+  "dependencies": {
+    "history": "^3.0.0",
+    "isomorphic-fetch": "^2.2.1",
+    "path-to-regexp": "^1.5.3",
+    "querystring": "^0.2.0"
+  }
 }
