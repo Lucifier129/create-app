@@ -3,8 +3,10 @@ var fs = require('fs')
 var path = require('path')
 var url = require('url')
 var querystring = require('querystring')
+require('isomorphic-fetch')
 require('babel/register')
 
+console.log(fetch)
 
 var createApp = path.join(__dirname, '..', '..', 'src')
 var spa = path.join(__dirname, 'src')
