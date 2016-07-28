@@ -1,20 +1,24 @@
 /**
  * createApp at client
  */
-import History from '../share/history'
 import * as _ from '../share/util'
 import createMatcher from '../share/createMatcher'
+import { defaultAppSettings } from '../share/constant'
+import * as defaultViewEngine from './viewEngine'
+import History from './history'
 
 export default function createApp(appSettings) {
+	let finalAppSettings = _.extends({ viewEngine: defaultViewEngine }, defaultAppSettings, appSettings)
+
 	let {
 		routes,
-		historySettings,
 		viewEngine,
 		loader,
 		context,
 		container,
-	} = appSettings
-	let history = createHistory(historySettings)
+	} = finalAppSettings
+
+	let history = createHistory(finalAppSettings)
 	let matcher = createMatcher(routes)
 	let currentLocation = null
 	let currentController = null
@@ -37,7 +41,7 @@ export default function createApp(appSettings) {
 		}
 	}
 
-	function matchController(location) {
+	function render(location) {
 		// check whether equal to current location
 		if (currentLocation) {
 			if (currentLocation.pathname === location.pathname) {
@@ -104,20 +108,24 @@ export default function createApp(appSettings) {
 				unlistenBeforeUnload = null
 			}
 		}
-		controller.refreshView = renderToContainer
+		controller.refreshView = refreshView
 
 		_.extend(controller, historyAPI)
 
 		let component = controller.init(currentLocation)
 
-		// if controller.init return false, do nothing
-		if (component === false) {
+		// if controller.init return false value, do nothing
+		if (!component) {
 			return
 		} else if (_.isThenable(component)) {
 			component.then(renderToContainer)
 		} else {
 			renderToContainer(component)
 		}
+	}
+
+	function refreshView() {
+		return renderToContainer(this.render())
 	}
 
 	function renderToContainer(component) {
@@ -141,8 +149,8 @@ export default function createApp(appSettings) {
 	}
 
 	function start() {
-		unlisten = history.listen(matchController)
-		matchController(history.getCurrentLocation())
+		unlisten = history.listen(render)
+		render(history.getCurrentLocation())
 	}
 
 	function stop() {
@@ -154,7 +162,12 @@ export default function createApp(appSettings) {
 		destroyController()
 	}
 
-	return  { start, stop }
+	return  {
+		start,
+		stop,
+		render,
+		listen: history.listen,
+	}
 
 }
 

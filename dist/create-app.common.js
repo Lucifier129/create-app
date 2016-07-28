@@ -9,6 +9,7 @@ var History = require('history');
 History = 'default' in History ? History['default'] : History;
 var pathToRegExp = require('path-to-regexp');
 pathToRegExp = 'default' in pathToRegExp ? pathToRegExp['default'] : pathToRegExp;
+var isomorphicFetch = require('isomorphic-fetch');
 
 var index = {
 	History: History,

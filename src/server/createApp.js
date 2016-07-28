@@ -3,68 +3,106 @@
  */
 import * as _ from '../share/util'
 import createMatcher from '../share/createMatcher'
+import { defaultAppSettings } from '../share/constant'
+import * as defaultViewEngine from './viewEngine'
+import url from 'url'
+import querystring from 'querystring'
 
 export default function createApp(appSettings) {
-	let {
-		routes,
-		viewEngine,
-		loader,
-		context,
-		basename,
-	} = appSettings
-	let matcher = createMatcher(routes)
-	let BASENAME_RE = new RegExp(`^${basename}`, 'i')
-	let currentLocation = null
+    let finalAppSettings = _.extends({ viewEngine: defaultViewEngine }, defaultAppSettings, appSettings)
 
-	function matchPathname(pathname) {
-		return matcher(pathname.replace(BASENAME_RE, ''))
-	}
+    let {
+        routes,
+        viewEngine,
+        loader,
+        context,
+        basename,
+    } = finalAppSettings
 
-	function matchController($location) {
-		let location = {
-			...$location,
+    let matcher = createMatcher(routes)
+    let BASENAME_RE = new RegExp(`^${basename}`, 'i')
+    let currentLocation = null
+
+    let historyAPI = {
+        goReplace: render,
+        goTo: render,
+        goIndex: _.noop,
+        goBack: _.noop,
+        goForward: _.noop,
+    }
+
+    function getPathname(pathname) {
+        return pathname.replace(BASENAME_RE, '')
+    }
+
+    function getLocation() {
+        return currentLocation
+    }
+
+    function render(requestPath) {
+    	let finalPath = getPathname(requestPath)
+    	let urlObj = url.parse(requestPath)
+		let query = urlObj.query ? querystring.parse(urlObj.query) : {}
+		let finalLocation = {
+			originalUrl: requestPath,
+			pathname: urlObj.pathname,
+			search: urlObj.search || '',
+			query: query,
+			basename: basename,
 		}
-		location.pathname = $location.pathname.replace(BASENAME_RE, '')
-		let matches = matchPathname(location.pathname)
-		if (!matches) {
-			throw new Error(`Did not match any route with pathname:${location.pathname}`)
-		}
-		let { params, controller } = matches
-		let controllerType = typeof controller
-		let target = null
+        let matches = matchPathname(finalLocation.pathname)
 
-		location.params = params
-		currentLocation = location
+        if (!matches) {
+            throw new Error(`Did not match any route with path:${requestPath}`)
+        }
 
-		if (controllerType === 'string') {
-			return loader(controller, initController)
-		}
+        let { params, controller } = matches
+        let controllerType = typeof controller
 
-		if (controllerType === 'function') {
-			target = controller(location)
-		}
+        finalLocation.params = params
+        currentLocation = finalLocation
 
-		if (_.isThenable(target)) {
-			return target.then(initController)
-		} else {
-			return initController(target)
-		}
-	}
+        // handle path string
+        if (controllerType === 'string') {
+            let result = loader(controller, initController)
+            if (_.isThenable(result)) {
+                return result.then(initController)
+            } else {
+                return result
+            }
+        }
 
-	function initController(Controller) {
-		let controller = new Controller(context)
-		let component = controller.init(currentLocation)
+        // handle factory function
+        if (controllerType === 'function') {
+            let result = controller(finalLocation)
+            if (_.isThenable(result)) {
+                return result.then(initController)
+            } else {
+                return initController(result)
+            }
+        }
+    }
 
-		if (_.isThenable(component)) {
-			return component.then(renderToString)
-		} else {
-			return renderToString(component)
-		}
-	}
+    function initController(Controller) {
+        let controller = new Controller(context)
 
-	function renderToString(component) {
-		return viewEngine.render(component)
-	}
+        controller.getLocation = getLocation
+        _.extend(controller, historyAPI)
 
-	return { matchController, matchPathname }
+        let component = controller.init()
+
+        if (_.isThenable(component)) {
+            return component.then(renderToString)
+        } else {
+            return renderToString(component)
+        }
+    }
+
+    function renderToString(component) {
+        return viewEngine.render(component)
+    }
+
+    return {
+    	render
+    }
 }
