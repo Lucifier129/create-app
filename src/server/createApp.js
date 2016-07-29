@@ -9,7 +9,9 @@ import History from '../share/history'
 import createMemoryHistory from 'history/lib/createMemoryHistory'
 
 export default function createApp(appSettings) {
-    let finalAppSettings = _.extends({ viewEngine: defaultViewEngine }, defaultAppSettings, appSettings)
+    let finalAppSettings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
+
+    _.extend(finalAppSettings, appSettings)
 
     let {
         routes,
@@ -23,10 +25,11 @@ export default function createApp(appSettings) {
 
     function render(requestPath, callback) {
         let location = history.createLocation(requestPath)
-        let matches = matchPathname(location.pathname)
+        let matches = matcher(location.pathname)
 
         if (!matches) {
-            throw new Error(`Did not match any route with path:${requestPath}`)
+            callback(new Error(`Did not match any route with path:${requestPath}`))
+            return
         }
 
         let { path, params, controller } = matches

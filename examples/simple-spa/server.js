@@ -61,43 +61,19 @@ var server = http.createServer(function(req, res) {
 		return
 	}
 
-	var urlObj = url.parse(req.url)
-	var query = urlObj.query ? querystring.parse(urlObj.query) : {}
-	var location = {
-		pathname: urlObj.pathname,
-		search: urlObj.search || '',
-		query: query,
-		basename: basename,
-	}
-
-	var match = app.matchPathname(location.pathname)
-
-	// handle routes
-	if (match && match.path !== '*') {
-		var content = app.matchController(location)
-		res.writeHeader(200, {
-			'Content-Type': 'text/html'
-		})
-		if (typeof content === 'string') {
-			res.end(render(content))
-		} else {
-			content.then(content => res.end(render(content)))
+	// handle page
+	app.render(req.url, (error, content) => {
+		if (error) {
+			// handle 404
+			res.writeHead(404)
+			res.end(JSON.stringify(error))
+			return
 		}
-		return
-	}
-
-	// handle index page
-	if (req.url === '/') {
 		res.writeHeader(200, {
 			'Content-Type': 'text/html'
 		})
-		res.end(indexFile)
-		return
-	}
-
-	// handle 404
-	res.writeHead(404)
-	res.end('not found')
+		res.end(render(content))
+	})
 })
 
 server.listen(3001)

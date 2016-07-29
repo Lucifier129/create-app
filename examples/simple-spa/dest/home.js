@@ -1,6 +1,6 @@
 webpackJsonp([2],{
 
-/***/ 208:
+/***/ 210:
 /***/ function(module, exports, __webpack_require__) {
 
 	// controller
@@ -16,7 +16,7 @@ webpackJsonp([2],{
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _react = __webpack_require__(201);
+	var _react = __webpack_require__(203);
 
 	var _react2 = _interopRequireDefault(_react);
 

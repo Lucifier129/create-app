@@ -35,11 +35,6 @@ export function extend(to, from) {
     return to
 }
 
-export function extends(to, ...source) {
-    return source.reduce((result, from) => {
-        return extend(result, from)
-    }, to)
-}
 
 
 let uid = 0

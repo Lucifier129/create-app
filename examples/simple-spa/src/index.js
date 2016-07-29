@@ -4,8 +4,6 @@ import routes from './routes'
 import config from './config'
 import 'isomorphic-fetch'
 
-console.log(fetch)
-
 const webpackLoader = (url, initController) => {
     var load = require(url)
     load(module => {

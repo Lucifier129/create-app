@@ -7,5 +7,3 @@ export let render = (html, container) => {
 	container.innerHTML = html
 	return container
 }
-
-export let empty = noop

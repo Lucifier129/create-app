@@ -8,7 +8,9 @@ import * as defaultViewEngine from './viewEngine'
 import History from '../share/history'
 
 export default function createApp(appSettings) {
-    let finalAppSettings = _.extends({ viewEngine: defaultViewEngine }, defaultAppSettings, appSettings)
+    let finalAppSettings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
+
+    _.extend(finalAppSettings, appSettings)
 
     let {
         routes,
@@ -22,15 +24,6 @@ export default function createApp(appSettings) {
     let matcher = createMatcher(routes)
     let currentController = null
     let unlisten = null
-
-    let historyAPI = {
-        goReplace: history.replace,
-        goTo: history.push,
-        goIndex: history.go,
-        goBack: history.goBack,
-        goForward: history.goForward,
-    }
-
     let finalContainer = null
 
     function getContainer() {
