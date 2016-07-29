@@ -5,176 +5,242 @@ import * as _ from '../share/util'
 import createMatcher from '../share/createMatcher'
 import { defaultAppSettings } from '../share/constant'
 import * as defaultViewEngine from './viewEngine'
-import History from './history'
+import History from '../share/history'
 
 export default function createApp(appSettings) {
-	let finalAppSettings = _.extends({ viewEngine: defaultViewEngine }, defaultAppSettings, appSettings)
+    let finalAppSettings = _.extends({ viewEngine: defaultViewEngine }, defaultAppSettings, appSettings)
 
-	let {
-		routes,
-		viewEngine,
-		loader,
-		context,
-		container,
-	} = finalAppSettings
+    let {
+        routes,
+        viewEngine,
+        loader,
+        context,
+        container,
+    } = finalAppSettings
 
-	let history = createHistory(finalAppSettings)
-	let matcher = createMatcher(routes)
-	let currentLocation = null
-	let currentController = null
-	let unlisten = null
-	let currentCallback = () => {}
+    let history = createHistory(finalAppSettings)
+    let matcher = createMatcher(routes)
+    let currentController = null
+    let unlisten = null
 
-	let historyAPI = {
-		goReplace: history.replace,
-		goTo: history.push,
-		goIndex: history.go,
-		goBack: history.goBack,
-		goForward: history.goForward,
-	}
+    let historyAPI = {
+        goReplace: history.replace,
+        goTo: history.push,
+        goIndex: history.go,
+        goBack: history.goBack,
+        goForward: history.goForward,
+    }
 
-	function getContainer() {
-		if (typeof container === 'string') {
-			return document.querySelector(container)
-		} else {
-			return container
-		}
-	}
+    let finalContainer = null
 
-	function render(location) {
-		// check whether equal to current location
-		if (currentLocation) {
-			if (currentLocation.pathname === location.pathname) {
-				if (currentController && currentController.update) {
-					currentController.update(location)
-				}
-				return
-			}
-		}
+    function getContainer() {
+        if (finalContainer) {
+            return finalContainer
+        }
+        if (typeof container === 'string') {
+            return finalContainer = document.querySelector(container)
+        } else {
+            return finalContainer = container
+        }
+    }
 
-		let matches = matcher(location.pathname)
-		if (!matches) {
-			throw new Error(`Did not match any route with pathname:${location.pathname}`)
-		}
-		let { params, controller } = matches
-		let controllerType = typeof controller
-		let target = null
+    function render(targetPath) {
+        let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+        let matches = matcher(location.pathname)
 
-		location.params = params
-		currentLocation = location
+        if (!matches) {
+            throw new Error(`Did not match any route with pathname:${location.pathname}`)
+        }
+        let { path, params, controller } = matches
+        let controllerType = typeof controller
 
-		if (controllerType === 'string') {
-			loader(controller, initController)
-			return
-		}
+        location.pattern = path
+        location.params = params
 
-		if (controllerType === 'function') {
-			target = controller(location)
-		}
+        if (controllerType === 'string') {
+            let result = loader(controller, initController)
+            if (_.isThenable(result)) {
+                return result.then(initController)
+            } else {
+                return result
+            }
+        }
 
-		if (_.isThenable(target)) {
-			target.then(initController)
-		} else {
-			initController(target)
-		}
-	}
+        if (controllerType === 'function') {
+            let result = controller(location)
+            if (_.isThenable(result)) {
+                return result.then(initController)
+            } else {
+                return initController(result)
+            }
+        }
+    }
 
-	function initController(Controller) {
-		if (currentController) {
-			destroyController()
-		}
+    let controllers = {}
 
-		let controller = currentController = new Controller(context)
-		let unlistenBeforeLeave = null
-		let unlistenBeforeUnload = null
+    function getController(pattern, Controller) {
+        if (controllers.hasOwnProperty(pattern)) {
+            return controllers[pattern]
+        }
+        // implement the controller's life-cycle and useful methods
+        class WrapperController extends Controller {
+            constructor(location, context) {
+                super(location, context)
+                this.location = this.location || location
+                this.context = this.context || context
+            }
 
-		if (controller.beforeLeave) {
-			let beforeLeave = controller.beforeLeave.bind(controller)
-			unlistenBeforeLeave = history.listenBefore(beforeLeave)
-		}
+            // history apis
+            goReplace(targetPath) {
+                if (super.goReplace) {
+                    super.goReplace(targetPath)
+                }
+                history.replace(targetPath)
+            }
+            goTo(targetPath) {
+                if (super.goTo) {
+                    super.goTo(targetPath)
+                }
+                history.push(targetPath)
+            }
+            goIndex(index) {
+                if (super.goIndex) {
+                    super.goIndex(index)
+                }
+                history.go(index)
+            }
+            goBack() {
+                if (super.goBack) {
+                    super.goBack()
+                }
+                history.goBack()
+            }
+            goForward() {
+                if (super.goForward) {
+                    super.goForward()
+                }
+                history.goForward()
+            }
 
-		if (controller.beforeUnload) {
-			let beforeUnload = controller.beforeUnload.bind(controller)
-			unlistenBeforeUnload = history.listenBeforeUnload(beforeUnload)
-		}
+            // update view
+            refreshView() {
+                if (super.refreshView) {
+                    super.refreshView()
+                }
+                return renderToContainer(this.render())
+            }
 
-		controller.$unlisten = () => {
-			if (unlistenBeforeLeave) {
-				unlistenBeforeLeave()
-				unlistenBeforeLeave = null
-			}
-			if (unlistenBeforeUnload) {
-				unlistenBeforeUnload()
-				unlistenBeforeUnload = null
-			}
-		}
-		controller.refreshView = refreshView
+            // get container node
+            getContainer() {
+                if (super.getContainer) {
+                    super.getContainer()
+                }
+                return getContainer()
+            }
 
-		_.extend(controller, historyAPI)
+            // clear container
+            clearContainer() {
+            	if (super.clearContainer) {
+            		super.clearContainer()
+            	}
+            	return clearContainer()
+            }
+        }
+        controllers[pattern] = WrapperController
+        return WrapperController
+    }
 
-		let component = controller.init(currentLocation)
+    function createInitController(location) {
+        return function initController(Controller) {
+            if (currentController) {
+                destroyController()
+            }
+            let FinalController = getController(location.pattern, Controller)
+            let controller = currentController = new FinalController(location, context)
+            let unlistenBeforeLeave = null
+            let unlistenBeforeUnload = null
 
-		// if controller.init return false value, do nothing
-		if (!component) {
-			return
-		} else if (_.isThenable(component)) {
-			component.then(renderToContainer)
-		} else {
-			renderToContainer(component)
-		}
-	}
+            if (controller.beforeLeave) {
+                let beforeLeave = controller.beforeLeave.bind(controller)
+                unlistenBeforeLeave = history.listenBefore(beforeLeave)
+            }
 
-	function refreshView() {
-		return renderToContainer(this.render())
-	}
+            if (controller.beforeUnload) {
+                let beforeUnload = controller.beforeUnload.bind(controller)
+                unlistenBeforeUnload = history.listenBeforeUnload(beforeUnload)
+            }
 
-	function renderToContainer(component) {
-		viewEngine.render(component, getContainer())
-	}
+            controller.$unlisten = () => {
+                if (unlistenBeforeLeave) {
+                    unlistenBeforeLeave()
+                    unlistenBeforeLeave = null
+                }
+                if (unlistenBeforeUnload) {
+                    unlistenBeforeUnload()
+                    unlistenBeforeUnload = null
+                }
+            }
 
-	function clearContainer() {
-		if (viewEngine.clear) {
-			viewEngine.clear(getContainer())
-		}
-	}
+            let component = controller.init()
 
-	function destroyController() {
-	    if (currentController) {
-	        currentController.$unlisten()
-	        if (currentController.destroy) {
-	            currentController.destroy(currentLocation)
-	        }
-	        currentController = null
-	    }
-	}
+            // if controller.init return false value, do nothing
+            if (!component) {
+                return null
+            } else if (_.isThenable(component)) {
+                return component.then(renderToContainer)
+            } else {
+                return renderToContainer(component)
+            }
+        }
+    }
 
-	function start() {
-		unlisten = history.listen(render)
-		render(history.getCurrentLocation())
-	}
+    function renderToContainer(component) {
+        return viewEngine.render(component, getContainer())
+    }
 
-	function stop() {
-		currentLocation = null
-		if (unlisten) {
-			unlisten()
-			unlisten = null
-		}
-		destroyController()
-	}
+    function clearContainer() {
+        if (viewEngine.clear) {
+            return viewEngine.clear(getContainer())
+        }
+    }
 
-	return  {
-		start,
-		stop,
-		render,
-		listen: history.listen,
-	}
+    function destroyController() {
+        if (currentController) {
+            currentController.$unlisten()
+            if (currentController.destroy) {
+                currentController.destroy()
+            }
+            currentController = null
+        }
+        clearContainer()
+    }
+
+    function start() {
+        unlisten = history.listen(render)
+        render(history.getlocation())
+    }
+
+    function stop() {
+        if (unlisten) {
+            unlisten()
+            unlisten = null
+        }
+        destroyController()
+    }
+
+    return {
+        start,
+        stop,
+        render,
+        listen: history.listen,
+    }
 
 }
 
 function createHistory(settings) {
-	let create = History[settings.type]
-	create = History.useBeforeUnload(create)
-	create = History.useQueries(create)
-	create = History.useBasename(create)
-	return create(settings)
+    let create = History[settings.type]
+    create = History.useBeforeUnload(create)
+    create = History.useQueries(create)
+    create = History.useBasename(create)
+    return create(settings)
 }

@@ -5,8 +5,8 @@ import * as _ from '../share/util'
 import createMatcher from '../share/createMatcher'
 import { defaultAppSettings } from '../share/constant'
 import * as defaultViewEngine from './viewEngine'
-import url from 'url'
-import querystring from 'querystring'
+import History from '../share/history'
+import createMemoryHistory from 'history/lib/createMemoryHistory'
 
 export default function createApp(appSettings) {
     let finalAppSettings = _.extends({ viewEngine: defaultViewEngine }, defaultAppSettings, appSettings)
@@ -16,57 +16,32 @@ export default function createApp(appSettings) {
         viewEngine,
         loader,
         context,
-        basename,
     } = finalAppSettings
 
     let matcher = createMatcher(routes)
-    let BASENAME_RE = new RegExp(`^${basename}`, 'i')
-    let currentLocation = null
+    let history = createHistory(finalAppSettings)
 
-    let historyAPI = {
-        goReplace: render,
-        goTo: render,
-        goIndex: _.noop,
-        goBack: _.noop,
-        goForward: _.noop,
-    }
-
-    function getPathname(pathname) {
-        return pathname.replace(BASENAME_RE, '')
-    }
-
-    function getLocation() {
-        return currentLocation
-    }
-
-    function render(requestPath) {
-    	let finalPath = getPathname(requestPath)
-    	let urlObj = url.parse(requestPath)
-		let query = urlObj.query ? querystring.parse(urlObj.query) : {}
-		let finalLocation = {
-			originalUrl: requestPath,
-			pathname: urlObj.pathname,
-			search: urlObj.search || '',
-			query: query,
-			basename: basename,
-		}
-        let matches = matchPathname(finalLocation.pathname)
+    function render(requestPath, callback) {
+        let location = history.createLocation(requestPath)
+        let matches = matchPathname(location.pathname)
 
         if (!matches) {
             throw new Error(`Did not match any route with path:${requestPath}`)
         }
 
-        let { params, controller } = matches
-        let controllerType = typeof controller
+        let { path, params, controller } = matches
 
-        finalLocation.params = params
-        currentLocation = finalLocation
+        location.pattern = path
+        location.params = params
+
+        let initController = createInitController(location, callback)
+        let controllerType = typeof controller
 
         // handle path string
         if (controllerType === 'string') {
             let result = loader(controller, initController)
             if (_.isThenable(result)) {
-                return result.then(initController)
+                return result.then(initController, callback)
             } else {
                 return result
             }
@@ -74,27 +49,98 @@ export default function createApp(appSettings) {
 
         // handle factory function
         if (controllerType === 'function') {
-            let result = controller(finalLocation)
+            let result = controller(location)
             if (_.isThenable(result)) {
-                return result.then(initController)
+                return result.then(initController, callback)
             } else {
                 return initController(result)
             }
         }
     }
 
-    function initController(Controller) {
-        let controller = new Controller(context)
+    let controllers = {}
 
-        controller.getLocation = getLocation
-        _.extend(controller, historyAPI)
+    function getController(pattern, Controller) {
+        if (controllers.hasOwnProperty(pattern)) {
+            return controllers[pattern]
+        }
 
-        let component = controller.init()
+        // implement the controller's life-cycle and useful methods
+        class WrapperController extends Controller {
+            constructor(location, context) {
+                super(location, context)
+                this.location = this.location || location
+                this.context = this.context || context
+            }
 
-        if (_.isThenable(component)) {
-            return component.then(renderToString)
-        } else {
-            return renderToString(component)
+            // history apis
+            goReplace(targetPath) {
+                if (super.goReplace) {
+                    super.goReplace(targetPath)
+                }
+                return render(targetPath)
+            }
+            goTo(targetPath) {
+                if (super.goTo) {
+                    super.goTo(targetPath)
+                }
+                return render(targetPath)
+            }
+            goIndex(index) {
+                if (super.goIndex) {
+                    super.goIndex(index)
+                }
+            }
+            goBack() {
+                if (super.goBack) {
+                    super.goBack()
+                }
+            }
+            goForward() {
+                if (super.goForward) {
+                    super.goForward()
+                }
+            }
+            refreshView() {
+                if (super.refreshView) {
+                    super.refreshView()
+                }
+            }
+            getContainer() {
+                if (super.getContainer) {
+                    super.getContainer()
+                }
+            }
+            clearContainer() {
+                if (super.clearContainer) {
+                    super.clearContainer()
+                }
+            }
+        }
+        controllers[pattern] = WrapperController
+        return WrapperController
+    }
+
+    function createInitController(location, callback) {
+        return function initController(Controller) {
+            let FinalController = getContainer(location.pattern, Controller)
+            let controller = new FinalController(location, context)
+            let component = controller.init()
+
+            if (_.isThenable(component)) {
+                let promise = component.then(renderToString)
+                if (callback) {
+                    return promise
+                        .then(result => callback(null, result), callback)
+                }
+                return promise
+            }
+
+            let result = renderToString(component)
+            if (callback) {
+                callback(null, result)
+            }
+            return result
         }
     }
 
@@ -102,7 +148,23 @@ export default function createApp(appSettings) {
         return viewEngine.render(component)
     }
 
-    return {
-    	render
+    function publicRender(requestPath, callback) {
+        try {
+            return render(requestPath, callback)
+        } catch (error) {
+            callback(error)
+        }
     }
+
+    return {
+        render: publicRender
+    }
+}
+
+
+function createHistory(settings) {
+    let create = createMemoryHistory
+    create = History.useQueries(create)
+    create = History.useBasename(create)
+    return create(settings)
 }
