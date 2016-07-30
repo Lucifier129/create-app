@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import routes from './routes'
 import config from './config'
 import 'isomorphic-fetch'
+import * as History from 'history'
 
 const webpackLoader = (url, initController) => {
     var load = require(url)

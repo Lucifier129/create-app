@@ -61,12 +61,13 @@ var server = http.createServer(function(req, res) {
 		return
 	}
 
+
 	// handle page
 	app.render(req.url, (error, content) => {
 		if (error) {
 			// handle 404
 			res.writeHead(404)
-			res.end(JSON.stringify(error))
+			res.end(JSON.stringify(error.message))
 			return
 		}
 		res.writeHeader(200, {

@@ -1,9 +1,7 @@
-// placeholder
-import History from 'history'
-import pathToRegExp from 'path-to-regexp'
-import 'isomorphic-fetch'
+import server from './server/index'
+import client from './client/index'
 
 export default {
-	History,
-	pathToRegExp,
+	server,
+	client,
 }

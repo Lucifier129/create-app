@@ -1,6 +1,6 @@
 webpackJsonp([2],{
 
-/***/ 210:
+/***/ 44:
 /***/ function(module, exports, __webpack_require__) {
 
 	// controller
@@ -16,57 +16,43 @@ webpackJsonp([2],{
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _react = __webpack_require__(203);
+	var _react = __webpack_require__(33);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	var Controller = (function () {
-		function Controller(context) {
+		function Controller() {
 			_classCallCheck(this, Controller);
 
-			console.log('receive context', context);
-			this.willMount = this.willMount.bind(this);
-			this.didMount = this.didMount.bind(this);
-			this.willUpdate = this.willUpdate.bind(this);
-			this.didUpdate = this.didUpdate.bind(this);
-			this.willUnmount = this.willUnmount.bind(this);
 			this.jump = this.jump.bind(this);
 		}
 
 		_createClass(Controller, [{
 			key: 'init',
-			value: function init($location) {
-				this.$location = $location;
-				console.log('init', $location);
+			value: function init() {
 				return this.render();
 			}
 		}, {
 			key: 'update',
-			value: function update($location) {
-				console.log('update', $location);
+			value: function update() {
+				console.log('update');
 			}
 		}, {
 			key: 'destroy',
-			value: function destroy($location) {
-				console.log('destroy', $location);
+			value: function destroy() {
+				console.log('destroy', this.location);
 			}
 		}, {
 			key: 'render',
 			value: function render() {
 				return _react2['default'].createElement(
 					'div',
-					{
-						'hook-willMount': this.willMount,
-						'hook-didMount': this.didMount,
-						'hook-willUpdate': this.willUpdate,
-						'hook-didUpdate': this.didUpdate,
-						'hook-willUnmount': this.willUnmount
-					},
+					null,
 					_react2['default'].createElement(
 						'h1',
 						null,
-						'list: ',
-						JSON.stringify(this.$location, null, 2)
+						'home: ',
+						JSON.stringify(this.location, null, 2)
 					),
 					_react2['default'].createElement(
 						'ul',
@@ -110,38 +96,7 @@ webpackJsonp([2],{
 				var search = _event$currentTarget.search;
 
 				console.log('jump');
-				this.goTo({
-					pathname: pathname,
-					search: search,
-					state: {
-						name: 'home'
-					}
-				});
-			}
-		}, {
-			key: 'willMount',
-			value: function willMount() {
-				console.log('willMount');
-			}
-		}, {
-			key: 'didMount',
-			value: function didMount() {
-				console.log('didMount');
-			}
-		}, {
-			key: 'willUpdate',
-			value: function willUpdate() {
-				console.log('willUpdate');
-			}
-		}, {
-			key: 'didUpdate',
-			value: function didUpdate() {
-				console.log('didUpdate');
-			}
-		}, {
-			key: 'willUnmount',
-			value: function willUnmount() {
-				console.log('willUnmount');
+				this.goTo(pathname);
 			}
 		}]);
 

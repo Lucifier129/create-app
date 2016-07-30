@@ -52,7 +52,7 @@ export default function createApp(appSettings) {
 
         // handle factory function
         if (controllerType === 'function') {
-            let result = controller(location)
+            let result = controller(location, loader)
             if (_.isThenable(result)) {
                 return result.then(initController, callback)
             } else {
@@ -126,7 +126,7 @@ export default function createApp(appSettings) {
 
     function createInitController(location, callback) {
         return function initController(Controller) {
-            let FinalController = getContainer(location.pattern, Controller)
+            let FinalController = getController(location.pattern, Controller)
             let controller = new FinalController(location, context)
             let component = controller.init()
 
@@ -167,7 +167,7 @@ export default function createApp(appSettings) {
 
 function createHistory(settings) {
     let create = createMemoryHistory
-    create = History.useQueries(create)
     create = History.useBasename(create)
+    create = History.useQueries(create)
     return create(settings)
 }

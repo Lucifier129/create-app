@@ -20,9 +20,10 @@ export default function createApp(appSettings) {
         container,
     } = finalAppSettings
 
-    let history = createHistory(finalAppSettings)
+    let history = window.$history = createHistory(finalAppSettings)
     let matcher = createMatcher(routes)
     let currentController = null
+    let currentLocation = null
     let unlisten = null
     let finalContainer = null
 
@@ -39,6 +40,18 @@ export default function createApp(appSettings) {
 
     function render(targetPath) {
         let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+
+        if (currentLocation) {
+            let isEqualPathname = currentLocation.pathname === location.pathname
+            let isEqualSearch = currentLocation.search === location.search
+            let isEqualHash = currentLocation.hash === location.hash
+            if (isEqualPathname && isEqualSearch && isEqualHash) {
+                return
+            }
+        }
+
+        currentLocation = location
+
         let matches = matcher(location.pathname)
 
         if (!matches) {
@@ -50,6 +63,8 @@ export default function createApp(appSettings) {
         location.pattern = path
         location.params = params
 
+        let initController = createInitController(location)
+
         if (controllerType === 'string') {
             let result = loader(controller, initController)
             if (_.isThenable(result)) {
@@ -60,7 +75,7 @@ export default function createApp(appSettings) {
         }
 
         if (controllerType === 'function') {
-            let result = controller(location)
+            let result = controller(location, loader)
             if (_.isThenable(result)) {
                 return result.then(initController)
             } else {
@@ -210,7 +225,7 @@ export default function createApp(appSettings) {
 
     function start() {
         unlisten = history.listen(render)
-        render(history.getlocation())
+        render(history.getCurrentLocation())
     }
 
     function stop() {
@@ -232,8 +247,8 @@ export default function createApp(appSettings) {
 
 function createHistory(settings) {
     let create = History[settings.type]
+    create = History.useBasename(create)
     create = History.useBeforeUnload(create)
     create = History.useQueries(create)
-    create = History.useBasename(create)
     return create(settings)
 }

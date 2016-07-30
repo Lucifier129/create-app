@@ -2,11 +2,12 @@
   "name": "create-app",
   "version": "0.1.1",
   "description": "configuring once, rendering both client and server.",
-  "main": "src/index.js",
+  "browser": "lib/client/index.js",
+  "main": "lib/server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:lib": "babel ./src --out-dir ./lib",
-    "build": "node build.js",
+    "build": "node build.js & npm run build:lib",
     "deploy": "gulp deploy",
     "prepublish": "npm run build"
   },
@@ -37,6 +38,7 @@
     "gulp-gh-pages": "^0.5.4",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
+    "react-lite": "^0.15.14",
     "rollup": "^0.21.0",
     "rollup-plugin-babel": "^1.0.0",
     "rollup-plugin-replace": "^1.1.0",

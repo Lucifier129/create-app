@@ -2,36 +2,22 @@
 import React, { Component } from 'react'
 
 export default class Controller {
-	constructor(context) {
-		console.log('receive context', context)
-		this.willMount = this.willMount.bind(this)
-		this.didMount = this.didMount.bind(this)
-		this.willUpdate = this.willUpdate.bind(this)
-		this.didUpdate = this.didUpdate.bind(this)
-		this.willUnmount = this.willUnmount.bind(this)
+	constructor() {
 		this.jump = this.jump.bind(this)
 	}
-	init($location) {
-		this.$location = $location
-		console.log('init', $location)
+	init() {
 		return this.render()
 	}
-	update($location) {
-		console.log('update', $location)
+	update() {
+		console.log('update')
 	}
-	destroy($location) {
-		console.log('destroy', $location)
+	destroy() {
+		console.log('destroy', this.location)
 	}
 	render() {
 		return (
-			<div
-				hook-willMount={this.willMount}
-				hook-didMount={this.didMount}
-				hook-willUpdate={this.willUpdate}
-				hook-didUpdate={this.didUpdate}
-				hook-willUnmount={this.willUnmount}
-			>
-				<h1>list: { JSON.stringify(this.$location, null, 2) }</h1>
+			<div>
+				<h1>home: { JSON.stringify(this.location, null, 2) }</h1>
 				<ul>
 					<li><a href="/home" onClick={this.jump}>home page</a></li>
 					<li><a href="/list" onClick={this.jump}>list page</a></li>
@@ -44,27 +30,6 @@ export default class Controller {
 		event.preventDefault()
 		let { pathname, search } = event.currentTarget
 		console.log('jump')
-		this.goTo({
-			pathname,
-			search,
-			state: {
-				name: 'home'
-			}
-		})
-	}
-	willMount() {
-		console.log('willMount')
-	}
-	didMount() {
-		console.log('didMount')
-	}
-	willUpdate() {
-		console.log('willUpdate')
-	}
-	didUpdate() {
-		console.log('didUpdate')
-	}
-	willUnmount() {
-		console.log('willUnmount')
+		this.goTo(pathname)
 	}
 }

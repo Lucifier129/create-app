@@ -48,7 +48,9 @@ module.exports = {
         extensions: ['', '.js'],
         root: __dirname,
         alias: {
-            'create-app': path.join(__dirname, 'src')
+            'create-app': path.join(__dirname, 'src'),
+            'react': 'react-lite',
+            'react-dom': 'react-lite',
         }
     }
 };
