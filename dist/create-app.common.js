@@ -43,12 +43,8 @@ babelHelpers.classCallCheck = function (instance, Constructor) {
     throw new TypeError("Cannot call a class as a function");
   }
 };
-function isFn(obj) {
-    return typeof obj === 'function';
-}
-
 function isThenable(obj) {
-    return obj != null && isFn(obj.then);
+    return obj != null && typeof obj.then === 'function';
 }
 
 function identity(obj) {
@@ -73,11 +69,11 @@ if (!Object.freeze) {
 
 function createMatcher(routes) {
     var finalRoutes = routes.map(createRoute);
-    var routelength = finalRoutes.length;
+    var routeLength = finalRoutes.length;
 
     return function matcher(pathname) {
         var finalPathname = cleanPath(pathname);
-        for (var i = 0; i < routelength; i++) {
+        for (var i = 0; i < routeLength; i++) {
             var route = finalRoutes[i];
             var matches = route.regexp.exec(finalPathname);
             if (!matches) {
@@ -121,6 +117,7 @@ function cleanPath(path) {
 }
 
 var defaultAppSettings = {
+	container: '#container',
 	basename: '',
 	context: {},
 	type: 'createHistory'
@@ -314,6 +311,9 @@ function createApp$1(appSettings) {
 
     function createInitController(location) {
         return function initController(Controller) {
+            if (currentLocation !== location) {
+                return;
+            }
             if (currentController) {
                 destroyController();
             }
@@ -377,9 +377,24 @@ function createApp$1(appSettings) {
         _clearContainer();
     }
 
-    function start() {
-        unlisten = history.listen(render);
-        render(history.getCurrentLocation());
+    function start(callback, shouldRenderWithCurrentLocation) {
+        var listener = function listener(location) {
+            var result = render(location);
+            if (!callback) {
+                return;
+            }
+            if (isThenable(result)) {
+                result.then(function () {
+                    return callback(location);
+                });
+            } else {
+                callback(location);
+            }
+        };
+        unlisten = history.listen(listener);
+        if (shouldRenderWithCurrentLocation !== false) {
+            listener(history.getCurrentLocation());
+        }
     }
 
     function stop() {

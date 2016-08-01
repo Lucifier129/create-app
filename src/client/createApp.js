@@ -227,22 +227,43 @@ export default function createApp(appSettings) {
         clearContainer()
     }
 
+    let listeners = []
+    function subscribe(listener) {
+        let index = listeners.indexOf(listener)
+        if (index === -1) {
+            listeners.push(listener)
+        }
+        return () => {
+            let index = listeners.indexOf(listener)
+            if (index !== -1) {
+                listeners = listeners.filter(fn => fn !== listener)
+            }
+        }
+    }
+    function publish(list, location) {
+        for (let i = 0, len = list.length; i < len; i++) {
+            list[i](location)
+        }
+    }
+
     function start(callback, shouldRenderWithCurrentLocation) {
         let listener = location => {
             let result = render(location)
-            if (!callback) {
-                return
-            }
             if (_.isThenable(result)) {
-                result.then(() => callback(location))
+                result.then(() => publish(location))
             } else {
-                callback(location)
+                publish(location)
             }
         }
         unlisten = history.listen(listener)
+        let unsubscribe
+        if (typeof callback === 'function') {
+            unsubscribe = subscribe(callback)
+        }
         if (shouldRenderWithCurrentLocation !== false) {
             listener(history.getCurrentLocation())
         }
+        return unsubscribe
     }
 
     function stop() {
@@ -258,6 +279,7 @@ export default function createApp(appSettings) {
         stop,
         render,
         history,
+        subscribe,
     }
 
 }

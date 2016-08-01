@@ -1,8 +1,8 @@
-const execSteps = (steps, history, done) => {
-  let index = 0, unlisten
+const execSteps = ({ steps, subscribe, location }, done) => {
+  let index = 0, unsubscribe
 
   const cleanup = (...args) => {
-    unlisten()
+    unsubscribe()
     done(...args)
   }
 
@@ -18,8 +18,8 @@ const execSteps = (steps, history, done) => {
   }
 
   if (steps.length) {
-    unlisten = history.listen(execNextStep)
-    execNextStep(history.getCurrentLocation())
+    unsubscribe = subscribe(execNextStep)
+    execNextStep(location)
   } else {
     done()
   }
