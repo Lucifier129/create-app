@@ -20,7 +20,7 @@ export default function createApp(appSettings) {
         container,
     } = finalAppSettings
 
-    let history = window.$history = createHistory(finalAppSettings)
+    let history = createHistory(finalAppSettings)
     let matcher = createMatcher(routes)
     let currentController = null
     let currentLocation = null
@@ -57,16 +57,17 @@ export default function createApp(appSettings) {
         if (!matches) {
             throw new Error(`Did not match any route with pathname:${location.pathname}`)
         }
+
         let { path, params, controller } = matches
-        let controllerType = typeof controller
 
         location.pattern = path
         location.params = params
 
+        let controllerType = typeof controller
         let initController = createInitController(location)
 
         if (controllerType === 'string') {
-            let result = loader(controller, initController)
+            let result = loader(controller, initController, location)
             if (_.isThenable(result)) {
                 return result.then(initController)
             } else {
@@ -148,10 +149,10 @@ export default function createApp(appSettings) {
 
             // clear container
             clearContainer() {
-            	if (super.clearContainer) {
-            		super.clearContainer()
-            	}
-            	return clearContainer()
+                if (super.clearContainer) {
+                    super.clearContainer()
+                }
+                return clearContainer()
             }
         }
         controllers[pattern] = WrapperController
@@ -160,6 +161,9 @@ export default function createApp(appSettings) {
 
     function createInitController(location) {
         return function initController(Controller) {
+            if (currentLocation !== location) {
+                return
+            }
             if (currentController) {
                 destroyController()
             }
@@ -223,9 +227,22 @@ export default function createApp(appSettings) {
         clearContainer()
     }
 
-    function start() {
-        unlisten = history.listen(render)
-        render(history.getCurrentLocation())
+    function start(callback, shouldRenderWithCurrentLocation) {
+        let listener = location => {
+            let result = render(location)
+            if (!callback) {
+                return
+            }
+            if (_.isThenable(result)) {
+                result.then(() => callback(location))
+            } else {
+                callback(location)
+            }
+        }
+        unlisten = history.listen(listener)
+        if (shouldRenderWithCurrentLocation !== false) {
+            listener(history.getCurrentLocation())
+        }
     }
 
     function stop() {
@@ -240,7 +257,7 @@ export default function createApp(appSettings) {
         start,
         stop,
         render,
-        listen: history.listen,
+        history,
     }
 
 }

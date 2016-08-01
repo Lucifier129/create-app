@@ -42,7 +42,7 @@ export default function createApp(appSettings) {
 
         // handle path string
         if (controllerType === 'string') {
-            let result = loader(controller, initController)
+            let result = loader(controller, initController, location)
             if (_.isThenable(result)) {
                 return result.then(initController, callback)
             } else {
@@ -160,7 +160,8 @@ export default function createApp(appSettings) {
     }
 
     return {
-        render: publicRender
+        render: publicRender,
+        history,
     }
 }
 

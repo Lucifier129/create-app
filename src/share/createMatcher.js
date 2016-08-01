@@ -3,11 +3,11 @@ import * as _ from './util'
 
 export default function createMatcher(routes) {
     const finalRoutes = routes.map(createRoute)
-    const routelength = finalRoutes.length
+    const routeLength = finalRoutes.length
 
     return function matcher(pathname) {
         let finalPathname = cleanPath(pathname)
-        for (let i = 0; i < routelength; i++) {
+        for (let i = 0; i < routeLength; i++) {
             let route = finalRoutes[i]
             let matches = route.regexp.exec(finalPathname)
             if (!matches) {

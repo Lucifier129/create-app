@@ -152,7 +152,7 @@
       var context = finalAppSettings.context;
       var container = finalAppSettings.container;
 
-      var history = window.$history = createHistory$2(finalAppSettings);
+      var history = createHistory$2(finalAppSettings);
       var matcher = createMatcher(routes);
       var currentController = null;
       var currentLocation = null;
@@ -189,19 +189,19 @@
           if (!matches) {
               throw new Error('Did not match any route with pathname:' + location.pathname);
           }
+
           var path = matches.path;
           var params = matches.params;
           var controller = matches.controller;
 
-          var controllerType = typeof controller;
-
           location.pattern = path;
           location.params = params;
 
+          var controllerType = typeof controller;
           var initController = createInitController(location);
 
           if (controllerType === 'string') {
-              var result = loader(controller, initController);
+              var result = loader(controller, initController, location);
               if (isThenable(result)) {
                   return result.then(initController);
               } else {
@@ -391,7 +391,7 @@
           start: start,
           stop: stop,
           render: render,
-          listen: history.listen
+          history: history
       };
   }
 
@@ -446,7 +446,7 @@
 
           // handle path string
           if (controllerType === 'string') {
-              var result = loader(controller, initController);
+              var result = loader(controller, initController, location);
               if (isThenable(result)) {
                   return result.then(initController, callback);
               } else {
@@ -581,7 +581,8 @@
       }
 
       return {
-          render: publicRender
+          render: publicRender,
+          history: history
       };
   }
 

@@ -222,7 +222,7 @@
 	    var context = finalAppSettings.context;
 	    var container = finalAppSettings.container;
 
-	    var history = window.$history = createHistory(finalAppSettings);
+	    var history = createHistory(finalAppSettings);
 	    var matcher = (0, _shareCreateMatcher2['default'])(routes);
 	    var currentController = null;
 	    var currentLocation = null;
@@ -259,19 +259,19 @@
 	        if (!matches) {
 	            throw new Error('Did not match any route with pathname:' + location.pathname);
 	        }
+
 	        var path = matches.path;
 	        var params = matches.params;
 	        var controller = matches.controller;
 
-	        var controllerType = typeof controller;
-
 	        location.pattern = path;
 	        location.params = params;
 
+	        var controllerType = typeof controller;
 	        var initController = createInitController(location);
 
 	        if (controllerType === 'string') {
-	            var result = loader(controller, initController);
+	            var result = loader(controller, initController, location);
 	            if (_.isThenable(result)) {
 	                return result.then(initController);
 	            } else {
@@ -471,7 +471,7 @@
 	        start: start,
 	        stop: stop,
 	        render: render,
-	        listen: history.listen
+	        history: history
 	    };
 	}
 
@@ -489,40 +489,18 @@
 /***/ function(module, exports) {
 
 	// util
-
 	'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
-	exports.isFn = isFn;
 	exports.isThenable = isThenable;
-	exports.invoke = invoke;
-	exports.noop = noop;
 	exports.identity = identity;
 	exports.extend = extend;
-	exports.getUid = getUid;
-	var emptyList = [];
-
-	exports.emptyList = emptyList;
-
-	function isFn(obj) {
-	    return typeof obj === 'function';
-	}
 
 	function isThenable(obj) {
-	    return obj != null && isFn(obj.then);
+	    return obj != null && typeof obj.then === 'function';
 	}
-
-	function invoke(fn) {
-	    return fn();
-	}
-
-	var isArr = Array.isArray;
-
-	exports.isArr = isArr;
-
-	function noop() {}
 
 	function identity(obj) {
 	    return obj;
@@ -538,12 +516,6 @@
 	        to[keys[i]] = from[keys[i]];
 	    }
 	    return to;
-	}
-
-	var uid = 0;
-
-	function getUid() {
-	    return ++uid;
 	}
 
 	if (!Object.freeze) {
@@ -575,11 +547,11 @@
 
 	function createMatcher(routes) {
 	    var finalRoutes = routes.map(createRoute);
-	    var routelength = finalRoutes.length;
+	    var routeLength = finalRoutes.length;
 
 	    return function matcher(pathname) {
 	        var finalPathname = cleanPath(pathname);
-	        for (var i = 0; i < routelength; i++) {
+	        for (var i = 0; i < routeLength; i++) {
 	            var route = finalRoutes[i];
 	            var matches = route.regexp.exec(finalPathname);
 	            if (!matches) {
@@ -1081,6 +1053,7 @@
 	var isServer = !isClient;
 	exports.isServer = isServer;
 	var defaultAppSettings = {
+		container: '#container',
 		basename: '',
 		context: {},
 		type: 'createHistory'
@@ -1089,19 +1062,16 @@
 
 /***/ },
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * default view engine for client
 	 */
-	'use strict';
+	"use strict";
 
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _shareUtil = __webpack_require__(3);
-
 	var render = function render(html, container) {
 	  container.innerHTML = html;
 	  return container;
@@ -3032,7 +3002,8 @@
 	      var normalizedBasename = basename.slice(-1) === '/' ? basename : basename + '/';
 	      var normalizedPathname = pname.charAt(0) === '/' ? pname.slice(1) : pname;
 	      var pathname = normalizedBasename + normalizedPathname;
-	      return _extends({}, object, {
+
+	      return _extends({}, location, {
 	        pathname: pathname
 	      });
 	    };
@@ -3099,7 +3070,7 @@
 /***/ function(module, exports) {
 
 	/*!
-	 * react-lite.js v0.15.14
+	 * react-lite.js v0.15.16
 	 * (c) 2016 Jade Gu
 	 * Released under the MIT License.
 	 */
@@ -3145,14 +3116,14 @@
 	        // init element
 	        node = initVelem(vnode, parentContext, namespaceURI);
 	    } else if (vtype === VCOMPONENT) {
-	        // init state component
+	        // init stateful component
 	        node = initVcomponent(vnode, parentContext, namespaceURI);
 	    } else if (vtype === VSTATELESS) {
 	        // init stateless component
 	        node = initVstateless(vnode, parentContext, namespaceURI);
 	    } else if (vtype === VCOMMENT) {
 	        // init comment
-	        node = document.createComment('react-empty: ' + vnode.uid);
+	        node = document.createComment('react-text: ' + (vnode.uid || getUid()));
 	    }
 	    return node;
 	}
@@ -4287,6 +4258,7 @@
 	        profile: 0,
 	        radioGroup: 0,
 	        readOnly: HAS_BOOLEAN_VALUE,
+	        referrerPolicy: 0,
 	        rel: 0,
 	        required: HAS_BOOLEAN_VALUE,
 	        reversed: HAS_BOOLEAN_VALUE,
@@ -4627,6 +4599,8 @@
 	    xlinkTitle: 'xlink:title',
 	    xlinkType: 'xlink:type',
 	    xmlBase: 'xml:base',
+	    xmlns: 0,
+	    xmlnsXlink: 'xmlns:xlink',
 	    xmlLang: 'xml:lang',
 	    xmlSpace: 'xml:space',
 	    y: 0,
@@ -5342,6 +5316,45 @@
 		return Klass;
 	}
 
+	function shallowEqual(objA, objB) {
+	    if (objA === objB) {
+	        return true;
+	    }
+
+	    if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+	        return false;
+	    }
+
+	    var keysA = Object.keys(objA);
+	    var keysB = Object.keys(objB);
+
+	    if (keysA.length !== keysB.length) {
+	        return false;
+	    }
+
+	    // Test for A's keys different from B.
+	    for (var i = 0; i < keysA.length; i++) {
+	        if (!objB.hasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	}
+
+	function PureComponent(props, context) {
+		Component.call(this, props, context);
+	}
+
+	PureComponent.prototype = Object.create(Component.prototype);
+	PureComponent.prototype.constructor = PureComponent;
+	PureComponent.prototype.isPureReactComponent = true;
+	PureComponent.prototype.shouldComponentUpdate = shallowCompare;
+
+	function shallowCompare(nextProps, nextState) {
+		return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
+	}
+
 	var React = extend({
 	    version: '0.15.1',
 	    cloneElement: cloneElement,
@@ -5349,6 +5362,7 @@
 	    createElement: createElement,
 	    createFactory: createFactory,
 	    Component: Component,
+	    PureComponent: PureComponent,
 	    createClass: createClass,
 	    Children: Children,
 	    PropTypes: PropTypes,
@@ -5373,10 +5387,7 @@
 		value: true
 	});
 	exports['default'] = [{
-		path: '/',
-		controller: './home/controller'
-	}, {
-		path: '/home',
+		path: '/(home)?',
 		controller: './home/controller'
 	}, {
 		path: '/list',
@@ -5386,7 +5397,7 @@
 		controller: './detail/controller'
 	}, {
 		path: '*',
-		controller: './home/controller'
+		controller: './detail/controller'
 	}];
 	module.exports = exports['default'];
 

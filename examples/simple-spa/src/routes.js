@@ -4,10 +4,7 @@
 
 export default [
 	{
-		path: '/',
-		controller: './home/controller'
-	}, {
-		path: '/home',
+		path: '/(home)?',
 		controller: './home/controller'
 	}, {
 		path: '/list',
@@ -17,6 +14,6 @@ export default [
 		controller: './detail/controller'
 	},  {
 		path: '*',
-		controller: './home/controller'
+		controller: './detail/controller'
 	}
 ]

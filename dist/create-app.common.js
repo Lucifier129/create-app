@@ -155,7 +155,7 @@ function createApp$1(appSettings) {
     var context = finalAppSettings.context;
     var container = finalAppSettings.container;
 
-    var history = window.$history = createHistory$2(finalAppSettings);
+    var history = createHistory$2(finalAppSettings);
     var matcher = createMatcher(routes);
     var currentController = null;
     var currentLocation = null;
@@ -192,19 +192,19 @@ function createApp$1(appSettings) {
         if (!matches) {
             throw new Error('Did not match any route with pathname:' + location.pathname);
         }
+
         var path = matches.path;
         var params = matches.params;
         var controller = matches.controller;
 
-        var controllerType = typeof controller;
-
         location.pattern = path;
         location.params = params;
 
+        var controllerType = typeof controller;
         var initController = createInitController(location);
 
         if (controllerType === 'string') {
-            var result = loader(controller, initController);
+            var result = loader(controller, initController, location);
             if (isThenable(result)) {
                 return result.then(initController);
             } else {
@@ -394,7 +394,7 @@ function createApp$1(appSettings) {
         start: start,
         stop: stop,
         render: render,
-        listen: history.listen
+        history: history
     };
 }
 
@@ -449,7 +449,7 @@ function createApp(appSettings) {
 
         // handle path string
         if (controllerType === 'string') {
-            var result = loader(controller, initController);
+            var result = loader(controller, initController, location);
             if (isThenable(result)) {
                 return result.then(initController, callback);
             } else {
@@ -584,7 +584,8 @@ function createApp(appSettings) {
     }
 
     return {
-        render: publicRender
+        render: publicRender,
+        history: history
     };
 }
 
