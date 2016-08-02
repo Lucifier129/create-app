@@ -94,10 +94,10 @@ function describeTest(type) {
             type,
         })
         return new Promise(resolve => {
-            app.start(null, false)
-            app.subscribe(resolve)
-            console.log(app.history.getCurrentLocation().pathname)
-            
+            // do not match current location
+            app.start(resolve, false)
+
+            // render random location by default
             app.history.push(`/random${Math.random().toString(36).substr(2)}`)
         })
     }
@@ -207,99 +207,102 @@ function createTest() {
     })
 
     it('should match browser location and render page', (done) => {
-        app.subscribe(location => {
-            let content = document.body.innerHTML
-            expect(content).toEqual('home')
-            done()
-        })
+        let steps = [
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('home')
+                expect(location.pathname).toEqual('/')
+                done()
+            }
+        ]
+        execSteps(steps, app.subscribe, done)
         app.history.push('/')
     })
 
-    it('should refresh view when calling container.refreshView', () => {
-        app.subscribe(location => {
-            let content = document.body.innerHTML
-            expect(content).toEqual('home')
+    it('should refresh view when calling container.refreshView', (done) => {
+        let steps = [
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('home')
 
-            document.body.innerHTML = ''
+                document.body.innerHTML = ''
 
-            content = document.body.innerHTML
-            expect(content).toEqual('')
+                content = document.body.innerHTML
+                expect(content).toEqual('')
 
-            controller.refreshView()
-            content = document.body.innerHTML
-            expect(content).toEqual('home')
-        })
+                controller.refreshView()
+                content = document.body.innerHTML
+                expect(content).toEqual('home')
+                expect(location.pathname).toEqual('/')
+            }
+        ]
+        execSteps(steps, app.subscribe, done)
         app.history.push('/')
     })
 
     it('should go to another location and render page', (done) => {
-        let count = 0
-        app.subscribe(location => {
-            let content
-            switch(count) {
-                case 0:
-                    content = document.body.innerHTML
-                    expect(content).toEqual('home')
-                    app.history.push('/detail')
-                    break
-                case 1:
-                    content = document.body.innerHTML
-                    expect(content).toEqual('detail')
-                    done()
-                    break
-                }
-            count += 1
-        })
+        let steps = [
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('home')
+                expect(location.pathname).toEqual('/')
+                app.history.push('/detail')
+            },
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('detail')
+                expect(location.pathname).toEqual('/detail')
+                done()
+            }
+        ]
+        execSteps(steps, app.subscribe, done)
         app.history.push('/')
     })
 
     it('should wait for promise resolved when controller.init return promise', (done) => {
         let start
-        let count = 0
-        app.subscribe(location => {
-            let content
-            switch(count) {
-                case 0:
-                    content = document.body.innerHTML
-                    expect(content).toEqual('home')
-                    start = new Date()
-                    app.history.push('/list')
-                    break
-                case 1:
-                    content = document.body.innerHTML
-                    expect(content).toEqual('list')
-                    expect(new Date() - start > 50).toBe(true)
-                    done()
-                    break
+        let steps = [
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('home')
+                expect(location.pathname).toEqual('/')
+                start = new Date()
+                app.history.push('/list')
+            },
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('list')
+                expect(location.pathname).toEqual('/list')
+                expect(new Date() - start > 50).toBe(true)
+                done()
             }
-            count += 1
-        })
+        ]
+        execSteps(steps, app.subscribe, done)
         app.history.push('/')
     })
 
     it('should go to another location when calling controller#goX method', (done) => {
-        let count = 0
-        app.subscribe(location => {
-            let content
-            switch(count) {
-                case 0:
-                    content = document.body.innerHTML
-                    expect(content).toEqual('home')
-                    controller.goTo('/detail')
-                    break
-                case 1:
-                    content = document.body.innerHTML
-                    expect(content).toEqual('detail')
-                    controller.goForward('/notfound')
-                    break
-                case 2:
-                    content = document.body.innerHTML
-                    expect(content).toEqual('not found')
-                    done()
-                    break
+        let steps = [
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('home')
+                expect(location.pathname).toEqual('/')
+                controller.goTo('/detail')
+            },
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('detail')
+                expect(location.pathname).toEqual('/detail')
+                controller.goReplace('/notfound')
+            },
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('not found')
+                expect(location.pathname).toEqual('/notfound')
+                done()
             }
-            count += 1
-        })
+        ]
+        execSteps(steps, app.subscribe, done)
         app.history.push('/')
     })
 

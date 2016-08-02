@@ -83,6 +83,8 @@ export default function createApp(appSettings) {
                 return initController(result)
             }
         }
+
+        throw new Error('controller must be string or function')
     }
 
     let controllers = {}
@@ -228,6 +230,7 @@ export default function createApp(appSettings) {
     }
 
     let listeners = []
+
     function subscribe(listener) {
         let index = listeners.indexOf(listener)
         if (index === -1) {
@@ -240,9 +243,10 @@ export default function createApp(appSettings) {
             }
         }
     }
-    function publish(list, location) {
-        for (let i = 0, len = list.length; i < len; i++) {
-            list[i](location)
+
+    function publish(location) {
+        for (let i = 0, len = listeners.length; i < len; i++) {
+            listeners[i](location)
         }
     }
 
@@ -269,9 +273,13 @@ export default function createApp(appSettings) {
     function stop() {
         if (unlisten) {
             unlisten()
-            unlisten = null
         }
         destroyController()
+        currentController = null
+        currentLocation = null
+        unlisten = null
+        finalContainer = null
+        listeners = []
     }
 
     return {

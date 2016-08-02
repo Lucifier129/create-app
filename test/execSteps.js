@@ -1,4 +1,4 @@
-const execSteps = ({ steps, subscribe, location }, done) => {
+const execSteps = (steps, subscribe, done) => {
   let index = 0, unsubscribe
 
   const cleanup = (...args) => {
@@ -19,7 +19,6 @@ const execSteps = ({ steps, subscribe, location }, done) => {
 
   if (steps.length) {
     unsubscribe = subscribe(execNextStep)
-    execNextStep(location)
   } else {
     done()
   }
