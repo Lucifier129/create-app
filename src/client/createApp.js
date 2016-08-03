@@ -40,13 +40,13 @@ export default function createApp(appSettings) {
 
     function render(targetPath) {
         let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
-
+        console.log(location.pathname)
         if (currentLocation) {
             let isEqualPathname = currentLocation.pathname === location.pathname
             let isEqualSearch = currentLocation.search === location.search
             let isEqualHash = currentLocation.hash === location.hash
             if (isEqualPathname && isEqualSearch && isEqualHash) {
-                console.log('equal', location.pathname)
+                // console.log('equal', location.pathname)
                 return
             }
         }
@@ -252,7 +252,11 @@ export default function createApp(appSettings) {
     }
 
     function start(callback, shouldRenderWithCurrentLocation) {
+        let count = 0
         let listener = location => {
+            // if (finalAppSettings.type === 'createHashHistory' && count === 0) {
+            //     return count += 1
+            // }
             let result = render(location)
             if (_.isThenable(result)) {
                 result.then(() => {
@@ -276,13 +280,13 @@ export default function createApp(appSettings) {
     function stop() {
         if (unlisten) {
             unlisten()
+            destroyController()
+            currentController = null
+            currentLocation = null
+            unlisten = null
+            finalContainer = null
+            listeners = []
         }
-        destroyController()
-        currentController = null
-        currentLocation = null
-        unlisten = null
-        finalContainer = null
-        listeners = []
     }
 
     return {
