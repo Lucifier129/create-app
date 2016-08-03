@@ -46,6 +46,7 @@ export default function createApp(appSettings) {
             let isEqualSearch = currentLocation.search === location.search
             let isEqualHash = currentLocation.hash === location.hash
             if (isEqualPathname && isEqualSearch && isEqualHash) {
+                console.log('equal', location.pathname)
                 return
             }
         }
@@ -254,7 +255,9 @@ export default function createApp(appSettings) {
         let listener = location => {
             let result = render(location)
             if (_.isThenable(result)) {
-                result.then(() => publish(location))
+                result.then(() => {
+                    publish(location)
+                })
             } else {
                 publish(location)
             }

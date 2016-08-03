@@ -77,7 +77,7 @@ var server = http.createServer(function(req, res) {
 	})
 })
 
-server.listen(3001)
+server.listen(3002)
 
 console.log('server start at 3001')
 

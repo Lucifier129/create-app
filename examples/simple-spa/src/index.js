@@ -9,7 +9,7 @@ const webpackLoader = (url, initController) => {
     var load = require(url)
     load(module => {
         let Controller = module.default || module
-        initController(Controller)
+        return initController(Controller)
     })
 }
 

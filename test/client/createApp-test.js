@@ -69,13 +69,12 @@ describe('createApp', () => {
         })
     })
 
-    describe('feature', () => {
-        describe('hash history', () => {
-            describeTest('createHashHistory')
-        })
-        describe('pushState history', () => {
-            describeTest('createHistory')
-        })
+    describe('feature: hash history', () => {
+        describeTest('createHashHistory')
+    })
+
+    describe('feature: pushState history', () => {
+        describeTest('createHistory')
     })
 })
 
@@ -94,11 +93,12 @@ function describeTest(type) {
             type,
         })
         return new Promise(resolve => {
+            let count = 0
             // do not match current location
             app.start(resolve, false)
-
+            let targetPath = `/random${Math.random().toString(36).substr(2)}`
             // render random location by default
-            app.history.push(`/random${Math.random().toString(36).substr(2)}`)
+            app.history.push(targetPath)
         })
     }
 
@@ -143,19 +143,21 @@ function describeTest(type) {
         describe('callback style at sync mode', () => {
             beforeEach(() => {
                 let loader = (controller, init) => {
+                    let Controller
                     switch (controller) {
                         case 'home':
-                            init(Home)
+                            Controller = Home
                             break
                         case 'list':
-                            init(List)
+                            Controller = List
                             break
                         case 'detail':
-                            init(Detail)
+                            Controller = Detail
                             break
                         default:
-                            init(NotFound)
+                            Controller = NotFound
                     }
+                    return init(Controller)
                 }
                 return initApp({
                     routes,
@@ -271,9 +273,9 @@ function createTest() {
             },
             location => {
                 let content = document.body.innerHTML
-                expect(content).toEqual('list')
                 expect(location.pathname).toEqual('/list')
-                expect(new Date() - start > 50).toBe(true)
+                expect(new Date() - start >= 50).toBe(true)
+                expect(content).toEqual('list')
                 done()
             }
         ]
