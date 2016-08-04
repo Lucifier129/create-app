@@ -85,11 +85,7 @@ function describeTest(type) {
         if (app) {
             app.stop()
             document.body.innerHTML = ''
-            window.hash = ''
-        }
-
-        window.onhashchange = () => {
-            console.log('hashchange', window.location.hash)
+            window.location.hash = ''
         }
 
         app = createApp({
@@ -98,7 +94,6 @@ function describeTest(type) {
             type,
         })
         return new Promise(resolve => {
-            let count = 0
             // do not match current location
             app.start(resolve, false)
             let targetPath = `/random${Math.random().toString(36).substr(2)}`
@@ -274,11 +269,9 @@ function createTest() {
                 expect(content).toEqual('home')
                 expect(location.pathname).toEqual('/')
                 start = new Date()
-                console.log('push list ')
                 app.history.push('/list')
             },
             location => {
-                console.log('end push list')
                 let content = document.body.innerHTML
                 expect(location.pathname).toEqual('/list')
                 expect(new Date() - start >= 50).toBe(true)

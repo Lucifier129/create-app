@@ -7,6 +7,8 @@ import { defaultAppSettings } from '../share/constant'
 import * as defaultViewEngine from './viewEngine'
 import History from '../share/history'
 
+let uid = 0
+
 export default function createApp(appSettings) {
     let finalAppSettings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
@@ -27,6 +29,8 @@ export default function createApp(appSettings) {
     let unlisten = null
     let finalContainer = null
 
+    let id = uid++
+
     function getContainer() {
         if (finalContainer) {
             return finalContainer
@@ -40,7 +44,6 @@ export default function createApp(appSettings) {
 
     function render(targetPath) {
         let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
-        console.log(location.pathname)
         if (currentLocation) {
             let isEqualPathname = currentLocation.pathname === location.pathname
             let isEqualSearch = currentLocation.search === location.search
