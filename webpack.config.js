@@ -5,6 +5,7 @@ module.exports = {
     watch: true,
     entry: {
         'simple-spa': './examples/simple-spa/src',
+        'test-history': './examples/test-history/src',
     },
     output: {
         publicPath: '/examples/',

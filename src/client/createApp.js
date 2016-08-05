@@ -255,11 +255,10 @@ export default function createApp(appSettings) {
     }
 
     function start(callback, shouldRenderWithCurrentLocation) {
-        let count = 0
         let listener = location => {
-            // if (finalAppSettings.type === 'createHashHistory' && count === 0) {
-            //     return count += 1
-            // }
+            if (finalAppSettings.type === 'createHashHistory' && location.action === 'POP') {
+                return
+            }
             let result = render(location)
             if (_.isThenable(result)) {
                 result.then(() => {
