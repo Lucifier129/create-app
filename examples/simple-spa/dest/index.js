@@ -1195,7 +1195,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -1477,7 +1479,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	var canUseDOM = exports.canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
 
 /***/ },
@@ -1486,7 +1490,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.go = exports.replaceLocation = exports.pushLocation = exports.startListener = exports.getUserConfirmation = exports.getCurrentLocation = undefined;
 
 	var _LocationUtils = __webpack_require__(15);
@@ -1496,6 +1502,9 @@
 	var _DOMStateStorage = __webpack_require__(20);
 
 	var _PathUtils = __webpack_require__(16);
+
+	/* eslint-disable no-alert */
+
 
 	var PopStateEvent = 'popstate';
 
@@ -1516,7 +1525,7 @@
 	    historyState = window.history.state || {};
 	  } catch (error) {
 	    // IE 11 sometimes throws when accessing window.history.state
-	    // See https://github.com/ReactTraining/history/pull/289
+	    // See https://github.com/mjackson/history/pull/289
 	    historyState = {};
 	  }
 
@@ -1525,7 +1534,7 @@
 
 	var getUserConfirmation = exports.getUserConfirmation = function getUserConfirmation(message, callback) {
 	  return callback(window.confirm(message));
-	}; // eslint-disable-line no-alert
+	};
 
 	var startListener = exports.startListener = function startListener(listener) {
 	  var handlePopState = function handlePopState(event) {
@@ -1572,7 +1581,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.locationsAreEqual = exports.statesAreEqual = exports.createLocation = exports.createQuery = undefined;
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1633,13 +1644,9 @@
 	  if (typeofA === 'object') {
 	    !!(isDate(a) && isDate(b)) ? process.env.NODE_ENV !== 'production' ? (0, _invariant2.default)(false, 'You must not store Date objects in location state') : (0, _invariant2.default)(false) : void 0;
 
-	    if (!Array.isArray(a)) {
-	      var keysofA = Object.keys(a);
-	      var keysofB = Object.keys(b);
-	      return keysofA.length === keysofB.length && keysofA.every(function (key) {
-	        return statesAreEqual(a[key], b[key]);
-	      });
-	    }
+	    if (!Array.isArray(a)) return Object.keys(a).every(function (key) {
+	      return statesAreEqual(a[key], b[key]);
+	    });
 
 	    return Array.isArray(b) && a.length === b.length && a.every(function (item, index) {
 	      return statesAreEqual(item, b[index]);
@@ -1664,14 +1671,20 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
-	exports.createPath = exports.parsePath = exports.getQueryStringValueFromPath = exports.stripQueryStringValueFromPath = exports.addQueryStringValueToPath = undefined;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.createPath = exports.parsePath = exports.getQueryStringValueFromPath = exports.stripQueryStringValueFromPath = exports.addQueryStringValueToPath = exports.isAbsolutePath = undefined;
 
 	var _warning = __webpack_require__(17);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var isAbsolutePath = exports.isAbsolutePath = function isAbsolutePath(path) {
+	  return typeof path === 'string' && path.charAt(0) === '/';
+	};
 
 	var addQueryStringValueToPath = exports.addQueryStringValueToPath = function addQueryStringValueToPath(path, key, value) {
 	  var _parsePath = parsePath(path);
@@ -1838,7 +1851,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	/**
 	 * Indicates that navigation was caused by a call to history.push.
 	 */
@@ -1865,7 +1880,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	var addEventListener = exports.addEventListener = function addEventListener(node, event, listener) {
 	  return node.addEventListener ? node.addEventListener(event, listener, false) : node.attachEvent('on' + event, listener);
 	};
@@ -1902,7 +1919,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.readState = exports.saveState = undefined;
 
 	var _warning = __webpack_require__(17);
@@ -1911,15 +1930,10 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var QuotaExceededErrors = {
-	  QuotaExceededError: true,
-	  QUOTA_EXCEEDED_ERR: true
-	};
+	var QuotaExceededErrors = ['QuotaExceededError', 'QUOTA_EXCEEDED_ERR']; /* eslint-disable no-empty */
 
-	var SecurityErrors = {
-	  SecurityError: true
-	};
 
+	var SecurityError = 'SecurityError';
 	var KeyPrefix = '@@History/';
 
 	var createKey = function createKey(key) {
@@ -1931,7 +1945,6 @@
 	    // Session storage is not available or hidden.
 	    // sessionStorage is undefined in Internet Explorer when served via file protocol.
 	    process.env.NODE_ENV !== 'production' ? (0, _warning2.default)(false, '[history] Unable to save state; sessionStorage is not available') : void 0;
-
 	    return;
 	  }
 
@@ -1942,7 +1955,7 @@
 	      window.sessionStorage.setItem(createKey(key), JSON.stringify(state));
 	    }
 	  } catch (error) {
-	    if (SecurityErrors[error.name]) {
+	    if (error.name === SecurityError) {
 	      // Blocking cookies in Chrome/Firefox/Safari throws SecurityError on any
 	      // attempt to access window.sessionStorage.
 	      process.env.NODE_ENV !== 'production' ? (0, _warning2.default)(false, '[history] Unable to save state; sessionStorage is not available due to security settings') : void 0;
@@ -1950,7 +1963,7 @@
 	      return;
 	    }
 
-	    if (QuotaExceededErrors[error.name] && window.sessionStorage.length === 0) {
+	    if (QuotaExceededErrors.indexOf(error.name) >= 0 && window.sessionStorage.length === 0) {
 	      // Safari "private mode" throws QuotaExceededError.
 	      process.env.NODE_ENV !== 'production' ? (0, _warning2.default)(false, '[history] Unable to save state; sessionStorage is not available in Safari private mode') : void 0;
 
@@ -1966,7 +1979,7 @@
 	  try {
 	    json = window.sessionStorage.getItem(createKey(key));
 	  } catch (error) {
-	    if (SecurityErrors[error.name]) {
+	    if (error.name === SecurityError) {
 	      // Blocking cookies in Chrome/Firefox/Safari throws SecurityError on any
 	      // attempt to access window.sessionStorage.
 	      process.env.NODE_ENV !== 'production' ? (0, _warning2.default)(false, '[history] Unable to read state; sessionStorage is not available due to security settings') : void 0;
@@ -1993,7 +2006,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.replaceLocation = exports.pushLocation = exports.getCurrentLocation = exports.go = exports.getUserConfirmation = undefined;
 
 	var _BrowserProtocol = __webpack_require__(14);
@@ -2035,7 +2050,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _AsyncUtils = __webpack_require__(23);
 
@@ -2050,6 +2067,8 @@
 	var _LocationUtils = __webpack_require__(15);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	var createHistory = function createHistory() {
 	  var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
@@ -2076,12 +2095,12 @@
 	  };
 
 	  var updateLocation = function updateLocation(nextLocation) {
-	    var currentIndex = getCurrentIndex();
-
 	    currentLocation = nextLocation;
 
+	    var currentIndex = getCurrentIndex();
+
 	    if (currentLocation.action === _Actions.PUSH) {
-	      allKeys = [].concat(allKeys.slice(0, currentIndex + 1), [currentLocation.key]);
+	      allKeys = [].concat(_toConsumableArray(allKeys.slice(0, currentIndex + 1)), [currentLocation.key]);
 	    } else if (currentLocation.action === _Actions.REPLACE) {
 	      allKeys[currentIndex] = currentLocation.key;
 	    }
@@ -2216,7 +2235,12 @@
 
 	"use strict";
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 	var loopAsync = exports.loopAsync = function loopAsync(turns, work, callback) {
 	  var currentTurn = 0,
 	      isDone = false;
@@ -2258,7 +2282,7 @@
 
 	    if (isDone) {
 	      // This means the loop finished synchronously.
-	      callback.apply(undefined, doneArgs);
+	      callback.apply(undefined, _toConsumableArray(doneArgs));
 	      return;
 	    }
 
@@ -2277,7 +2301,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _warning = __webpack_require__(17);
 
@@ -2306,7 +2332,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -2336,67 +2364,31 @@
 
 	var DefaultQueryKey = '_k';
 
-	var addLeadingSlash = function addLeadingSlash(path) {
-	  return path.charAt(0) === '/' ? path : '/' + path;
-	};
-
-	var HashPathCoders = {
-	  hashbang: {
-	    encodePath: function encodePath(path) {
-	      return path.charAt(0) === '!' ? path : '!' + path;
-	    },
-	    decodePath: function decodePath(path) {
-	      return path.charAt(0) === '!' ? path.substring(1) : path;
-	    }
-	  },
-	  noslash: {
-	    encodePath: function encodePath(path) {
-	      return path.charAt(0) === '/' ? path.substring(1) : path;
-	    },
-	    decodePath: addLeadingSlash
-	  },
-	  slash: {
-	    encodePath: addLeadingSlash,
-	    decodePath: addLeadingSlash
-	  }
-	};
-
 	var createHashHistory = function createHashHistory() {
 	  var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
 	  !_ExecutionEnvironment.canUseDOM ? process.env.NODE_ENV !== 'production' ? (0, _invariant2.default)(false, 'Hash history needs a DOM') : (0, _invariant2.default)(false) : void 0;
 
 	  var queryKey = options.queryKey;
-	  var hashType = options.hashType;
 
 
 	  process.env.NODE_ENV !== 'production' ? (0, _warning2.default)(queryKey !== false, 'Using { queryKey: false } no longer works. Instead, just don\'t ' + 'use location state if you don\'t want a key in your URL query string') : void 0;
 
 	  if (typeof queryKey !== 'string') queryKey = DefaultQueryKey;
 
-	  if (hashType == null) hashType = 'slash';
-
-	  if (!(hashType in HashPathCoders)) {
-	    process.env.NODE_ENV !== 'production' ? (0, _warning2.default)(false, 'Invalid hash type: %s', hashType) : void 0;
-
-	    hashType = 'slash';
-	  }
-
-	  var pathCoder = HashPathCoders[hashType];
-
 	  var getUserConfirmation = HashProtocol.getUserConfirmation;
 
 
 	  var getCurrentLocation = function getCurrentLocation() {
-	    return HashProtocol.getCurrentLocation(pathCoder, queryKey);
+	    return HashProtocol.getCurrentLocation(queryKey);
 	  };
 
 	  var pushLocation = function pushLocation(location) {
-	    return HashProtocol.pushLocation(location, pathCoder, queryKey);
+	    return HashProtocol.pushLocation(location, queryKey);
 	  };
 
 	  var replaceLocation = function replaceLocation(location) {
-	    return HashProtocol.replaceLocation(location, pathCoder, queryKey);
+	    return HashProtocol.replaceLocation(location, queryKey);
 	  };
 
 	  var history = (0, _createHistory2.default)(_extends({
@@ -2411,7 +2403,7 @@
 	      stopListener = void 0;
 
 	  var startListener = function startListener(listener, before) {
-	    if (++listenerCount === 1) stopListener = HashProtocol.startListener(history.transitionTo, pathCoder, queryKey);
+	    if (++listenerCount === 1) stopListener = HashProtocol.startListener(history.transitionTo, queryKey);
 
 	    var unlisten = before ? history.listenBefore(listener) : history.listen(listener);
 
@@ -2439,7 +2431,7 @@
 	  };
 
 	  var createHref = function createHref(path) {
-	    return '#' + pathCoder.encodePath(history.createHref(path));
+	    return '#' + history.createHref(path);
 	  };
 
 	  return _extends({}, history, {
@@ -2459,7 +2451,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.replaceLocation = exports.pushLocation = exports.startListener = exports.getCurrentLocation = exports.go = exports.getUserConfirmation = undefined;
 
 	var _BrowserProtocol = __webpack_require__(14);
@@ -2497,8 +2491,8 @@
 	  // We can't use window.location.hash here because it's not
 	  // consistent across browsers - Firefox will pre-decode it!
 	  var href = window.location.href;
-	  var hashIndex = href.indexOf('#');
-	  return hashIndex === -1 ? '' : href.substring(hashIndex + 1);
+	  var index = href.indexOf('#');
+	  return index === -1 ? '' : href.substring(index + 1);
 	};
 
 	var pushHashPath = function pushHashPath(path) {
@@ -2506,13 +2500,23 @@
 	};
 
 	var replaceHashPath = function replaceHashPath(path) {
-	  var hashIndex = window.location.href.indexOf('#');
+	  var i = window.location.href.indexOf('#');
 
-	  window.location.replace(window.location.href.slice(0, hashIndex >= 0 ? hashIndex : 0) + '#' + path);
+	  window.location.replace(window.location.href.slice(0, i >= 0 ? i : 0) + '#' + path);
 	};
 
-	var getCurrentLocation = exports.getCurrentLocation = function getCurrentLocation(pathCoder, queryKey) {
-	  var path = pathCoder.decodePath(getHashPath());
+	var ensureSlash = function ensureSlash() {
+	  var path = getHashPath();
+
+	  if ((0, _PathUtils.isAbsolutePath)(path)) return true;
+
+	  replaceHashPath('/' + path);
+
+	  return false;
+	};
+
+	var getCurrentLocation = exports.getCurrentLocation = function getCurrentLocation(queryKey) {
+	  var path = getHashPath();
 	  var key = (0, _PathUtils.getQueryStringValueFromPath)(path, queryKey);
 
 	  var state = void 0;
@@ -2529,31 +2533,20 @@
 
 	var prevLocation = void 0;
 
-	var startListener = exports.startListener = function startListener(listener, pathCoder, queryKey) {
+	var startListener = exports.startListener = function startListener(listener, queryKey) {
 	  var handleHashChange = function handleHashChange() {
-	    var path = getHashPath();
-	    var encodedPath = pathCoder.encodePath(path);
+	    if (!ensureSlash()) return; // Hash path must always begin with a /
 
-	    if (path !== encodedPath) {
-	      // Always be sure we have a properly-encoded hash.
-	      replaceHashPath(encodedPath);
-	    } else {
-	      var currentLocation = getCurrentLocation(pathCoder, queryKey);
+	    var currentLocation = getCurrentLocation(queryKey);
 
-	      if (prevLocation && currentLocation.key && prevLocation.key === currentLocation.key) return; // Ignore extraneous hashchange events
+	    if (prevLocation && currentLocation.key && prevLocation.key === currentLocation.key) return; // Ignore extraneous hashchange events
 
-	      prevLocation = currentLocation;
+	    prevLocation = currentLocation;
 
-	      listener(currentLocation);
-	    }
+	    listener(currentLocation);
 	  };
 
-	  // Ensure the hash is encoded properly.
-	  var path = getHashPath();
-	  var encodedPath = pathCoder.encodePath(path);
-
-	  if (path !== encodedPath) replaceHashPath(encodedPath);
-
+	  ensureSlash();
 	  (0, _DOMUtils.addEventListener)(window, HashChangeEvent, handleHashChange);
 
 	  return function () {
@@ -2561,12 +2554,11 @@
 	  };
 	};
 
-	var updateLocation = function updateLocation(location, pathCoder, queryKey, updateHash) {
+	var updateLocation = function updateLocation(location, queryKey, updateHash) {
 	  var state = location.state;
 	  var key = location.key;
 
-
-	  var path = pathCoder.encodePath((0, _PathUtils.createPath)(location));
+	  var path = (0, _PathUtils.createPath)(location);
 
 	  if (state !== undefined) {
 	    path = (0, _PathUtils.addQueryStringValueToPath)(path, queryKey, key);
@@ -2578,8 +2570,8 @@
 	  updateHash(path);
 	};
 
-	var pushLocation = exports.pushLocation = function pushLocation(location, pathCoder, queryKey) {
-	  return updateLocation(location, pathCoder, queryKey, function (path) {
+	var pushLocation = exports.pushLocation = function pushLocation(location, queryKey) {
+	  return updateLocation(location, queryKey, function (path) {
 	    if (getHashPath() !== path) {
 	      pushHashPath(path);
 	    } else {
@@ -2588,8 +2580,8 @@
 	  });
 	};
 
-	var replaceLocation = exports.replaceLocation = function replaceLocation(location, pathCoder, queryKey) {
-	  return updateLocation(location, pathCoder, queryKey, function (path) {
+	var replaceLocation = exports.replaceLocation = function replaceLocation(location, queryKey) {
+	  return updateLocation(location, queryKey, function (path) {
 	    if (getHashPath() !== path) replaceHashPath(path);
 	  });
 	};
@@ -2601,7 +2593,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -2932,7 +2926,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -3016,7 +3012,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -3062,7 +3060,7 @@
 	      var normalizedPathname = pname.charAt(0) === '/' ? pname.slice(1) : pname;
 	      var pathname = normalizedBasename + normalizedPathname;
 
-	      return _extends({}, object, {
+	      return _extends({}, location, {
 	        pathname: pathname
 	      });
 	    };
@@ -5937,7 +5935,9 @@
 
 	'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.locationsAreEqual = exports.Actions = exports.useQueries = exports.useBeforeUnload = exports.useBasename = exports.createMemoryHistory = exports.createHashHistory = exports.createHistory = undefined;
 
 	var _LocationUtils = __webpack_require__(15);
@@ -5975,9 +5975,7 @@
 
 	var _Actions2 = __webpack_require__(18);
 
-	var _Actions = _interopRequireWildcard(_Actions2);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	var _Actions3 = _interopRequireDefault(_Actions2);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5987,7 +5985,7 @@
 	exports.useBasename = _useBasename3.default;
 	exports.useBeforeUnload = _useBeforeUnload3.default;
 	exports.useQueries = _useQueries3.default;
-	exports.Actions = _Actions;
+	exports.Actions = _Actions3.default;
 
 /***/ },
 /* 39 */
@@ -5995,7 +5993,9 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -6171,9 +6171,7 @@
 		__webpack_require__.e/* nsure */(1, function(require) {
 			cb(__webpack_require__(42));
 		});
-		var script = document.head.lastElementChild;
-					script.onerror = cb;
-				}
+	}
 
 /***/ },
 /* 42 */,
@@ -6184,9 +6182,7 @@
 		__webpack_require__.e/* nsure */(2, function(require) {
 			cb(__webpack_require__(44));
 		});
-		var script = document.head.lastElementChild;
-					script.onerror = cb;
-				}
+	}
 
 /***/ },
 /* 44 */,
@@ -6197,9 +6193,7 @@
 		__webpack_require__.e/* nsure */(3, function(require) {
 			cb(__webpack_require__(46));
 		});
-		var script = document.head.lastElementChild;
-					script.onerror = cb;
-				}
+	}
 
 /***/ }
 /******/ ]);

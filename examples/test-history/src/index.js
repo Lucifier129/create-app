@@ -6,22 +6,20 @@ let history = createHashHistory({
 // let history = createHistory()
 
 let listener = (location) => {
-	if (location.action === 'POP') {
-		// debugger
-	}
 	console.log(location.action, location)
 }
 
 let unlistener = history.listen(listener)
 
 
+listener(history.getCurrentLocation())
 
 
 history.push(createRandomPath())
 
-setTimeout(() => {
-	history.push(createRandomPath())
-}, 1000)
+// setTimeout(() => {
+// 	history.push(createRandomPath())
+// }, 1000)
 
 
 function createRandomPath() {
