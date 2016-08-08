@@ -3,19 +3,19 @@
  */
 
 // HTML5 history
-import createHistory from 'history/lib/createBrowserHistory'
+import createHistory from 'create-history/lib/createBrowserHistory'
 
 // Hash history
-import createHashHistory from 'history/lib/createHashHistory'
+import createHashHistory from 'create-history/lib/createHashHistory'
 
 // query support
-import useQueries from 'history/lib/useQueries'
+import useQueries from 'create-history/lib/useQueries'
 
 // beforeunload support
-import useBeforeUnload from 'history/lib/useBeforeUnload'
+import useBeforeUnload from 'create-history/lib/useBeforeUnload'
 
 // basename support
-import useBasename from 'history/lib/useBasename'
+import useBasename from 'create-history/lib/useBasename'
 
 export default {
 	createHistory,

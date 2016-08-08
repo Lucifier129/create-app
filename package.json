@@ -54,7 +54,7 @@
     "webpack": "^1.12.2"
   },
   "dependencies": {
-    "history": "^3.0.0",
+    "create-history": "^1.0.0",
     "path-to-regexp": "^1.5.3"
   }
 }

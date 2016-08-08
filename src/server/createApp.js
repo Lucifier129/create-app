@@ -6,7 +6,7 @@ import createMatcher from '../share/createMatcher'
 import { defaultAppSettings } from '../share/constant'
 import * as defaultViewEngine from './viewEngine'
 import History from '../share/history'
-import createMemoryHistory from 'history/lib/createMemoryHistory'
+import createMemoryHistory from 'create-history/lib/createMemoryHistory'
 
 export default function createApp(appSettings) {
     let finalAppSettings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)

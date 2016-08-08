@@ -5,19 +5,17 @@
  */
 'use strict';
 
-var createMemoryHistory = require('history/lib/createMemoryHistory');
-createMemoryHistory = 'default' in createMemoryHistory ? createMemoryHistory['default'] : createMemoryHistory;
 var pathToRegexp = require('path-to-regexp');
 pathToRegexp = 'default' in pathToRegexp ? pathToRegexp['default'] : pathToRegexp;
-var createHistory = require('history/lib/createBrowserHistory');
+var createHistory = require('create-history/lib/createBrowserHistory');
 createHistory = 'default' in createHistory ? createHistory['default'] : createHistory;
-var createHashHistory = require('history/lib/createHashHistory');
+var createHashHistory = require('create-history/lib/createHashHistory');
 createHashHistory = 'default' in createHashHistory ? createHashHistory['default'] : createHashHistory;
-var useQueries = require('history/lib/useQueries');
+var useQueries = require('create-history/lib/useQueries');
 useQueries = 'default' in useQueries ? useQueries['default'] : useQueries;
-var useBeforeUnload = require('history/lib/useBeforeUnload');
+var useBeforeUnload = require('create-history/lib/useBeforeUnload');
 useBeforeUnload = 'default' in useBeforeUnload ? useBeforeUnload['default'] : useBeforeUnload;
-var useBasename = require('history/lib/useBasename');
+var useBasename = require('create-history/lib/useBasename');
 useBasename = 'default' in useBasename ? useBasename['default'] : useBasename;
 
 var babelHelpers = {};
@@ -123,14 +121,14 @@ var defaultAppSettings = {
 	type: 'createHistory'
 };
 
-var render$1 = function render(html, container) {
+var render = function render(html, container) {
   container.innerHTML = html;
   return container;
 };
 
 
-var defaultViewEngine$1 = Object.freeze({
-  render: render$1
+var defaultViewEngine = Object.freeze({
+  render: render
 });
 
 var History = {
@@ -141,8 +139,9 @@ var History = {
 	useBasename: useBasename
 };
 
-function createApp$1(appSettings) {
-    var finalAppSettings = extend({ viewEngine: defaultViewEngine$1 }, defaultAppSettings);
+var uid = 0;
+function createApp(appSettings) {
+    var finalAppSettings = extend({ viewEngine: defaultViewEngine }, defaultAppSettings);
 
     extend(finalAppSettings, appSettings);
 
@@ -152,12 +151,14 @@ function createApp$1(appSettings) {
     var context = finalAppSettings.context;
     var container = finalAppSettings.container;
 
-    var history = createHistory$2(finalAppSettings);
+    var history = createHistory$1(finalAppSettings);
     var matcher = createMatcher(routes);
     var currentController = null;
     var currentLocation = null;
     var unlisten = null;
     var finalContainer = null;
+
+    var id = uid++;
 
     function _getContainer() {
         if (finalContainer) {
@@ -172,12 +173,12 @@ function createApp$1(appSettings) {
 
     function render(targetPath) {
         var location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath;
-
         if (currentLocation) {
             var isEqualPathname = currentLocation.pathname === location.pathname;
             var isEqualSearch = currentLocation.search === location.search;
             var isEqualHash = currentLocation.hash === location.hash;
             if (isEqualPathname && isEqualSearch && isEqualHash) {
+                // console.log('equal', location.pathname)
                 return;
             }
         }
@@ -217,6 +218,8 @@ function createApp$1(appSettings) {
                 return initController(result);
             }
         }
+
+        throw new Error('controller must be string or function');
     }
 
     var controllers = {};
@@ -377,43 +380,76 @@ function createApp$1(appSettings) {
         _clearContainer();
     }
 
+    var listeners = [];
+
+    function subscribe(listener) {
+        var index = listeners.indexOf(listener);
+        if (index === -1) {
+            listeners.push(listener);
+        }
+        return function () {
+            var index = listeners.indexOf(listener);
+            if (index !== -1) {
+                listeners = listeners.filter(function (fn) {
+                    return fn !== listener;
+                });
+            }
+        };
+    }
+
+    function publish(location) {
+        for (var i = 0, len = listeners.length; i < len; i++) {
+            listeners[i](location);
+        }
+    }
+
     function start(callback, shouldRenderWithCurrentLocation) {
         var listener = function listener(location) {
-            var result = render(location);
-            if (!callback) {
+            if (finalAppSettings.type === 'createHashHistory' && location.action === 'POP') {
                 return;
             }
+            var result = render(location);
             if (isThenable(result)) {
                 result.then(function () {
-                    return callback(location);
+                    publish(location);
                 });
             } else {
-                callback(location);
+                publish(location);
             }
         };
         unlisten = history.listen(listener);
+        var unsubscribe = undefined;
+        if (typeof callback === 'function') {
+            unsubscribe = subscribe(callback);
+        }
         if (shouldRenderWithCurrentLocation !== false) {
             listener(history.getCurrentLocation());
         }
+        return unsubscribe;
     }
 
     function stop() {
         if (unlisten) {
             unlisten();
+            destroyController();
+            currentController = null;
+            currentLocation = null;
             unlisten = null;
+            finalContainer = null;
+            listeners = [];
         }
-        destroyController();
     }
 
     return {
         start: start,
         stop: stop,
         render: render,
-        history: history
+        history: history,
+        subscribe: subscribe
     };
 }
 
-function createHistory$2(settings) {
+function createHistory$1(settings) {
     var create = History[settings.type];
     create = History.useBasename(create);
     create = History.useBeforeUnload(create);
@@ -421,199 +457,4 @@ function createHistory$2(settings) {
     return create(settings);
 }
 
-var render = function render(html) {
-  return html.toString();
-};
-
-
-var defaultViewEngine = Object.freeze({
-  render: render
-});
-
-function createApp(appSettings) {
-    var finalAppSettings = extend({ viewEngine: defaultViewEngine }, defaultAppSettings);
-
-    extend(finalAppSettings, appSettings);
-
-    var routes = finalAppSettings.routes;
-    var viewEngine = finalAppSettings.viewEngine;
-    var loader = finalAppSettings.loader;
-    var context = finalAppSettings.context;
-
-    var matcher = createMatcher(routes);
-    var history = createHistory$1(finalAppSettings);
-
-    function render(requestPath, callback) {
-        var location = history.createLocation(requestPath);
-        var matches = matcher(location.pathname);
-
-        if (!matches) {
-            callback(new Error('Did not match any route with path:' + requestPath));
-            return;
-        }
-
-        var path = matches.path;
-        var params = matches.params;
-        var controller = matches.controller;
-
-        location.pattern = path;
-        location.params = params;
-
-        var initController = createInitController(location, callback);
-        var controllerType = typeof controller;
-
-        // handle path string
-        if (controllerType === 'string') {
-            var result = loader(controller, initController, location);
-            if (isThenable(result)) {
-                return result.then(initController, callback);
-            } else {
-                return result;
-            }
-        }
-
-        // handle factory function
-        if (controllerType === 'function') {
-            var result = controller(location, loader);
-            if (isThenable(result)) {
-                return result.then(initController, callback);
-            } else {
-                return initController(result);
-            }
-        }
-    }
-
-    var controllers = {};
-
-    function getController(pattern, Controller) {
-        if (controllers.hasOwnProperty(pattern)) {
-            return controllers[pattern];
-        }
-
-        // implement the controller's life-cycle and useful methods
-
-        var WrapperController = (function (_Controller) {
-            babelHelpers.inherits(WrapperController, _Controller);
-
-            function WrapperController(location, context) {
-                babelHelpers.classCallCheck(this, WrapperController);
-
-                _Controller.call(this, location, context);
-                this.location = this.location || location;
-                this.context = this.context || context;
-            }
-
-            // history apis
-
-            WrapperController.prototype.goReplace = function goReplace(targetPath) {
-                if (_Controller.prototype.goReplace) {
-                    _Controller.prototype.goReplace.call(this, targetPath);
-                }
-                return render(targetPath);
-            };
-
-            WrapperController.prototype.goTo = function goTo(targetPath) {
-                if (_Controller.prototype.goTo) {
-                    _Controller.prototype.goTo.call(this, targetPath);
-                }
-                return render(targetPath);
-            };
-
-            WrapperController.prototype.goIndex = function goIndex(index) {
-                if (_Controller.prototype.goIndex) {
-                    _Controller.prototype.goIndex.call(this, index);
-                }
-            };
-
-            WrapperController.prototype.goBack = function goBack() {
-                if (_Controller.prototype.goBack) {
-                    _Controller.prototype.goBack.call(this);
-                }
-            };
-
-            WrapperController.prototype.goForward = function goForward() {
-                if (_Controller.prototype.goForward) {
-                    _Controller.prototype.goForward.call(this);
-                }
-            };
-
-            WrapperController.prototype.refreshView = function refreshView() {
-                if (_Controller.prototype.refreshView) {
-                    _Controller.prototype.refreshView.call(this);
-                }
-            };
-
-            WrapperController.prototype.getContainer = function getContainer() {
-                if (_Controller.prototype.getContainer) {
-                    _Controller.prototype.getContainer.call(this);
-                }
-            };
-
-            WrapperController.prototype.clearContainer = function clearContainer() {
-                if (_Controller.prototype.clearContainer) {
-                    _Controller.prototype.clearContainer.call(this);
-                }
-            };
-
-            return WrapperController;
-        })(Controller);
-
-        controllers[pattern] = WrapperController;
-        return WrapperController;
-    }
-
-    function createInitController(location, callback) {
-        return function initController(Controller) {
-            var FinalController = getController(location.pattern, Controller);
-            var controller = new FinalController(location, context);
-            var component = controller.init();
-
-            if (isThenable(component)) {
-                var promise = component.then(renderToString);
-                if (callback) {
-                    return promise.then(function (result) {
-                        return callback(null, result);
-                    }, callback);
-                }
-                return promise;
-            }
-
-            var result = renderToString(component);
-            if (callback) {
-                callback(null, result);
-            }
-            return result;
-        };
-    }
-
-    function renderToString(component) {
-        return viewEngine.render(component);
-    }
-
-    function publicRender(requestPath, callback) {
-        try {
-            return render(requestPath, callback);
-        } catch (error) {
-            callback(error);
-        }
-    }
-
-    return {
-        render: publicRender,
-        history: history
-    };
-}
-
-function createHistory$1(settings) {
-    var create = createMemoryHistory;
-    create = History.useBasename(create);
-    create = History.useQueries(create);
-    return create(settings);
-}
-
-var index = {
-	server: createApp,
-	client: createApp$1
-};
-
-module.exports = index;
+module.exports = createApp;
