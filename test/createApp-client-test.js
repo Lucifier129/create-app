@@ -1,61 +1,11 @@
 import expect from 'expect'
-import execSteps from '../execSteps'
-import createApp from '../../src/client'
-
-let controller
-
-class Home {
-    constructor() {
-        controller = this
-    }
-    init() {
-        return this.render()
-    }
-    render() {
-        return 'home'
-    }
-}
-class List {
-    constructor() {
-        controller = this
-    }
-    init() {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve(this.render())
-            }, 50)
-        })
-    }
-    render() {
-        return 'list'
-    }
-}
-class Detail {
-    constructor() {
-        controller = this
-    }
-    init() {
-        return this.render()
-    }
-    render() {
-        return 'detail'
-    }
-}
-class NotFound {
-    constructor() {
-        controller = this
-    }
-    init() {
-        return this.render()
-    }
-    render() {
-        return 'not found'
-    }
-}
+import execSteps from './execSteps'
+import createApp from '../src/client'
+import { getController, Home, List, Detail, NotFound } from './classes'
 
 let app
 
-describe('createApp', () => {
+describe('createApp-client', () => {
 
     describe('result', () => {
         it('should return an object', () => {
@@ -66,6 +16,7 @@ describe('createApp', () => {
             expect(app.start).toBeA('function')
             expect(app.stop).toBeA('function')
             expect(app.history).toBeA('object')
+            expect(app.render).toBeA('function')
         })
     })
 
@@ -97,7 +48,7 @@ function describeTest(type) {
             // do not match current location
             app.start(resolve, false)
             let targetPath = `/random${Math.random().toString(36).substr(2)}`
-            // render random location by default
+                // render random location by default
             app.history.push(targetPath)
         })
     }
@@ -204,7 +155,7 @@ function describeTest(type) {
 function createTest() {
 
     it('should get container by controller.getContainer', () => {
-        let container = controller.getContainer()
+        let container = getController().getContainer()
         expect(container).toBe(document.querySelector('body'))
     })
 
@@ -232,7 +183,7 @@ function createTest() {
                 content = document.body.innerHTML
                 expect(content).toEqual('')
 
-                controller.refreshView()
+                getController().refreshView()
                 content = document.body.innerHTML
                 expect(content).toEqual('home')
                 expect(location.pathname).toEqual('/')
@@ -289,13 +240,13 @@ function createTest() {
                 let content = document.body.innerHTML
                 expect(content).toEqual('home')
                 expect(location.pathname).toEqual('/')
-                controller.goTo('/detail')
+                getController().goTo('/detail')
             },
             location => {
                 let content = document.body.innerHTML
                 expect(content).toEqual('detail')
                 expect(location.pathname).toEqual('/detail')
-                controller.goReplace('/notfound')
+                getController().goReplace('/notfound')
             },
             location => {
                 let content = document.body.innerHTML
@@ -310,10 +261,10 @@ function createTest() {
 
     it('should call controller.destroy when go to another location', () => {
         let count = 0
-        controller.destroy = function() {
+        getController().destroy = function() {
             count += 1
             expect(count).toBe(1)
         }
-        controller.goTo('/detail')
+        getController().goTo('/detail')
     })
 }
