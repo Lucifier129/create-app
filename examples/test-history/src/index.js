@@ -12,9 +12,6 @@ let listener = (location) => {
 let unlistener = history.listen(listener)
 
 
-listener(history.getCurrentLocation())
-
-
 history.push(createRandomPath())
 
 // setTimeout(() => {

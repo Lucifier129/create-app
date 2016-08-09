@@ -1,6 +1,6 @@
 webpackJsonp([1],{
 
-/***/ 42:
+/***/ 60:
 /***/ function(module, exports, __webpack_require__) {
 
 	// controller
