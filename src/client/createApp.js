@@ -7,8 +7,6 @@ import { defaultAppSettings } from '../share/constant'
 import * as defaultViewEngine from './viewEngine'
 import History from '../share/history'
 
-let uid = 0
-
 export default function createApp(appSettings) {
     let finalAppSettings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
@@ -29,8 +27,6 @@ export default function createApp(appSettings) {
     let unlisten = null
     let finalContainer = null
 
-    let id = uid++
-
     function getContainer() {
         if (finalContainer) {
             return finalContainer
@@ -44,12 +40,12 @@ export default function createApp(appSettings) {
 
     function render(targetPath) {
         let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+
         if (currentLocation) {
             let isEqualPathname = currentLocation.pathname === location.pathname
             let isEqualSearch = currentLocation.search === location.search
             let isEqualHash = currentLocation.hash === location.hash
             if (isEqualPathname && isEqualSearch && isEqualHash) {
-                // console.log('equal', location.pathname)
                 return
             }
         }
@@ -70,25 +66,21 @@ export default function createApp(appSettings) {
         let controllerType = typeof controller
         let initController = createInitController(location)
 
+        let Controller = null
+
         if (controllerType === 'string') {
-            let result = loader(controller, initController, location)
-            if (_.isThenable(result)) {
-                return result.then(initController)
-            } else {
-                return result
-            }
+            Controller = loader(controller, location)
+        } else if (controllerType === 'function') {
+            Controller = controller(location, loader)
+        } else {
+            throw new Error('controller must be string or function')
         }
 
-        if (controllerType === 'function') {
-            let result = controller(location, loader)
-            if (_.isThenable(result)) {
-                return result.then(initController)
-            } else {
-                return initController(result)
-            }
+        if (_.isThenable(Controller)) {
+            return Controller.then(initController)
+        } else {
+            return initController(Controller)
         }
-
-        throw new Error('controller must be string or function')
     }
 
     let controllers = {}
@@ -107,58 +99,34 @@ export default function createApp(appSettings) {
 
             // history apis
             goReplace(targetPath) {
-                if (super.goReplace) {
-                    super.goReplace(targetPath)
-                }
                 history.replace(targetPath)
             }
             goTo(targetPath) {
-                if (super.goTo) {
-                    super.goTo(targetPath)
-                }
                 history.push(targetPath)
             }
             goIndex(index) {
-                if (super.goIndex) {
-                    super.goIndex(index)
-                }
                 history.go(index)
             }
             goBack() {
-                if (super.goBack) {
-                    super.goBack()
-                }
                 history.goBack()
             }
             goForward() {
-                if (super.goForward) {
-                    super.goForward()
-                }
                 history.goForward()
             }
 
             // update view
             refreshView() {
-                if (super.refreshView) {
-                    super.refreshView()
-                }
-                return renderToContainer(this.render())
+                renderToContainer(this.render())
             }
 
             // get container node
             getContainer() {
-                if (super.getContainer) {
-                    super.getContainer()
-                }
                 return getContainer()
             }
 
             // clear container
             clearContainer() {
-                if (super.clearContainer) {
-                    super.clearContainer()
-                }
-                return clearContainer()
+                clearContainer()
             }
         }
         controllers[pattern] = WrapperController
@@ -170,9 +138,7 @@ export default function createApp(appSettings) {
             if (currentLocation !== location) {
                 return
             }
-            if (currentController) {
-                destroyController()
-            }
+            destroyController()
             let FinalController = getController(location.pattern, Controller)
             let controller = currentController = new FinalController(location, context)
             let unlistenBeforeLeave = null

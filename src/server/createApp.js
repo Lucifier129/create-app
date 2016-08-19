@@ -28,8 +28,9 @@ export default function createApp(appSettings) {
         let matches = matcher(location.pathname)
 
         if (!matches) {
-            callback(new Error(`Did not match any route with path:${requestPath}`))
-            return
+            let error = new Error(`Did not match any route with path:${requestPath}`)
+            callback(error)
+            return Promise.reject(error)
         }
 
         let { path, params, controller } = matches
@@ -75,49 +76,12 @@ export default function createApp(appSettings) {
                 this.location = this.location || location
                 this.context = this.context || context
             }
-
             // history apis
             goReplace(targetPath) {
-                if (super.goReplace) {
-                    super.goReplace(targetPath)
-                }
                 return render(targetPath)
             }
             goTo(targetPath) {
-                if (super.goTo) {
-                    super.goTo(targetPath)
-                }
                 return render(targetPath)
-            }
-            goIndex(index) {
-                if (super.goIndex) {
-                    super.goIndex(index)
-                }
-            }
-            goBack() {
-                if (super.goBack) {
-                    super.goBack()
-                }
-            }
-            goForward() {
-                if (super.goForward) {
-                    super.goForward()
-                }
-            }
-            refreshView() {
-                if (super.refreshView) {
-                    super.refreshView()
-                }
-            }
-            getContainer() {
-                if (super.getContainer) {
-                    super.getContainer()
-                }
-            }
-            clearContainer() {
-                if (super.clearContainer) {
-                    super.clearContainer()
-                }
             }
         }
         controllers[pattern] = WrapperController
