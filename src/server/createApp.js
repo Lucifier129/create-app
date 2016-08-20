@@ -41,24 +41,20 @@ export default function createApp(appSettings) {
         let initController = createInitController(location, callback)
         let controllerType = typeof controller
 
-        // handle path string
+        let Controller = null
+
         if (controllerType === 'string') {
-            let result = loader(controller, initController, location)
-            if (_.isThenable(result)) {
-                return result.then(initController, callback)
-            } else {
-                return result
-            }
+            Controller = loader(controller, location)
+        } else if (controllerType === 'function') {
+            Controller = controller(location, loader)
+        } else {
+            throw new Error('controller must be string or function')
         }
 
-        // handle factory function
-        if (controllerType === 'function') {
-            let result = controller(location, loader)
-            if (_.isThenable(result)) {
-                return result.then(initController, callback)
-            } else {
-                return initController(result)
-            }
+        if (_.isThenable(Controller)) {
+            return Controller.then(initController)
+        } else {
+            return initController(Controller)
         }
     }
 
@@ -72,11 +68,11 @@ export default function createApp(appSettings) {
         // implement the controller's life-cycle and useful methods
         class WrapperController extends Controller {
             constructor(location, context) {
-                super(location, context)
-                this.location = this.location || location
-                this.context = this.context || context
-            }
-            // history apis
+                    super(location, context)
+                    this.location = this.location || location
+                    this.context = this.context || context
+                }
+                // history apis
             goReplace(targetPath) {
                 return render(targetPath)
             }

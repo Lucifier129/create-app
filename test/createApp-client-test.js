@@ -93,7 +93,7 @@ function describeTest(type) {
 
         describe('callback style at sync mode', () => {
             beforeEach(() => {
-                let loader = (controller, init) => {
+                let loader = (controller) => {
                     let Controller
                     switch (controller) {
                         case 'home':
@@ -108,7 +108,7 @@ function describeTest(type) {
                         default:
                             Controller = NotFound
                     }
-                    return init(Controller)
+                    return Controller
                 }
                 return initApp({
                     routes,

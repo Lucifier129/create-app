@@ -179,7 +179,7 @@ export default function createApp(appSettings) {
     }
 
     function renderToContainer(component) {
-        return viewEngine.render(component, getContainer())
+        return viewEngine.render(component, getContainer(), currentLocation)
     }
 
     function clearContainer() {

@@ -87,7 +87,7 @@ describe('createApp-server', () => {
 
         describe('sync mode', () => {
             beforeEach(() => {
-                let loader = (controller, init) => {
+                let loader = (controller) => {
                     let Controller
                     switch (controller) {
                         case 'home':
@@ -102,7 +102,7 @@ describe('createApp-server', () => {
                         default:
                             Controller = NotFound
                     }
-                    return init(Controller)
+                    return Controller
                 }
                 return initApp({
                     routes,
