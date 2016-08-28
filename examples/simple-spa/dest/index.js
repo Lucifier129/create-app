@@ -96,7 +96,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
-	module.exports = __webpack_require__(346);
+	module.exports = __webpack_require__(348);
 
 
 /***/ },
@@ -13358,7 +13358,9 @@
 /* 343 */,
 /* 344 */,
 /* 345 */,
-/* 346 */
+/* 346 */,
+/* 347 */,
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13373,18 +13375,18 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _routes = __webpack_require__(347);
+	var _routes = __webpack_require__(349);
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _config = __webpack_require__(348);
+	var _config = __webpack_require__(350);
 
 	var _config2 = _interopRequireDefault(_config);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var webpackLoader = function webpackLoader(url) {
-	    return new Promise(__webpack_require__(349)(url)).then(function (module) {
+	    return new Promise(__webpack_require__(351)(url)).then(function (module) {
 	        return module.default || module;
 	    });
 	};
@@ -13404,7 +13406,7 @@
 	app.start();
 
 /***/ },
-/* 347 */
+/* 349 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13431,7 +13433,7 @@
 	}];
 
 /***/ },
-/* 348 */
+/* 350 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13450,22 +13452,22 @@
 	};
 
 /***/ },
-/* 349 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./config": 348,
-		"./config.js": 348,
-		"./detail/controller": 350,
-		"./detail/controller.js": 350,
-		"./home/controller": 352,
-		"./home/controller.js": 352,
-		"./index": 346,
-		"./index.js": 346,
-		"./list/controller": 354,
-		"./list/controller.js": 354,
-		"./routes": 347,
-		"./routes.js": 347
+		"./config": 350,
+		"./config.js": 350,
+		"./detail/controller": 352,
+		"./detail/controller.js": 352,
+		"./home/controller": 354,
+		"./home/controller.js": 354,
+		"./index": 348,
+		"./index.js": 348,
+		"./list/controller": 356,
+		"./list/controller.js": 356,
+		"./routes": 349,
+		"./routes.js": 349
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -13478,26 +13480,15 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 349;
+	webpackContext.id = 351;
 
 
 /***/ },
-/* 350 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(cb) {
-		__webpack_require__.e/* nsure */(3, function(require) {
-			cb(__webpack_require__(351));
-		});
-	}
-
-/***/ },
-/* 351 */,
 /* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(cb) {
-		__webpack_require__.e/* nsure */(4, function(require) {
+		__webpack_require__.e/* nsure */(3, function(require) {
 			cb(__webpack_require__(353));
 		});
 	}
@@ -13508,8 +13499,19 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(cb) {
-		__webpack_require__.e/* nsure */(5, function(require) {
+		__webpack_require__.e/* nsure */(4, function(require) {
 			cb(__webpack_require__(355));
+		});
+	}
+
+/***/ },
+/* 355 */,
+/* 356 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(cb) {
+		__webpack_require__.e/* nsure */(5, function(require) {
+			cb(__webpack_require__(357));
 		});
 	}
 

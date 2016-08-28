@@ -1,6 +1,6 @@
 webpackJsonp([1],{
 
-/***/ 343:
+/***/ 345:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9,15 +9,15 @@ webpackJsonp([1],{
 		value: true
 	});
 
-	var _BaseController = __webpack_require__(337);
+	var _BaseController = __webpack_require__(339);
 
 	var _BaseController2 = _interopRequireDefault(_BaseController);
 
-	var _view = __webpack_require__(344);
+	var _view = __webpack_require__(346);
 
 	var _view2 = _interopRequireDefault(_view);
 
-	var _model = __webpack_require__(345);
+	var _model = __webpack_require__(347);
 
 	var actions = _interopRequireWildcard(_model);
 
