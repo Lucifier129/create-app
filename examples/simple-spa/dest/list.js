@@ -1,26 +1,26 @@
-webpackJsonp([3],{
+webpackJsonp([5],{
 
-/***/ 64:
+/***/ 355:
 /***/ function(module, exports, __webpack_require__) {
 
-	// controller
 	'use strict';
 
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // controller
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	var _react = __webpack_require__(33);
+	var _react = __webpack_require__(301);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var Controller = (function () {
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Controller = function () {
 		function Controller() {
 			_classCallCheck(this, Controller);
 
@@ -45,40 +45,40 @@ webpackJsonp([3],{
 		}, {
 			key: 'render',
 			value: function render() {
-				return _react2['default'].createElement(
+				return _react2.default.createElement(
 					'div',
 					null,
-					_react2['default'].createElement(
+					_react2.default.createElement(
 						'h1',
 						null,
 						'list: ',
 						JSON.stringify(this.location, null, 2)
 					),
-					_react2['default'].createElement(
+					_react2.default.createElement(
 						'ul',
 						null,
-						_react2['default'].createElement(
+						_react2.default.createElement(
 							'li',
 							null,
-							_react2['default'].createElement(
+							_react2.default.createElement(
 								'a',
 								{ href: '/home', onClick: this.jump },
 								'home page'
 							)
 						),
-						_react2['default'].createElement(
+						_react2.default.createElement(
 							'li',
 							null,
-							_react2['default'].createElement(
+							_react2.default.createElement(
 								'a',
 								{ href: '/list', onClick: this.jump },
 								'list page'
 							)
 						),
-						_react2['default'].createElement(
+						_react2.default.createElement(
 							'li',
 							null,
-							_react2['default'].createElement(
+							_react2.default.createElement(
 								'a',
 								{ href: '/detail', onClick: this.jump },
 								'detail page'
@@ -101,10 +101,9 @@ webpackJsonp([3],{
 		}]);
 
 		return Controller;
-	})();
+	}();
 
-	exports['default'] = Controller;
-	module.exports = exports['default'];
+	exports.default = Controller;
 
 /***/ }
 

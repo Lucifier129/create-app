@@ -1,47 +1,37 @@
-var http = require('http')
-var fs = require('fs')
-var path = require('path')
-var url = require('url')
-var querystring = require('querystring')
-require('isomorphic-fetch')
-require('babel/register')
+import http from 'http'
+import fs from 'fs'
+import path from 'path'
+import url from 'url'
+import querystring from 'querystring'
 
-console.log(fetch)
+import routes from './src/routes'
+import createApp from '../../src/server'
+import ReactDOMServer from 'react-dom/server'
 
-var createApp = path.join(__dirname, '..', '..', 'src')
-var spa = path.join(__dirname, 'src')
-
-var basename = '/examples/simple-spa'
-
-var routes = require(`${spa}/routes`).map(route => {
-	controller = path.join(spa, route.controller)
+var finalRoutes = routes.map(route => {
+	var controller = path.join(__dirname, 'src', route.controller)
 	return {
 		path: route.path,
 		controller: controller,
 	}
 })
 
-var commonjsLoader = (url, initController) => {
-	var Controller = require(url)
-	return initController(Controller)
+var commonjsLoader = url => {
+	var module = require(url)
+	return module.default || module
 }
-
-var ReactDOMServer = require('react-dom/server')
 
 var viewEngine = {
-	render: component => {
-		return ReactDOMServer.renderToString(component)
-	}
+	render: ReactDOMServer.renderToString
 }
-
+var basename = '/examples/simple-spa'
 var appSettings = {
 	basename: basename,
 	viewEngine: viewEngine,
 	loader: commonjsLoader,
-	routes: routes,
+	routes: finalRoutes,
 }
 
-var createApp = require(`${createApp}/server`)
 var app = createApp(appSettings)
 
 var indexFile = fs.readFileSync('index.html').toString()
@@ -68,6 +58,7 @@ var server = http.createServer(function(req, res) {
 			// handle 404
 			res.writeHead(404)
 			res.end(JSON.stringify(error.message))
+			console.log(error)
 			return
 		}
 		res.writeHeader(200, {
@@ -77,9 +68,11 @@ var server = http.createServer(function(req, res) {
 	})
 })
 
-server.listen(3002)
+var port = 3002
 
-console.log('server start at 3001')
+server.listen(port)
+
+console.log(`server start at ${port}`)
 
 function readFile(file) {
 	return fs.createReadStream(file)

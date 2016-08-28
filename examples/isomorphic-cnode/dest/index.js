@@ -27,7 +27,7 @@
 /******/ 	// "0" means "already loaded"
 /******/ 	// Array means "loading", array contains callbacks
 /******/ 	var installedChunks = {
-/******/ 		2:0
+/******/ 		0:0
 /******/ 	};
 
 /******/ 	// The require function
@@ -73,7 +73,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 
-/******/ 			script.src = __webpack_require__.p + "" + ({"3":"./simple-spa/dest/detail","4":"./simple-spa/dest/home","5":"./simple-spa/dest/list"}[chunkId]||chunkId) + ".js";
+/******/ 			script.src = __webpack_require__.p + "" + ({"1":"./isomorphic-cnode/dest/home"}[chunkId]||chunkId) + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};
@@ -96,7 +96,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
-	module.exports = __webpack_require__(346);
+	module.exports = __webpack_require__(298);
 
 
 /***/ },
@@ -8209,9 +8209,521 @@
 	};
 
 /***/ },
-/* 298 */,
-/* 299 */,
-/* 300 */,
+/* 298 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	__webpack_require__(299);
+
+	var _reactDom = __webpack_require__(301);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _fastclick = __webpack_require__(302);
+
+	var _fastclick2 = _interopRequireDefault(_fastclick);
+
+	var _client = __webpack_require__(303);
+
+	var _client2 = _interopRequireDefault(_client);
+
+	var _routes = __webpack_require__(334);
+
+	var _routes2 = _interopRequireDefault(_routes);
+
+	var _context = __webpack_require__(335);
+
+	var _context2 = _interopRequireDefault(_context);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var webpackLoader = function webpackLoader(url) {
+		return new Promise(__webpack_require__(336)(url)).then(function (module) {
+			return module.default || module;
+		});
+	};
+
+	var viewEngine = {
+		render: _reactDom2.default.render
+	};
+
+	var appSettings = {
+		type: 'createHashHistory',
+		hashType: 'hashbang',
+		basename: '/examples/isomorphic-cnode',
+		container: 'root',
+		context: _extends({}, _context2.default, {
+			isClient: true,
+			isServer: false
+		}),
+		loader: webpackLoader,
+		routes: _routes2.default,
+		viewEngine: viewEngine
+	};
+
+	var app = (0, _client2.default)(appSettings);
+
+	app.start();
+
+	if ('ontouchstart' in document) {
+		_fastclick2.default.attach(document.body);
+	}
+
+/***/ },
+/* 299 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// the whatwg-fetch polyfill installs the fetch() function
+	// on the global object (window or self)
+	//
+	// Return that as the export for use in Webpack, Browserify etc.
+	__webpack_require__(300);
+	module.exports = self.fetch.bind(self);
+
+
+/***/ },
+/* 300 */
+/***/ function(module, exports) {
+
+	(function(self) {
+	  'use strict';
+
+	  if (self.fetch) {
+	    return
+	  }
+
+	  var support = {
+	    searchParams: 'URLSearchParams' in self,
+	    iterable: 'Symbol' in self && 'iterator' in Symbol,
+	    blob: 'FileReader' in self && 'Blob' in self && (function() {
+	      try {
+	        new Blob()
+	        return true
+	      } catch(e) {
+	        return false
+	      }
+	    })(),
+	    formData: 'FormData' in self,
+	    arrayBuffer: 'ArrayBuffer' in self
+	  }
+
+	  function normalizeName(name) {
+	    if (typeof name !== 'string') {
+	      name = String(name)
+	    }
+	    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+	      throw new TypeError('Invalid character in header field name')
+	    }
+	    return name.toLowerCase()
+	  }
+
+	  function normalizeValue(value) {
+	    if (typeof value !== 'string') {
+	      value = String(value)
+	    }
+	    return value
+	  }
+
+	  // Build a destructive iterator for the value list
+	  function iteratorFor(items) {
+	    var iterator = {
+	      next: function() {
+	        var value = items.shift()
+	        return {done: value === undefined, value: value}
+	      }
+	    }
+
+	    if (support.iterable) {
+	      iterator[Symbol.iterator] = function() {
+	        return iterator
+	      }
+	    }
+
+	    return iterator
+	  }
+
+	  function Headers(headers) {
+	    this.map = {}
+
+	    if (headers instanceof Headers) {
+	      headers.forEach(function(value, name) {
+	        this.append(name, value)
+	      }, this)
+
+	    } else if (headers) {
+	      Object.getOwnPropertyNames(headers).forEach(function(name) {
+	        this.append(name, headers[name])
+	      }, this)
+	    }
+	  }
+
+	  Headers.prototype.append = function(name, value) {
+	    name = normalizeName(name)
+	    value = normalizeValue(value)
+	    var list = this.map[name]
+	    if (!list) {
+	      list = []
+	      this.map[name] = list
+	    }
+	    list.push(value)
+	  }
+
+	  Headers.prototype['delete'] = function(name) {
+	    delete this.map[normalizeName(name)]
+	  }
+
+	  Headers.prototype.get = function(name) {
+	    var values = this.map[normalizeName(name)]
+	    return values ? values[0] : null
+	  }
+
+	  Headers.prototype.getAll = function(name) {
+	    return this.map[normalizeName(name)] || []
+	  }
+
+	  Headers.prototype.has = function(name) {
+	    return this.map.hasOwnProperty(normalizeName(name))
+	  }
+
+	  Headers.prototype.set = function(name, value) {
+	    this.map[normalizeName(name)] = [normalizeValue(value)]
+	  }
+
+	  Headers.prototype.forEach = function(callback, thisArg) {
+	    Object.getOwnPropertyNames(this.map).forEach(function(name) {
+	      this.map[name].forEach(function(value) {
+	        callback.call(thisArg, value, name, this)
+	      }, this)
+	    }, this)
+	  }
+
+	  Headers.prototype.keys = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push(name) })
+	    return iteratorFor(items)
+	  }
+
+	  Headers.prototype.values = function() {
+	    var items = []
+	    this.forEach(function(value) { items.push(value) })
+	    return iteratorFor(items)
+	  }
+
+	  Headers.prototype.entries = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push([name, value]) })
+	    return iteratorFor(items)
+	  }
+
+	  if (support.iterable) {
+	    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+	  }
+
+	  function consumed(body) {
+	    if (body.bodyUsed) {
+	      return Promise.reject(new TypeError('Already read'))
+	    }
+	    body.bodyUsed = true
+	  }
+
+	  function fileReaderReady(reader) {
+	    return new Promise(function(resolve, reject) {
+	      reader.onload = function() {
+	        resolve(reader.result)
+	      }
+	      reader.onerror = function() {
+	        reject(reader.error)
+	      }
+	    })
+	  }
+
+	  function readBlobAsArrayBuffer(blob) {
+	    var reader = new FileReader()
+	    reader.readAsArrayBuffer(blob)
+	    return fileReaderReady(reader)
+	  }
+
+	  function readBlobAsText(blob) {
+	    var reader = new FileReader()
+	    reader.readAsText(blob)
+	    return fileReaderReady(reader)
+	  }
+
+	  function Body() {
+	    this.bodyUsed = false
+
+	    this._initBody = function(body) {
+	      this._bodyInit = body
+	      if (typeof body === 'string') {
+	        this._bodyText = body
+	      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+	        this._bodyBlob = body
+	      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+	        this._bodyFormData = body
+	      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	        this._bodyText = body.toString()
+	      } else if (!body) {
+	        this._bodyText = ''
+	      } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
+	        // Only support ArrayBuffers for POST method.
+	        // Receiving ArrayBuffers happens via Blobs, instead.
+	      } else {
+	        throw new Error('unsupported BodyInit type')
+	      }
+
+	      if (!this.headers.get('content-type')) {
+	        if (typeof body === 'string') {
+	          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+	        } else if (this._bodyBlob && this._bodyBlob.type) {
+	          this.headers.set('content-type', this._bodyBlob.type)
+	        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
+	        }
+	      }
+	    }
+
+	    if (support.blob) {
+	      this.blob = function() {
+	        var rejected = consumed(this)
+	        if (rejected) {
+	          return rejected
+	        }
+
+	        if (this._bodyBlob) {
+	          return Promise.resolve(this._bodyBlob)
+	        } else if (this._bodyFormData) {
+	          throw new Error('could not read FormData body as blob')
+	        } else {
+	          return Promise.resolve(new Blob([this._bodyText]))
+	        }
+	      }
+
+	      this.arrayBuffer = function() {
+	        return this.blob().then(readBlobAsArrayBuffer)
+	      }
+
+	      this.text = function() {
+	        var rejected = consumed(this)
+	        if (rejected) {
+	          return rejected
+	        }
+
+	        if (this._bodyBlob) {
+	          return readBlobAsText(this._bodyBlob)
+	        } else if (this._bodyFormData) {
+	          throw new Error('could not read FormData body as text')
+	        } else {
+	          return Promise.resolve(this._bodyText)
+	        }
+	      }
+	    } else {
+	      this.text = function() {
+	        var rejected = consumed(this)
+	        return rejected ? rejected : Promise.resolve(this._bodyText)
+	      }
+	    }
+
+	    if (support.formData) {
+	      this.formData = function() {
+	        return this.text().then(decode)
+	      }
+	    }
+
+	    this.json = function() {
+	      return this.text().then(JSON.parse)
+	    }
+
+	    return this
+	  }
+
+	  // HTTP methods whose capitalization should be normalized
+	  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+	  function normalizeMethod(method) {
+	    var upcased = method.toUpperCase()
+	    return (methods.indexOf(upcased) > -1) ? upcased : method
+	  }
+
+	  function Request(input, options) {
+	    options = options || {}
+	    var body = options.body
+	    if (Request.prototype.isPrototypeOf(input)) {
+	      if (input.bodyUsed) {
+	        throw new TypeError('Already read')
+	      }
+	      this.url = input.url
+	      this.credentials = input.credentials
+	      if (!options.headers) {
+	        this.headers = new Headers(input.headers)
+	      }
+	      this.method = input.method
+	      this.mode = input.mode
+	      if (!body) {
+	        body = input._bodyInit
+	        input.bodyUsed = true
+	      }
+	    } else {
+	      this.url = input
+	    }
+
+	    this.credentials = options.credentials || this.credentials || 'omit'
+	    if (options.headers || !this.headers) {
+	      this.headers = new Headers(options.headers)
+	    }
+	    this.method = normalizeMethod(options.method || this.method || 'GET')
+	    this.mode = options.mode || this.mode || null
+	    this.referrer = null
+
+	    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+	      throw new TypeError('Body not allowed for GET or HEAD requests')
+	    }
+	    this._initBody(body)
+	  }
+
+	  Request.prototype.clone = function() {
+	    return new Request(this)
+	  }
+
+	  function decode(body) {
+	    var form = new FormData()
+	    body.trim().split('&').forEach(function(bytes) {
+	      if (bytes) {
+	        var split = bytes.split('=')
+	        var name = split.shift().replace(/\+/g, ' ')
+	        var value = split.join('=').replace(/\+/g, ' ')
+	        form.append(decodeURIComponent(name), decodeURIComponent(value))
+	      }
+	    })
+	    return form
+	  }
+
+	  function headers(xhr) {
+	    var head = new Headers()
+	    var pairs = (xhr.getAllResponseHeaders() || '').trim().split('\n')
+	    pairs.forEach(function(header) {
+	      var split = header.trim().split(':')
+	      var key = split.shift().trim()
+	      var value = split.join(':').trim()
+	      head.append(key, value)
+	    })
+	    return head
+	  }
+
+	  Body.call(Request.prototype)
+
+	  function Response(bodyInit, options) {
+	    if (!options) {
+	      options = {}
+	    }
+
+	    this.type = 'default'
+	    this.status = options.status
+	    this.ok = this.status >= 200 && this.status < 300
+	    this.statusText = options.statusText
+	    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
+	    this.url = options.url || ''
+	    this._initBody(bodyInit)
+	  }
+
+	  Body.call(Response.prototype)
+
+	  Response.prototype.clone = function() {
+	    return new Response(this._bodyInit, {
+	      status: this.status,
+	      statusText: this.statusText,
+	      headers: new Headers(this.headers),
+	      url: this.url
+	    })
+	  }
+
+	  Response.error = function() {
+	    var response = new Response(null, {status: 0, statusText: ''})
+	    response.type = 'error'
+	    return response
+	  }
+
+	  var redirectStatuses = [301, 302, 303, 307, 308]
+
+	  Response.redirect = function(url, status) {
+	    if (redirectStatuses.indexOf(status) === -1) {
+	      throw new RangeError('Invalid status code')
+	    }
+
+	    return new Response(null, {status: status, headers: {location: url}})
+	  }
+
+	  self.Headers = Headers
+	  self.Request = Request
+	  self.Response = Response
+
+	  self.fetch = function(input, init) {
+	    return new Promise(function(resolve, reject) {
+	      var request
+	      if (Request.prototype.isPrototypeOf(input) && !init) {
+	        request = input
+	      } else {
+	        request = new Request(input, init)
+	      }
+
+	      var xhr = new XMLHttpRequest()
+
+	      function responseURL() {
+	        if ('responseURL' in xhr) {
+	          return xhr.responseURL
+	        }
+
+	        // Avoid security warnings on getResponseHeader when not allowed by CORS
+	        if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
+	          return xhr.getResponseHeader('X-Request-URL')
+	        }
+
+	        return
+	      }
+
+	      xhr.onload = function() {
+	        var options = {
+	          status: xhr.status,
+	          statusText: xhr.statusText,
+	          headers: headers(xhr),
+	          url: responseURL()
+	        }
+	        var body = 'response' in xhr ? xhr.response : xhr.responseText
+	        resolve(new Response(body, options))
+	      }
+
+	      xhr.onerror = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+
+	      xhr.ontimeout = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+
+	      xhr.open(request.method, request.url, true)
+
+	      if (request.credentials === 'include') {
+	        xhr.withCredentials = true
+	      }
+
+	      if ('responseType' in xhr && support.blob) {
+	        xhr.responseType = 'blob'
+	      }
+
+	      request.headers.forEach(function(value, name) {
+	        xhr.setRequestHeader(name, value)
+	      })
+
+	      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+	    })
+	  }
+	  self.fetch.polyfill = true
+	})(typeof self !== 'undefined' ? self : this);
+
+
+/***/ },
 /* 301 */
 /***/ function(module, exports) {
 
@@ -10524,7 +11036,853 @@
 	module.exports = React;
 
 /***/ },
-/* 302 */,
+/* 302 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;;(function () {
+		'use strict';
+
+		/**
+		 * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
+		 *
+		 * @codingstandard ftlabs-jsv2
+		 * @copyright The Financial Times Limited [All Rights Reserved]
+		 * @license MIT License (see LICENSE.txt)
+		 */
+
+		/*jslint browser:true, node:true*/
+		/*global define, Event, Node*/
+
+
+		/**
+		 * Instantiate fast-clicking listeners on the specified layer.
+		 *
+		 * @constructor
+		 * @param {Element} layer The layer to listen on
+		 * @param {Object} [options={}] The options to override the defaults
+		 */
+		function FastClick(layer, options) {
+			var oldOnClick;
+
+			options = options || {};
+
+			/**
+			 * Whether a click is currently being tracked.
+			 *
+			 * @type boolean
+			 */
+			this.trackingClick = false;
+
+
+			/**
+			 * Timestamp for when click tracking started.
+			 *
+			 * @type number
+			 */
+			this.trackingClickStart = 0;
+
+
+			/**
+			 * The element being tracked for a click.
+			 *
+			 * @type EventTarget
+			 */
+			this.targetElement = null;
+
+
+			/**
+			 * X-coordinate of touch start event.
+			 *
+			 * @type number
+			 */
+			this.touchStartX = 0;
+
+
+			/**
+			 * Y-coordinate of touch start event.
+			 *
+			 * @type number
+			 */
+			this.touchStartY = 0;
+
+
+			/**
+			 * ID of the last touch, retrieved from Touch.identifier.
+			 *
+			 * @type number
+			 */
+			this.lastTouchIdentifier = 0;
+
+
+			/**
+			 * Touchmove boundary, beyond which a click will be cancelled.
+			 *
+			 * @type number
+			 */
+			this.touchBoundary = options.touchBoundary || 10;
+
+
+			/**
+			 * The FastClick layer.
+			 *
+			 * @type Element
+			 */
+			this.layer = layer;
+
+			/**
+			 * The minimum time between tap(touchstart and touchend) events
+			 *
+			 * @type number
+			 */
+			this.tapDelay = options.tapDelay || 200;
+
+			/**
+			 * The maximum time for a tap
+			 *
+			 * @type number
+			 */
+			this.tapTimeout = options.tapTimeout || 700;
+
+			if (FastClick.notNeeded(layer)) {
+				return;
+			}
+
+			// Some old versions of Android don't have Function.prototype.bind
+			function bind(method, context) {
+				return function() { return method.apply(context, arguments); };
+			}
+
+
+			var methods = ['onMouse', 'onClick', 'onTouchStart', 'onTouchMove', 'onTouchEnd', 'onTouchCancel'];
+			var context = this;
+			for (var i = 0, l = methods.length; i < l; i++) {
+				context[methods[i]] = bind(context[methods[i]], context);
+			}
+
+			// Set up event handlers as required
+			if (deviceIsAndroid) {
+				layer.addEventListener('mouseover', this.onMouse, true);
+				layer.addEventListener('mousedown', this.onMouse, true);
+				layer.addEventListener('mouseup', this.onMouse, true);
+			}
+
+			layer.addEventListener('click', this.onClick, true);
+			layer.addEventListener('touchstart', this.onTouchStart, false);
+			layer.addEventListener('touchmove', this.onTouchMove, false);
+			layer.addEventListener('touchend', this.onTouchEnd, false);
+			layer.addEventListener('touchcancel', this.onTouchCancel, false);
+
+			// Hack is required for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+			// which is how FastClick normally stops click events bubbling to callbacks registered on the FastClick
+			// layer when they are cancelled.
+			if (!Event.prototype.stopImmediatePropagation) {
+				layer.removeEventListener = function(type, callback, capture) {
+					var rmv = Node.prototype.removeEventListener;
+					if (type === 'click') {
+						rmv.call(layer, type, callback.hijacked || callback, capture);
+					} else {
+						rmv.call(layer, type, callback, capture);
+					}
+				};
+
+				layer.addEventListener = function(type, callback, capture) {
+					var adv = Node.prototype.addEventListener;
+					if (type === 'click') {
+						adv.call(layer, type, callback.hijacked || (callback.hijacked = function(event) {
+							if (!event.propagationStopped) {
+								callback(event);
+							}
+						}), capture);
+					} else {
+						adv.call(layer, type, callback, capture);
+					}
+				};
+			}
+
+			// If a handler is already declared in the element's onclick attribute, it will be fired before
+			// FastClick's onClick handler. Fix this by pulling out the user-defined handler function and
+			// adding it as listener.
+			if (typeof layer.onclick === 'function') {
+
+				// Android browser on at least 3.2 requires a new reference to the function in layer.onclick
+				// - the old one won't work if passed to addEventListener directly.
+				oldOnClick = layer.onclick;
+				layer.addEventListener('click', function(event) {
+					oldOnClick(event);
+				}, false);
+				layer.onclick = null;
+			}
+		}
+
+		/**
+		* Windows Phone 8.1 fakes user agent string to look like Android and iPhone.
+		*
+		* @type boolean
+		*/
+		var deviceIsWindowsPhone = navigator.userAgent.indexOf("Windows Phone") >= 0;
+
+		/**
+		 * Android requires exceptions.
+		 *
+		 * @type boolean
+		 */
+		var deviceIsAndroid = navigator.userAgent.indexOf('Android') > 0 && !deviceIsWindowsPhone;
+
+
+		/**
+		 * iOS requires exceptions.
+		 *
+		 * @type boolean
+		 */
+		var deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent) && !deviceIsWindowsPhone;
+
+
+		/**
+		 * iOS 4 requires an exception for select elements.
+		 *
+		 * @type boolean
+		 */
+		var deviceIsIOS4 = deviceIsIOS && (/OS 4_\d(_\d)?/).test(navigator.userAgent);
+
+
+		/**
+		 * iOS 6.0-7.* requires the target element to be manually derived
+		 *
+		 * @type boolean
+		 */
+		var deviceIsIOSWithBadTarget = deviceIsIOS && (/OS [6-7]_\d/).test(navigator.userAgent);
+
+		/**
+		 * BlackBerry requires exceptions.
+		 *
+		 * @type boolean
+		 */
+		var deviceIsBlackBerry10 = navigator.userAgent.indexOf('BB10') > 0;
+
+		/**
+		 * Determine whether a given element requires a native click.
+		 *
+		 * @param {EventTarget|Element} target Target DOM element
+		 * @returns {boolean} Returns true if the element needs a native click
+		 */
+		FastClick.prototype.needsClick = function(target) {
+			switch (target.nodeName.toLowerCase()) {
+
+			// Don't send a synthetic click to disabled inputs (issue #62)
+			case 'button':
+			case 'select':
+			case 'textarea':
+				if (target.disabled) {
+					return true;
+				}
+
+				break;
+			case 'input':
+
+				// File inputs need real clicks on iOS 6 due to a browser bug (issue #68)
+				if ((deviceIsIOS && target.type === 'file') || target.disabled) {
+					return true;
+				}
+
+				break;
+			case 'label':
+			case 'iframe': // iOS8 homescreen apps can prevent events bubbling into frames
+			case 'video':
+				return true;
+			}
+
+			return (/\bneedsclick\b/).test(target.className);
+		};
+
+
+		/**
+		 * Determine whether a given element requires a call to focus to simulate click into element.
+		 *
+		 * @param {EventTarget|Element} target Target DOM element
+		 * @returns {boolean} Returns true if the element requires a call to focus to simulate native click.
+		 */
+		FastClick.prototype.needsFocus = function(target) {
+			switch (target.nodeName.toLowerCase()) {
+			case 'textarea':
+				return true;
+			case 'select':
+				return !deviceIsAndroid;
+			case 'input':
+				switch (target.type) {
+				case 'button':
+				case 'checkbox':
+				case 'file':
+				case 'image':
+				case 'radio':
+				case 'submit':
+					return false;
+				}
+
+				// No point in attempting to focus disabled inputs
+				return !target.disabled && !target.readOnly;
+			default:
+				return (/\bneedsfocus\b/).test(target.className);
+			}
+		};
+
+
+		/**
+		 * Send a click event to the specified element.
+		 *
+		 * @param {EventTarget|Element} targetElement
+		 * @param {Event} event
+		 */
+		FastClick.prototype.sendClick = function(targetElement, event) {
+			var clickEvent, touch;
+
+			// On some Android devices activeElement needs to be blurred otherwise the synthetic click will have no effect (#24)
+			if (document.activeElement && document.activeElement !== targetElement) {
+				document.activeElement.blur();
+			}
+
+			touch = event.changedTouches[0];
+
+			// Synthesise a click event, with an extra attribute so it can be tracked
+			clickEvent = document.createEvent('MouseEvents');
+			clickEvent.initMouseEvent(this.determineEventType(targetElement), true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);
+			clickEvent.forwardedTouchEvent = true;
+			targetElement.dispatchEvent(clickEvent);
+		};
+
+		FastClick.prototype.determineEventType = function(targetElement) {
+
+			//Issue #159: Android Chrome Select Box does not open with a synthetic click event
+			if (deviceIsAndroid && targetElement.tagName.toLowerCase() === 'select') {
+				return 'mousedown';
+			}
+
+			return 'click';
+		};
+
+
+		/**
+		 * @param {EventTarget|Element} targetElement
+		 */
+		FastClick.prototype.focus = function(targetElement) {
+			var length;
+
+			// Issue #160: on iOS 7, some input elements (e.g. date datetime month) throw a vague TypeError on setSelectionRange. These elements don't have an integer value for the selectionStart and selectionEnd properties, but unfortunately that can't be used for detection because accessing the properties also throws a TypeError. Just check the type instead. Filed as Apple bug #15122724.
+			if (deviceIsIOS && targetElement.setSelectionRange && targetElement.type.indexOf('date') !== 0 && targetElement.type !== 'time' && targetElement.type !== 'month') {
+				length = targetElement.value.length;
+				targetElement.setSelectionRange(length, length);
+			} else {
+				targetElement.focus();
+			}
+		};
+
+
+		/**
+		 * Check whether the given target element is a child of a scrollable layer and if so, set a flag on it.
+		 *
+		 * @param {EventTarget|Element} targetElement
+		 */
+		FastClick.prototype.updateScrollParent = function(targetElement) {
+			var scrollParent, parentElement;
+
+			scrollParent = targetElement.fastClickScrollParent;
+
+			// Attempt to discover whether the target element is contained within a scrollable layer. Re-check if the
+			// target element was moved to another parent.
+			if (!scrollParent || !scrollParent.contains(targetElement)) {
+				parentElement = targetElement;
+				do {
+					if (parentElement.scrollHeight > parentElement.offsetHeight) {
+						scrollParent = parentElement;
+						targetElement.fastClickScrollParent = parentElement;
+						break;
+					}
+
+					parentElement = parentElement.parentElement;
+				} while (parentElement);
+			}
+
+			// Always update the scroll top tracker if possible.
+			if (scrollParent) {
+				scrollParent.fastClickLastScrollTop = scrollParent.scrollTop;
+			}
+		};
+
+
+		/**
+		 * @param {EventTarget} targetElement
+		 * @returns {Element|EventTarget}
+		 */
+		FastClick.prototype.getTargetElementFromEventTarget = function(eventTarget) {
+
+			// On some older browsers (notably Safari on iOS 4.1 - see issue #56) the event target may be a text node.
+			if (eventTarget.nodeType === Node.TEXT_NODE) {
+				return eventTarget.parentNode;
+			}
+
+			return eventTarget;
+		};
+
+
+		/**
+		 * On touch start, record the position and scroll offset.
+		 *
+		 * @param {Event} event
+		 * @returns {boolean}
+		 */
+		FastClick.prototype.onTouchStart = function(event) {
+			var targetElement, touch, selection;
+
+			// Ignore multiple touches, otherwise pinch-to-zoom is prevented if both fingers are on the FastClick element (issue #111).
+			if (event.targetTouches.length > 1) {
+				return true;
+			}
+
+			targetElement = this.getTargetElementFromEventTarget(event.target);
+			touch = event.targetTouches[0];
+
+			if (deviceIsIOS) {
+
+				// Only trusted events will deselect text on iOS (issue #49)
+				selection = window.getSelection();
+				if (selection.rangeCount && !selection.isCollapsed) {
+					return true;
+				}
+
+				if (!deviceIsIOS4) {
+
+					// Weird things happen on iOS when an alert or confirm dialog is opened from a click event callback (issue #23):
+					// when the user next taps anywhere else on the page, new touchstart and touchend events are dispatched
+					// with the same identifier as the touch event that previously triggered the click that triggered the alert.
+					// Sadly, there is an issue on iOS 4 that causes some normal touch events to have the same identifier as an
+					// immediately preceeding touch event (issue #52), so this fix is unavailable on that platform.
+					// Issue 120: touch.identifier is 0 when Chrome dev tools 'Emulate touch events' is set with an iOS device UA string,
+					// which causes all touch events to be ignored. As this block only applies to iOS, and iOS identifiers are always long,
+					// random integers, it's safe to to continue if the identifier is 0 here.
+					if (touch.identifier && touch.identifier === this.lastTouchIdentifier) {
+						event.preventDefault();
+						return false;
+					}
+
+					this.lastTouchIdentifier = touch.identifier;
+
+					// If the target element is a child of a scrollable layer (using -webkit-overflow-scrolling: touch) and:
+					// 1) the user does a fling scroll on the scrollable layer
+					// 2) the user stops the fling scroll with another tap
+					// then the event.target of the last 'touchend' event will be the element that was under the user's finger
+					// when the fling scroll was started, causing FastClick to send a click event to that layer - unless a check
+					// is made to ensure that a parent layer was not scrolled before sending a synthetic click (issue #42).
+					this.updateScrollParent(targetElement);
+				}
+			}
+
+			this.trackingClick = true;
+			this.trackingClickStart = event.timeStamp;
+			this.targetElement = targetElement;
+
+			this.touchStartX = touch.pageX;
+			this.touchStartY = touch.pageY;
+
+			// Prevent phantom clicks on fast double-tap (issue #36)
+			if ((event.timeStamp - this.lastClickTime) < this.tapDelay) {
+				event.preventDefault();
+			}
+
+			return true;
+		};
+
+
+		/**
+		 * Based on a touchmove event object, check whether the touch has moved past a boundary since it started.
+		 *
+		 * @param {Event} event
+		 * @returns {boolean}
+		 */
+		FastClick.prototype.touchHasMoved = function(event) {
+			var touch = event.changedTouches[0], boundary = this.touchBoundary;
+
+			if (Math.abs(touch.pageX - this.touchStartX) > boundary || Math.abs(touch.pageY - this.touchStartY) > boundary) {
+				return true;
+			}
+
+			return false;
+		};
+
+
+		/**
+		 * Update the last position.
+		 *
+		 * @param {Event} event
+		 * @returns {boolean}
+		 */
+		FastClick.prototype.onTouchMove = function(event) {
+			if (!this.trackingClick) {
+				return true;
+			}
+
+			// If the touch has moved, cancel the click tracking
+			if (this.targetElement !== this.getTargetElementFromEventTarget(event.target) || this.touchHasMoved(event)) {
+				this.trackingClick = false;
+				this.targetElement = null;
+			}
+
+			return true;
+		};
+
+
+		/**
+		 * Attempt to find the labelled control for the given label element.
+		 *
+		 * @param {EventTarget|HTMLLabelElement} labelElement
+		 * @returns {Element|null}
+		 */
+		FastClick.prototype.findControl = function(labelElement) {
+
+			// Fast path for newer browsers supporting the HTML5 control attribute
+			if (labelElement.control !== undefined) {
+				return labelElement.control;
+			}
+
+			// All browsers under test that support touch events also support the HTML5 htmlFor attribute
+			if (labelElement.htmlFor) {
+				return document.getElementById(labelElement.htmlFor);
+			}
+
+			// If no for attribute exists, attempt to retrieve the first labellable descendant element
+			// the list of which is defined here: http://www.w3.org/TR/html5/forms.html#category-label
+			return labelElement.querySelector('button, input:not([type=hidden]), keygen, meter, output, progress, select, textarea');
+		};
+
+
+		/**
+		 * On touch end, determine whether to send a click event at once.
+		 *
+		 * @param {Event} event
+		 * @returns {boolean}
+		 */
+		FastClick.prototype.onTouchEnd = function(event) {
+			var forElement, trackingClickStart, targetTagName, scrollParent, touch, targetElement = this.targetElement;
+
+			if (!this.trackingClick) {
+				return true;
+			}
+
+			// Prevent phantom clicks on fast double-tap (issue #36)
+			if ((event.timeStamp - this.lastClickTime) < this.tapDelay) {
+				this.cancelNextClick = true;
+				return true;
+			}
+
+			if ((event.timeStamp - this.trackingClickStart) > this.tapTimeout) {
+				return true;
+			}
+
+			// Reset to prevent wrong click cancel on input (issue #156).
+			this.cancelNextClick = false;
+
+			this.lastClickTime = event.timeStamp;
+
+			trackingClickStart = this.trackingClickStart;
+			this.trackingClick = false;
+			this.trackingClickStart = 0;
+
+			// On some iOS devices, the targetElement supplied with the event is invalid if the layer
+			// is performing a transition or scroll, and has to be re-detected manually. Note that
+			// for this to function correctly, it must be called *after* the event target is checked!
+			// See issue #57; also filed as rdar://13048589 .
+			if (deviceIsIOSWithBadTarget) {
+				touch = event.changedTouches[0];
+
+				// In certain cases arguments of elementFromPoint can be negative, so prevent setting targetElement to null
+				targetElement = document.elementFromPoint(touch.pageX - window.pageXOffset, touch.pageY - window.pageYOffset) || targetElement;
+				targetElement.fastClickScrollParent = this.targetElement.fastClickScrollParent;
+			}
+
+			targetTagName = targetElement.tagName.toLowerCase();
+			if (targetTagName === 'label') {
+				forElement = this.findControl(targetElement);
+				if (forElement) {
+					this.focus(targetElement);
+					if (deviceIsAndroid) {
+						return false;
+					}
+
+					targetElement = forElement;
+				}
+			} else if (this.needsFocus(targetElement)) {
+
+				// Case 1: If the touch started a while ago (best guess is 100ms based on tests for issue #36) then focus will be triggered anyway. Return early and unset the target element reference so that the subsequent click will be allowed through.
+				// Case 2: Without this exception for input elements tapped when the document is contained in an iframe, then any inputted text won't be visible even though the value attribute is updated as the user types (issue #37).
+				if ((event.timeStamp - trackingClickStart) > 100 || (deviceIsIOS && window.top !== window && targetTagName === 'input')) {
+					this.targetElement = null;
+					return false;
+				}
+
+				this.focus(targetElement);
+				this.sendClick(targetElement, event);
+
+				// Select elements need the event to go through on iOS 4, otherwise the selector menu won't open.
+				// Also this breaks opening selects when VoiceOver is active on iOS6, iOS7 (and possibly others)
+				if (!deviceIsIOS || targetTagName !== 'select') {
+					this.targetElement = null;
+					event.preventDefault();
+				}
+
+				return false;
+			}
+
+			if (deviceIsIOS && !deviceIsIOS4) {
+
+				// Don't send a synthetic click event if the target element is contained within a parent layer that was scrolled
+				// and this tap is being used to stop the scrolling (usually initiated by a fling - issue #42).
+				scrollParent = targetElement.fastClickScrollParent;
+				if (scrollParent && scrollParent.fastClickLastScrollTop !== scrollParent.scrollTop) {
+					return true;
+				}
+			}
+
+			// Prevent the actual click from going though - unless the target node is marked as requiring
+			// real clicks or if it is in the whitelist in which case only non-programmatic clicks are permitted.
+			if (!this.needsClick(targetElement)) {
+				event.preventDefault();
+				this.sendClick(targetElement, event);
+			}
+
+			return false;
+		};
+
+
+		/**
+		 * On touch cancel, stop tracking the click.
+		 *
+		 * @returns {void}
+		 */
+		FastClick.prototype.onTouchCancel = function() {
+			this.trackingClick = false;
+			this.targetElement = null;
+		};
+
+
+		/**
+		 * Determine mouse events which should be permitted.
+		 *
+		 * @param {Event} event
+		 * @returns {boolean}
+		 */
+		FastClick.prototype.onMouse = function(event) {
+
+			// If a target element was never set (because a touch event was never fired) allow the event
+			if (!this.targetElement) {
+				return true;
+			}
+
+			if (event.forwardedTouchEvent) {
+				return true;
+			}
+
+			// Programmatically generated events targeting a specific element should be permitted
+			if (!event.cancelable) {
+				return true;
+			}
+
+			// Derive and check the target element to see whether the mouse event needs to be permitted;
+			// unless explicitly enabled, prevent non-touch click events from triggering actions,
+			// to prevent ghost/doubleclicks.
+			if (!this.needsClick(this.targetElement) || this.cancelNextClick) {
+
+				// Prevent any user-added listeners declared on FastClick element from being fired.
+				if (event.stopImmediatePropagation) {
+					event.stopImmediatePropagation();
+				} else {
+
+					// Part of the hack for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+					event.propagationStopped = true;
+				}
+
+				// Cancel the event
+				event.stopPropagation();
+				event.preventDefault();
+
+				return false;
+			}
+
+			// If the mouse event is permitted, return true for the action to go through.
+			return true;
+		};
+
+
+		/**
+		 * On actual clicks, determine whether this is a touch-generated click, a click action occurring
+		 * naturally after a delay after a touch (which needs to be cancelled to avoid duplication), or
+		 * an actual click which should be permitted.
+		 *
+		 * @param {Event} event
+		 * @returns {boolean}
+		 */
+		FastClick.prototype.onClick = function(event) {
+			var permitted;
+
+			// It's possible for another FastClick-like library delivered with third-party code to fire a click event before FastClick does (issue #44). In that case, set the click-tracking flag back to false and return early. This will cause onTouchEnd to return early.
+			if (this.trackingClick) {
+				this.targetElement = null;
+				this.trackingClick = false;
+				return true;
+			}
+
+			// Very odd behaviour on iOS (issue #18): if a submit element is present inside a form and the user hits enter in the iOS simulator or clicks the Go button on the pop-up OS keyboard the a kind of 'fake' click event will be triggered with the submit-type input element as the target.
+			if (event.target.type === 'submit' && event.detail === 0) {
+				return true;
+			}
+
+			permitted = this.onMouse(event);
+
+			// Only unset targetElement if the click is not permitted. This will ensure that the check for !targetElement in onMouse fails and the browser's click doesn't go through.
+			if (!permitted) {
+				this.targetElement = null;
+			}
+
+			// If clicks are permitted, return true for the action to go through.
+			return permitted;
+		};
+
+
+		/**
+		 * Remove all FastClick's event listeners.
+		 *
+		 * @returns {void}
+		 */
+		FastClick.prototype.destroy = function() {
+			var layer = this.layer;
+
+			if (deviceIsAndroid) {
+				layer.removeEventListener('mouseover', this.onMouse, true);
+				layer.removeEventListener('mousedown', this.onMouse, true);
+				layer.removeEventListener('mouseup', this.onMouse, true);
+			}
+
+			layer.removeEventListener('click', this.onClick, true);
+			layer.removeEventListener('touchstart', this.onTouchStart, false);
+			layer.removeEventListener('touchmove', this.onTouchMove, false);
+			layer.removeEventListener('touchend', this.onTouchEnd, false);
+			layer.removeEventListener('touchcancel', this.onTouchCancel, false);
+		};
+
+
+		/**
+		 * Check whether FastClick is needed.
+		 *
+		 * @param {Element} layer The layer to listen on
+		 */
+		FastClick.notNeeded = function(layer) {
+			var metaViewport;
+			var chromeVersion;
+			var blackberryVersion;
+			var firefoxVersion;
+
+			// Devices that don't support touch don't need FastClick
+			if (typeof window.ontouchstart === 'undefined') {
+				return true;
+			}
+
+			// Chrome version - zero for other browsers
+			chromeVersion = +(/Chrome\/([0-9]+)/.exec(navigator.userAgent) || [,0])[1];
+
+			if (chromeVersion) {
+
+				if (deviceIsAndroid) {
+					metaViewport = document.querySelector('meta[name=viewport]');
+
+					if (metaViewport) {
+						// Chrome on Android with user-scalable="no" doesn't need FastClick (issue #89)
+						if (metaViewport.content.indexOf('user-scalable=no') !== -1) {
+							return true;
+						}
+						// Chrome 32 and above with width=device-width or less don't need FastClick
+						if (chromeVersion > 31 && document.documentElement.scrollWidth <= window.outerWidth) {
+							return true;
+						}
+					}
+
+				// Chrome desktop doesn't need FastClick (issue #15)
+				} else {
+					return true;
+				}
+			}
+
+			if (deviceIsBlackBerry10) {
+				blackberryVersion = navigator.userAgent.match(/Version\/([0-9]*)\.([0-9]*)/);
+
+				// BlackBerry 10.3+ does not require Fastclick library.
+				// https://github.com/ftlabs/fastclick/issues/251
+				if (blackberryVersion[1] >= 10 && blackberryVersion[2] >= 3) {
+					metaViewport = document.querySelector('meta[name=viewport]');
+
+					if (metaViewport) {
+						// user-scalable=no eliminates click delay.
+						if (metaViewport.content.indexOf('user-scalable=no') !== -1) {
+							return true;
+						}
+						// width=device-width (or less than device-width) eliminates click delay.
+						if (document.documentElement.scrollWidth <= window.outerWidth) {
+							return true;
+						}
+					}
+				}
+			}
+
+			// IE10 with -ms-touch-action: none or manipulation, which disables double-tap-to-zoom (issue #97)
+			if (layer.style.msTouchAction === 'none' || layer.style.touchAction === 'manipulation') {
+				return true;
+			}
+
+			// Firefox version - zero for other browsers
+			firefoxVersion = +(/Firefox\/([0-9]+)/.exec(navigator.userAgent) || [,0])[1];
+
+			if (firefoxVersion >= 27) {
+				// Firefox 27+ does not have tap delay if the content is not zoomable - https://bugzilla.mozilla.org/show_bug.cgi?id=922896
+
+				metaViewport = document.querySelector('meta[name=viewport]');
+				if (metaViewport && (metaViewport.content.indexOf('user-scalable=no') !== -1 || document.documentElement.scrollWidth <= window.outerWidth)) {
+					return true;
+				}
+			}
+
+			// IE11: prefixed -ms-touch-action is no longer supported and it's recomended to use non-prefixed version
+			// http://msdn.microsoft.com/en-us/library/windows/apps/Hh767313.aspx
+			if (layer.style.touchAction === 'none' || layer.style.touchAction === 'manipulation') {
+				return true;
+			}
+
+			return false;
+		};
+
+
+		/**
+		 * Factory method for creating a FastClick object
+		 *
+		 * @param {Element} layer The layer to listen on
+		 * @param {Object} [options={}] The options to override the defaults
+		 */
+		FastClick.attach = function(layer, options) {
+			return new FastClick(layer, options);
+		};
+
+
+		if (true) {
+
+			// AMD. Register as an anonymous module.
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+				return FastClick;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (typeof module !== 'undefined' && module.exports) {
+			module.exports = FastClick.attach;
+			module.exports.FastClick = FastClick;
+		} else {
+			window.FastClick = FastClick;
+		}
+	}());
+
+
+/***/ },
 /* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -13346,65 +14704,7 @@
 	exports.default = useBasename;
 
 /***/ },
-/* 334 */,
-/* 335 */,
-/* 336 */,
-/* 337 */,
-/* 338 */,
-/* 339 */,
-/* 340 */,
-/* 341 */,
-/* 342 */,
-/* 343 */,
-/* 344 */,
-/* 345 */,
-/* 346 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _client = __webpack_require__(303);
-
-	var _client2 = _interopRequireDefault(_client);
-
-	var _reactDom = __webpack_require__(301);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _routes = __webpack_require__(347);
-
-	var _routes2 = _interopRequireDefault(_routes);
-
-	var _config = __webpack_require__(348);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var webpackLoader = function webpackLoader(url) {
-	    return new Promise(__webpack_require__(349)(url)).then(function (module) {
-	        return module.default || module;
-	    });
-	};
-
-	var viewEngine = {
-	    render: function render(component, container) {
-	        return _reactDom2.default.render(component, container);
-	    }
-	};
-
-	var app = (0, _client2.default)(_extends({}, _config2.default, {
-	    routes: _routes2.default,
-	    loader: webpackLoader,
-	    viewEngine: viewEngine
-	}));
-
-	app.start();
-
-/***/ },
-/* 347 */
+/* 334 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13412,60 +14712,75 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	/**
-	 * routes
-	 */
+	// routes
 
 	exports.default = [{
-		path: '/(home)?',
-		controller: './home/controller'
-	}, {
-		path: '/list',
-		controller: './list/controller'
-	}, {
-		path: '/detail',
-		controller: './detail/controller'
-	}, {
-		path: '*',
-		controller: './detail/controller'
+		path: '/(index|home)?',
+		controller: './page/home/controller'
 	}];
 
 /***/ },
-/* 348 */
+/* 335 */
 /***/ function(module, exports) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	    value: true
 	});
-	/**
-	 * configuration
-	 */
+	// context
+
+	var base = 'https://cnodejs.org/api/v1';
+	var createAPI = function createAPI(path) {
+	    return function () {
+	        return '' + base + (typeof path === 'function' ? path.apply(undefined, arguments) : path);
+	    };
+	};
+
 	exports.default = {
-		container: '#container',
-		type: 'createHistory',
-		// type: 'createHashHistory',
-		basename: '/examples/simple-spa'
+	    api: {
+	        topics: createAPI('/topics'),
+	        topic: createAPI('/topic'),
+	        collect: createAPI('/collect'),
+	        uncollect: createAPI('de_collect'),
+	        getCollect: createAPI(function (loginname) {
+	            return '/topic_collect/' + loginname;
+	        }),
+	        reply: createAPI(function (topicID) {
+	            return '/topic/' + topicID + '/replies';
+	        }),
+	        like: createAPI(function (replyID) {
+	            return '/reply/' + replyID + '/ups';
+	        }),
+	        getUser: createAPI(function (loginname) {
+	            return '/user/' + loginname;
+	        }),
+	        auth: createAPI('/accesstoken'),
+	        getUnreadMessage: createAPI('/message/count'),
+	        getMessage: createAPI('/messages'),
+	        markAllMessage: createAPI('/message/mark_all')
+	    }
 	};
 
 /***/ },
-/* 349 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./config": 348,
-		"./config.js": 348,
-		"./detail/controller": 350,
-		"./detail/controller.js": 350,
-		"./home/controller": 352,
-		"./home/controller.js": 352,
-		"./index": 346,
-		"./index.js": 346,
-		"./list/controller": 354,
-		"./list/controller.js": 354,
-		"./routes": 347,
-		"./routes.js": 347
+		"./context": 335,
+		"./context.js": 335,
+		"./index": 298,
+		"./index.js": 298,
+		"./lib/BaseController": 337,
+		"./lib/BaseController.js": 337,
+		"./page/home/controller": 342,
+		"./page/home/controller.js": 342,
+		"./page/home/model": 345,
+		"./page/home/model.js": 345,
+		"./page/home/view": 344,
+		"./page/home/view.js": 344,
+		"./routes": 334,
+		"./routes.js": 334
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -13478,40 +14793,356 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 349;
+	webpackContext.id = 336;
 
 
 /***/ },
-/* 350 */
+/* 337 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // base controller class
+
+
+	var _relite = __webpack_require__(338);
+
+	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Controller = function () {
+		function Controller(location, context) {
+			_classCallCheck(this, Controller);
+
+			this.location = location;
+			this.context = context;
+			this.refreshView = this.refreshView.bind(this);
+			this.render = this.render.bind(this);
+		}
+
+		_createClass(Controller, [{
+			key: 'init',
+			value: function () {
+				var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
+					var _this = this;
+
+					var initialState, actions, context, methods, store, logger, INIT;
+					return regeneratorRuntime.wrap(function _callee$(_context) {
+						while (1) {
+							switch (_context.prev = _context.next) {
+								case 0:
+									initialState = this.initialState;
+									actions = this.actions;
+									context = this.context;
+									methods = this.methods;
+									store = this.store = (0, _relite.createStore)(actions, _extends({}, context, initialState));
+									logger = (0, _relite.createLogger)({
+										name: this.constructor.name
+									});
+
+									store.subscribe(logger);
+									store.subscribe(this.refreshView);
+
+									this.methods = Object.keys(methods).reduce(function (obj, key) {
+										obj[key] = methods[key].bind(_this);
+										return obj;
+									}, {});
+
+									INIT = store.actions.INIT;
+									_context.next = 12;
+									return INIT();
+
+								case 12:
+									return _context.abrupt('return', this.render());
+
+								case 13:
+								case 'end':
+									return _context.stop();
+							}
+						}
+					}, _callee, this);
+				}));
+
+				function init() {
+					return _ref.apply(this, arguments);
+				}
+
+				return init;
+			}()
+		}, {
+			key: 'render',
+			value: function render() {
+				var View = this.View;
+				var store = this.store;
+				var methods = this.methods;
+
+				return React.createElement(View, { state: store.getState(), methods: methods });
+			}
+		}]);
+
+		return Controller;
+	}();
+
+	exports.default = Controller;
+
+/***/ },
+/* 338 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.createLogger = exports.createStore = undefined;
+
+	var _createStore = __webpack_require__(339);
+
+	var _createStore2 = _interopRequireDefault(_createStore);
+
+	var _createLogger = __webpack_require__(341);
+
+	var _createLogger2 = _interopRequireDefault(_createLogger);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * relite
+	 */
+	var createStore = exports.createStore = _createStore2.default;
+	var createLogger = exports.createLogger = _createLogger2.default;
+
+/***/ },
+/* 339 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = createSotre;
+
+	var _util = __webpack_require__(340);
+
+	var _ = _interopRequireWildcard(_util);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function createSotre(actions, initialState) {
+
+	    if (!_.isObj(actions)) {
+	        throw new Error('Expected first argument to be an object');
+	    }
+
+	    var listeners = [];
+	    var subscribe = function subscribe(listener) {
+	        listeners.push(listener);
+	        return function () {
+	            var index = listeners.indexOf(listener);
+	            if (index !== -1) {
+	                listeners.splice(index, 1);
+	            }
+	        };
+	    };
+	    var publish = function publish(data) {
+	        listeners.forEach(function (listener) {
+	            return listener(data);
+	        });
+	    };
+
+	    var currentState = initialState;
+
+	    var getState = function getState() {
+	        return currentState;
+	    };
+	    var replaceState = function replaceState(nextState, data, silent) {
+	        currentState = nextState;
+	        if (!silent) {
+	            publish(data);
+	        }
+	    };
+
+	    var isDispatching = false;
+	    var dispatch = function dispatch(actionType, actionPayload) {
+	        if (isDispatching) {
+	            throw new Error('store.dispatch(actionType, actionPayload): handler may not dispatch');
+	        }
+
+	        var start = new Date();
+	        var nextState = currentState;
+	        try {
+	            isDispatching = true;
+	            nextState = actions[actionType](currentState, actionPayload);
+	        } finally {
+	            isDispatching = false;
+	        }
+
+	        var updateState = function updateState(nextState) {
+	            if (_.isFn(nextState)) {
+	                return updateState(nextState(currentState, actionPayload));
+	            }
+	            if (_.isThenable(nextState)) {
+	                return nextState.then(updateState);
+	            }
+	            if (nextState === currentState) {
+	                return currentState;
+	            }
+	            replaceState(nextState, {
+	                start: start,
+	                end: new Date(),
+	                actionType: actionType,
+	                actionPayload: actionPayload,
+	                previousState: currentState,
+	                currentState: nextState
+	            });
+	            return nextState;
+	        };
+
+	        return updateState(nextState);
+	    };
+
+	    var bindingActions = Object.keys(actions).reduce(function (obj, actionType) {
+	        if (_.isFn(actions[actionType])) {
+	            obj[actionType] = function (actionPayload) {
+	                return dispatch(actionType, actionPayload);
+	            };
+	        }
+	        return obj;
+	    }, {});
+
+	    return {
+	        getState: getState,
+	        replaceState: replaceState,
+	        dispatch: dispatch,
+	        actions: bindingActions,
+	        subscribe: subscribe,
+	        publish: publish
+	    };
+	} /**
+	   * createStore
+	   */
+
+/***/ },
+/* 340 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.isFn = isFn;
+	exports.isThenable = isThenable;
+	exports.isObj = isObj;
+	/**
+	 * util
+	 */
+
+	function isFn(obj) {
+		return typeof obj === 'function';
+	}
+
+	function isThenable(obj) {
+		return obj != null && isFn(obj.then);
+	}
+
+	function isObj(obj) {
+		return Object.prototype.toString.call(obj) === '[object Object]';
+	}
+
+/***/ },
+/* 341 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = createLogger;
+	var attr = 'info' in console ? 'info' : "log";
+	var pad = function pad(num) {
+	    return ('0' + num).slice(-2);
+	};
+
+	function createLogger(_ref) {
+	    var _ref$name = _ref.name;
+	    var name = _ref$name === undefined ? "ROOT" : _ref$name;
+
+	    var logInfo = function logInfo(data) {
+	        var actionType = data.actionType;
+	        var actionPayload = data.actionPayload;
+	        var previousState = data.previousState;
+	        var currentState = data.currentState;
+	        var _data$start = data.start;
+	        var start = _data$start === undefined ? new Date() : _data$start;
+	        var _data$end = data.end;
+	        var end = _data$end === undefined ? new Date() : _data$end;
+
+	        var formattedTime = start.getHours() + ':' + pad(start.getMinutes()) + ':' + pad(start.getSeconds());
+	        var takeTime = end.getTime() - start.getTime();
+	        var message = name + ': action-type [' + actionType + '] @ ' + formattedTime + ' in ' + takeTime + 'ms';
+
+	        try {
+	            console.groupCollapsed(message);
+	        } catch (e) {
+	            try {
+	                console.group(message);
+	            } catch (e) {
+	                console.log(message);
+	            }
+	        }
+
+	        if (attr === 'log') {
+	            console[attr](actionPayload);
+	            console[attr](previousState);
+	            console[attr](currentState);
+	        } else {
+	            console[attr]('%c action-payload', 'color: #03A9F4; font-weight: bold', actionPayload);
+	            console[attr]('%c prev-state', 'color: #9E9E9E; font-weight: bold', previousState);
+	            console[attr]('%c next-state', 'color: #4CAF50; font-weight: bold', currentState);
+	        }
+
+	        try {
+	            console.groupEnd();
+	        } catch (e) {
+	            console.log('-- log end --');
+	        }
+	    };
+
+	    return logInfo;
+	}
+
+/***/ },
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(cb) {
-		__webpack_require__.e/* nsure */(3, function(require) {
-			cb(__webpack_require__(351));
+		__webpack_require__.e/* nsure */(1, function(require) {
+			cb(__webpack_require__(343));
 		});
 	}
 
 /***/ },
-/* 351 */,
-/* 352 */
-/***/ function(module, exports, __webpack_require__) {
+/* 343 */,
+/* 344 */
+/***/ function(module, exports) {
 
-	module.exports = function(cb) {
-		__webpack_require__.e/* nsure */(4, function(require) {
-			cb(__webpack_require__(353));
-		});
-	}
+	"use strict";
 
 /***/ },
-/* 353 */,
-/* 354 */
-/***/ function(module, exports, __webpack_require__) {
+/* 345 */
+/***/ function(module, exports) {
 
-	module.exports = function(cb) {
-		__webpack_require__.e/* nsure */(5, function(require) {
-			cb(__webpack_require__(355));
-		});
-	}
+	"use strict";
 
 /***/ }
 /******/ ]);

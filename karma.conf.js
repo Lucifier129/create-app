@@ -74,9 +74,6 @@ module.exports = (config) => {
         loaders: [{
             test: /\.jsx?$/,
             loader: 'babel-loader',
-            query: {
-                stage: 0
-            },
             exclude: /node_modules/
         }],
       },

@@ -216,15 +216,12 @@ export default function createApp(appSettings) {
 
     function publish(location) {
         for (let i = 0, len = listeners.length; i < len; i++) {
-            listeners[i](location)
+            listeners[i](location, history)
         }
     }
 
     function start(callback, shouldRenderWithCurrentLocation) {
         let listener = location => {
-            if (finalAppSettings.type === 'createHashHistory' && location.action === 'POP') {
-                return
-            }
             let result = render(location)
             if (_.isThenable(result)) {
                 result.then(() => {

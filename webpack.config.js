@@ -4,8 +4,8 @@ var path = require('path');
 module.exports = {
     watch: true,
     entry: {
-        'simple-spa': './examples/simple-spa/src',
-        'test-history': './examples/test-history/src',
+        'simple-spa': ['babel-polyfill', './examples/simple-spa/src'],
+        'isomorphic-cnode': ['babel-polyfill', './examples/isomorphic-cnode/javascript'],
     },
     output: {
         publicPath: '/examples/',
@@ -17,9 +17,6 @@ module.exports = {
         loaders: [{
             test: /\.jsx?$/,
             loader: 'babel-loader',
-            query: {
-                stage: 0
-            },
             exclude: /node_modules/
         }],
         postLoaders: [{
@@ -28,7 +25,7 @@ module.exports = {
             query: {
                 lazy: true,
                 name: './[2]/dest/[folder]',
-                regExp: /(.*)examples[\/\\](.*)[\/\\]src(.*)$/.source,
+                regExp: /(.*)examples[\/\\]([^\/\\]+)[\/\\]/.source,
             },
             exclude: /node_modules/,
         }]
