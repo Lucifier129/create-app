@@ -29,8 +29,8 @@ export default class Controller {
 		let logger = createLogger({
 			name: this.name,
 		})
-		store.subscribe(logger)
 		store.subscribe(this.refreshView)
+		store.subscribe(logger)
 
 		this.methods = Object.keys(methods).reduce((obj, key) => {
 			obj[key] = methods[key].bind(this)

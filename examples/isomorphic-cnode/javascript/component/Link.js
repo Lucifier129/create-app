@@ -15,7 +15,7 @@ export default class Link extends Component {
 		let href = to ? `${basename}${to}` : null
 		let Tag = tagName
 		return (
-			<Tag {...other} href={href} onClick={this.handleClick}>{children}</Tag>
+			<Tag {...other} href={tagName === 'a' ? href : null} onClick={this.handleClick}>{children}</Tag>
 		)
 	}
 	handleClick = (event) => {

@@ -67,7 +67,7 @@ function Topic(props) {
 						}
 					</p>
 					<p>
-						<time>{getLastTimeStr(create_at, true)}}</time>
+						<time>{getLastTimeStr(create_at, true)}</time>
 						<time>{getLastTimeStr(last_reply_at, true)}</time>
 					</p>
 				</div>
