@@ -2,7 +2,7 @@
 
 export default [
 	{
-		path: '/(index|home)?',
+		path: '/(index|home|list)?',
 		controller: './page/home/controller',
 	}
 ]

@@ -4,9 +4,9 @@ import Link from './Link'
 export default function UserInfo({ location, userInfo }) {
 	return (
 		<div className="user-info">
-		{ userInfo && userInfo.loginname
-			? <Login location={location} />
-			: <User userInfo={userInfo}  />
+		{ userInfo && !!userInfo.loginname
+			? <User userInfo={userInfo}  />
+			: <Login location={location} />
 		}
 	    </div>
 	)

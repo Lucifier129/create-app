@@ -1,8 +1,14 @@
-import React, { Component, Children } from 'react'
+import React, { Component, Children, PropTypes } from 'react'
 
 export default class BaseView extends Component {
+	static childContextTypes = {
+		location: PropTypes.object,
+		goTo: PropTypes.func,
+		goReplace: PropTypes.func,
+		context: PropTypes.object,
+	};
 	getChildContext() {
-		let { context } = this.props
+		let { children, ...context } = this.props
 		return context
 	}
 	render() {

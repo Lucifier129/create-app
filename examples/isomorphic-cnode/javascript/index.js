@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import Fastclick from 'fastclick'
 import createApp from 'create-app/client'
 import routes from './routes'
-import context from './context'
 
 const webpackLoader = (url) => (
     new Promise(require(url))
@@ -11,16 +10,17 @@ const webpackLoader = (url) => (
 )
 
 const viewEngine = {
-	render: ReactDOM.render,
+	render(component, container) {
+		return ReactDOM.render(component, container)
+	},
 }
 
 const appSettings = {
 	type: 'createHashHistory',
 	hashType: 'hashbang',
-	basename: '/examples/isomorphic-cnode',
-	container: 'root',
+	// basename: '/examples/isomorphic-cnode',
+	container: '#root',
 	context: {
-		...context,
 		isClient: true,
 		isServer: false,
 	},

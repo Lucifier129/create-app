@@ -1,4 +1,5 @@
 // base controller class
+import React, { Component } from 'react'
 import { createStore, createLogger } from 'relite'
 import BaseView from '../component/BaseView'
 
@@ -10,14 +11,23 @@ export default class Controller {
 		this.render = this.render.bind(this)
 		this.goTo = this.goTo.bind(this)
 	}
-	async init() {
-		let { initialState, actions, context, methods } = this
+	init() {
+		let { initialState, actions, context, methods, location } = this
+		let userInfo = {
+			loginname: '',
+			avatar_url: '',
+		}
+		if (context.isClient) {
+			userInfo = localStorage.getItem('userInfo') || userInfo
+		}
 		let store = this.store = createStore(actions, {
 			...context,
 			...initialState,
+			location,
+			userInfo,
 		})
 		let logger = createLogger({
-			name: this.constructor.name
+			name: this.name,
 		})
 		store.subscribe(logger)
 		store.subscribe(this.refreshView)
@@ -28,13 +38,17 @@ export default class Controller {
 		}, {})
 
 		let { INIT } = store.actions
-		await INIT()
-		return this.render()
+		return INIT().then(this.render)
 	}
 	render() {
 		let { View, store, methods, context, location, goTo, goReplace } = this
 		return (
-			<BaseView context={context} location={location} goTo={goTo} goReplace={goReplace}>
+			<BaseView
+				context={context}
+				location={location}
+				goTo={goTo}
+				goReplace={goReplace}
+			>
 				<View state={store.getState()} methods={methods} />
 			</BaseView>
 		)

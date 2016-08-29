@@ -1,8 +1,19 @@
 import React, { Component } from 'react'
 import classnames from 'classnames'
+import { addClassName } from '../lib/hoc'
 import Menu from './Menu'
+import Link from './Link'
 
-export default function Header() {
+let settings = {
+	path: ['showMenu'],
+	target: ['html', 'body', '#page'],
+	className: 'scroll-hide',
+}
+
+export default addClassName(settings, Header)
+
+
+function Header(props) {
 	let {
 		showMenu,
 		fixHead,
@@ -12,7 +23,8 @@ export default function Header() {
 		messageCount,
 		userInfo,
 		location,
-	} = this.props
+		pageType,
+	} = props
 	let headClassName = classnames({
 		'show': showMenu && fixHead,
 		'fix-head': fixHead,
@@ -28,7 +40,7 @@ export default function Header() {
 				{ fixHead &&
 					<div className="toolbar-nav" onClick={openMenu}></div>
 				}
-					<span v-text="pageType"></span>
+					<span>{pageType}</span>
 				{ messageCount && messageCount > 0 &&
 					<i className="num">{messageCount}</i>
 				}

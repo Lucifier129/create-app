@@ -10,7 +10,7 @@ export default class Link extends Component {
 		tagName: 'a',
 	};
 	render () {
-		let { basename } = this.context.location
+		let { basename = '' } = this.context.location
 		let { to, children, tagName, ...other } = this.props
 		let href = to ? `${basename}${to}` : null
 		let Tag = tagName
@@ -21,7 +21,8 @@ export default class Link extends Component {
 	handleClick = (event) => {
 		let { onClick, replace, to } = this.props
 		let { goTo, goReplace, location } = this.context
-		let href = to ? `${location.basename}${to}` : null
+		let { basename = ''} = location
+		let href = to ? `${basename}${to}` : null
 
 		onClick && onClick(event)
 		

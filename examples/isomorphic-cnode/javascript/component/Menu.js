@@ -4,10 +4,11 @@ import Link from './Link'
 import UserInfo from './UserInfo'
 
 export default function Menu({ location, userInfo, showMenu }) {
-	let className = {
-		'nav-list': true,
-		'show': showMenu
-	}
+	let className = classnames({
+	    'nav-list': true,
+	    'show': showMenu
+	})
+
 	return (
 		<section id="sideBar" className={className}>
 			<UserInfo location={location} userInfo={userInfo} />
