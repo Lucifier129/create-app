@@ -1,9 +1,20 @@
 import uniq from 'lodash/uniq'
 
 
+export function createFetchJSON(base) {
+    return function fetchJSON(url, options) {
+        url = url.charAt(0) === '/' ? `${base}${url}` : url
+        return fetch(url, options).then(toJSON)
+    }
+}
+
+function toJSON(obj) {
+    return obj.json()
+}
+
 export function accessProp(obj, path = []) {
     return path.reduce((target, name) => {
-        return obj[name]
+        return target[name]
     }, obj)
 }
 

@@ -1,6 +1,6 @@
-webpackJsonp([2],{
+webpackJsonp([11],{
 
-/***/ 578:
+/***/ 612:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13,11 +13,11 @@ webpackJsonp([2],{
 
 	var _BaseController2 = _interopRequireDefault(_BaseController);
 
-	var _view = __webpack_require__(579);
+	var _view = __webpack_require__(613);
 
 	var _view2 = _interopRequireDefault(_view);
 
-	var _model = __webpack_require__(580);
+	var _model = __webpack_require__(614);
 
 	var actions = _interopRequireWildcard(_model);
 
@@ -49,63 +49,63 @@ webpackJsonp([2],{
 	            args[_key] = arguments[_key];
 	        }
 
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = _class.__proto__ || Object.getPrototypeOf(_class)).call.apply(_ref, [this].concat(args))), _this), _this.name = 'List', _this.View = _view2.default, _this.actions = actions, _this.initialState = {
-	            topics: [],
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = _class.__proto__ || Object.getPrototypeOf(_class)).call.apply(_ref, [this].concat(args))), _this), _this.name = 'Message', _this.needLogin = true, _this.View = _view2.default, _this.actions = actions, _this.initialState = {
 	            showMenu: false,
-	            searchKey: {
-	                page: 1,
-	                limit: 20,
-	                tab: 'all',
-	                mdrender: true
-	            },
-	            userInfo: {}
-	        }, _this.isFetching = false, _this.methods = {
+	            user: {},
+	            selectItem: 'hasnot_read',
+	            currentData: []
+	        }, _this.methods = {
 	            openMenu: _methods.openMenu,
 	            closeMenu: _methods.closeMenu,
-	            handleScroll: function handleScroll() {
+
+	            changeItem: function changeItem(_ref2) {
+	                var currentTarget = _ref2.currentTarget;
+	                var UPDATE_FIELD = this.store.actions.UPDATE_FIELD;
+
+	                var selectItem = currentTarget.getAttribute('data-type');
+
+	                UPDATE_FIELD({
+	                    key: 'selectItem',
+	                    value: selectItem
+	                });
+	            },
+	            markAll: function markAll() {
 	                var _this2 = this;
 
 	                return _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-	                    var _store$getState, showMenu, scrollHeight, pageHeight, FETCH_NEXT_TOPICS;
+	                    var _store$actions, MARK_ALL_MESSAGES, INIT;
 
 	                    return regeneratorRuntime.wrap(function _callee$(_context) {
 	                        while (1) {
 	                            switch (_context.prev = _context.next) {
 	                                case 0:
-	                                    _store$getState = _this2.store.getState();
-	                                    showMenu = _store$getState.showMenu;
+	                                    _store$actions = _this2.store.actions;
+	                                    MARK_ALL_MESSAGES = _store$actions.MARK_ALL_MESSAGES;
+	                                    INIT = _store$actions.INIT;
+	                                    _context.prev = 3;
+	                                    _context.next = 6;
+	                                    return MARK_ALL_MESSAGES();
 
-	                                    if (!(_this2.isFetching || showMenu)) {
-	                                        _context.next = 4;
-	                                        break;
-	                                    }
+	                                case 6:
+	                                    _context.next = 8;
+	                                    return INIT();
 
-	                                    return _context.abrupt('return');
+	                                case 8:
+	                                    _context.next = 13;
+	                                    break;
 
-	                                case 4:
-	                                    scrollHeight = window.innerHeight + window.scrollY;
-	                                    pageHeight = document.body.scrollHeight || document.documentElement.scrollHeight;
+	                                case 10:
+	                                    _context.prev = 10;
+	                                    _context.t0 = _context['catch'](3);
 
-	                                    if (!(pageHeight - scrollHeight <= 200)) {
-	                                        _context.next = 12;
-	                                        break;
-	                                    }
+	                                    alert(_context.t0.message);
 
-	                                    FETCH_NEXT_TOPICS = _this2.store.actions.FETCH_NEXT_TOPICS;
-
-	                                    _this2.isFetching = true;
-	                                    _context.next = 11;
-	                                    return FETCH_NEXT_TOPICS();
-
-	                                case 11:
-	                                    _this2.isFetching = false;
-
-	                                case 12:
+	                                case 13:
 	                                case 'end':
 	                                    return _context.stop();
 	                            }
 	                        }
-	                    }, _callee, _this2);
+	                    }, _callee, _this2, [[3, 10]]);
 	                }))();
 	            }
 	        }, _temp), _possibleConstructorReturn(_this, _ret);

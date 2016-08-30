@@ -1,23 +1,28 @@
 /**
  * actions of model
  */
-import querystring from 'querystring'
-import api from '../../api'
+import { getTopics } from '../../service'
 
 export let INIT = async (state) => {
-	let { searchKey, topics } = state
+	let { searchKey, topics, location } = state
 
 	if (topics.length > 0) {
 		return state
 	}
 
-	let search = querystring.stringify(searchKey)
-	let response = await fetch(`${api.topics()}?${search}`)
-	let { data } = await response.json()
+	if (location.query.tab) {
+		searchKey = {
+			...searchKey,
+			tab: location.query.tab,
+		}
+	}
+
+	let { data } = await getTopics(searchKey)
 
 	return {
 		...state,
 		topics: data,
+		searchKey,
 	}
 }
 
@@ -29,9 +34,7 @@ export let FETCH_NEXT_TOPICS = async (state) => {
 		page: searchKey.page + 1,
 	}
 
-	let search = querystring.stringify(searchKey)
-	let response = await fetch(`${api.topics()}?${search}`)
-	let { data } = await response.json()
+	let { data } = await getTopics(searchKey)
 
 	topics = topics.concat(data)
 
@@ -42,9 +45,12 @@ export let FETCH_NEXT_TOPICS = async (state) => {
 	}
 }
 
-export let SET_MENU_STATUS = (state, showMenu = false) => {
+export let UPDATE_FIELD = (state, { key, value }) => {
+	if (state[key] === value) {
+		return state
+	}
 	return {
 		...state,
-		showMenu,
+		[key]: value,
 	}
 }

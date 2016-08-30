@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import classnames from 'classnames'
-import { addClassName } from '../lib/hoc'
+import { addClassName } from '../share/hoc'
 import Menu from './Menu'
 import Link from './Link'
 
@@ -10,7 +10,7 @@ let settings = {
 	className: 'scroll-hide',
 }
 
-export default addClassName(settings, Header)
+export default addClassName(settings)(Header)
 
 
 function Header(props) {
@@ -27,7 +27,7 @@ function Header(props) {
 	} = props
 	let headClassName = classnames({
 		'show': showMenu && fixHead,
-		'fix-head': fixHead,
+		'fix-header': fixHead,
 		'no-fix': !fixHead
 	})
 	return (
@@ -54,6 +54,7 @@ function Header(props) {
 					showMenu={showMenu}
 					userInfo={userInfo}
 					location={location}
+					closeMenu={closeMenu}
 				/>
 			}
 			</div>

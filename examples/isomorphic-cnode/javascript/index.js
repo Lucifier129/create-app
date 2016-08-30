@@ -11,7 +11,10 @@ const webpackLoader = (url) => (
 
 const viewEngine = {
 	render(component, container) {
-		return ReactDOM.render(component, container)
+		console.time('render')
+		let result = ReactDOM.render(component, container)
+		console.timeEnd('render')
+		return result
 	},
 }
 

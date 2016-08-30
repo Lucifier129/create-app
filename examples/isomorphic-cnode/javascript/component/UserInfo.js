@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
+import { purify } from '../share/hoc'
 import Link from './Link'
 
-export default function UserInfo({ location, userInfo }) {
+export default purify()(UserInfo)
+
+function UserInfo({ location, userInfo }) {
 	return (
 		<div className="user-info">
 		{ userInfo && !!userInfo.loginname
@@ -13,6 +16,11 @@ export default function UserInfo({ location, userInfo }) {
 }
 
 function Login({ location }) {
+
+	if (location.pathname === '/login') {
+		return null
+	}
+
 	let currentPath = `${location.pathname}${location.search}${location.hash}`
 	let targetPath = `/login?redirect=${currentPath}`
 	return (

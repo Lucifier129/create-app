@@ -1,6 +1,7 @@
-import Controller from '../../lib/BaseController'
+import Controller from '../../share/BaseController'
 import View from './view'
 import * as actions from './model'
+import { openMenu, closeMenu } from '../../share/methods'
 
 export default class extends Controller {
     name = 'List'
@@ -8,7 +9,7 @@ export default class extends Controller {
     actions = actions
     initialState = {
     	topics: [],
-    	showMenu: false,
+        showMenu: false,
         searchKey: {
             page: 1,
             limit: 20,
@@ -17,24 +18,24 @@ export default class extends Controller {
         },
         userInfo: {},
     }
-    methods = {
-        openMenu() {
-        	let { SET_MENU_STATUS } = this.store.actions
-            
-        	SET_MENU_STATUS(true)
-        },
-        closeMenu() {
-        	let { SET_MENU_STATUS } = this.store.actions
 
-        	SET_MENU_STATUS(false)
-        },
-        handleScroll() {
-            let { FETCH_NEXT_TOPICS } = this.store.actions
+    isFetching = false
+    methods = {
+        openMenu,
+        closeMenu,
+        async handleScroll() {
+            let { showMenu } = this.store.getState()
+            if (this.isFetching || showMenu) {
+                return
+            }
             let scrollHeight = window.innerHeight + window.scrollY
-            let pageHeight = document.body.clientHeight + document.body.scrollHeight
+            let pageHeight = document.body.scrollHeight || document.documentElement.scrollHeight
 
             if (pageHeight - scrollHeight <= 200) {
-                FETCH_NEXT_TOPICS()
+                let { FETCH_NEXT_TOPICS } = this.store.actions
+                this.isFetching = true
+                await FETCH_NEXT_TOPICS()
+                this.isFetching = false
             }
         },
     }

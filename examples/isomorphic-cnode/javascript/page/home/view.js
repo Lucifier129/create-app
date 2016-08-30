@@ -1,12 +1,12 @@
 // view
 import React, { Component } from 'react'
-import { getLastTimeStr, getTabClassName, getTabStr, getTitleStr } from '../../lib/util'
-import { connectScroll } from '../../lib/hoc'
+import { getLastTimeStr, getTabClassName, getTabStr, getTitleStr } from '../../share/util'
+import { connectScroll, purify } from '../../share/hoc'
 import Header from '../../component/Header'
 import Link from '../../component/Link'
 import BackToTop from '../../component/BackToTop'
 
-export default connectScroll(['methods', 'handleScroll'], View)
+export default connectScroll(['methods', 'handleScroll'])(View)
 
 function View({ state, methods }) {
 	let {
@@ -16,6 +16,7 @@ function View({ state, methods }) {
 		userInfo,
 		searchKey,
 	} = state
+
 	let { openMenu, closeMenu } = methods
 	return (
 		<div>
@@ -32,7 +33,7 @@ function View({ state, methods }) {
 		    <section id="page">
 		        <ul className="posts-list">
 		        {
-		        	topics.map(topic => <Topic {...topic} key={topic.id} />)
+		        	topics.map(topic => <PureTopic {...topic} key={topic.id} />)
 		        }
 		        </ul>
 		    </section>
@@ -40,6 +41,8 @@ function View({ state, methods }) {
 		</div>
 	)
 }
+
+let PureTopic = purify()(Topic)
 
 function Topic(props) {
 	let {

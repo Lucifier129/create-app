@@ -3,14 +3,14 @@ import classnames from 'classnames'
 import Link from './Link'
 import UserInfo from './UserInfo'
 
-export default function Menu({ location, userInfo, showMenu }) {
+export default function Menu({ location, userInfo, showMenu, closeMenu }) {
 	let className = classnames({
 	    'nav-list': true,
 	    'show': showMenu
 	})
 
 	return (
-		<section id="sideBar" className={className}>
+		<section id="sideBar" className={className} onClick={closeMenu}>
 			<UserInfo location={location} userInfo={userInfo} />
 	        <ul className="list-ul">
 	            <Link

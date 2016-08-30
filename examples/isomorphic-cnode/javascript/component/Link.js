@@ -22,19 +22,18 @@ export default class Link extends Component {
 		let { onClick, replace, to } = this.props
 		let { goTo, goReplace, location } = this.context
 		let { basename = ''} = location
-		let href = to ? `${basename}${to}` : null
 
 		onClick && onClick(event)
 		
-		if (!href) {
+		if (!to) {
 			return
 		}
 
 		event.preventDefault()
 		if (replace === true) {
-			goReplace(href)
+			goReplace(to)
 		} else {
-			goTo(href)
+			goTo(to)
 		}
 	}
 }

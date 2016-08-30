@@ -38,18 +38,22 @@ export default function createApp(appSettings) {
         }
     }
 
-    function render(targetPath) {
-        let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+    function ignoreInput(input) {
+        if (!currentLocation) {
+            return false
+        }
+        let currentUrl = currentLocation.pathname + currentLocation.search + currentLocation.hash
+        let targetUrl = typeof input === 'string' ? input : input.pathname + input.search + input.hash
+        return currentUrl === targetUrl
+    }
 
-        if (currentLocation) {
-            let isEqualPathname = currentLocation.pathname === location.pathname
-            let isEqualSearch = currentLocation.search === location.search
-            let isEqualHash = currentLocation.hash === location.hash
-            if (isEqualPathname && isEqualSearch && isEqualHash) {
-                return
-            }
+    function render(targetPath) {
+        if (ignoreInput(targetPath)) {
+            return
         }
 
+        let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+        context.prevLocation = currentLocation
         currentLocation = location
 
         let matches = matcher(location.pathname)
@@ -99,9 +103,15 @@ export default function createApp(appSettings) {
 
             // history apis
             goReplace(targetPath) {
+                if (ignoreInput(targetPath)) {
+                    return
+                }
                 history.replace(targetPath)
             }
             goTo(targetPath) {
+                if (ignoreInput(targetPath)) {
+                    return
+                }
                 history.push(targetPath)
             }
             goIndex(index) {
@@ -167,11 +177,17 @@ export default function createApp(appSettings) {
 
             let component = controller.init()
 
+
             // if controller.init return false value, do nothing
             if (!component) {
                 return null
             } else if (_.isThenable(component)) {
-                return component.then(renderToContainer)
+                return component.then(result => {
+                    if (currentLocation !== location) {
+                        return
+                    }
+                    return renderToContainer(result)
+                })
             } else {
                 return renderToContainer(component)
             }
