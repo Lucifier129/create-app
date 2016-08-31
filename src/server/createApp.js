@@ -114,6 +114,7 @@ export default function createApp(appSettings) {
             return render(requestPath, callback)
         } catch (error) {
             callback && callback(error)
+            return Promise.reject(error)
         }
     }
 
