@@ -66,6 +66,7 @@ export default function createApp(appSettings) {
 
         location.pattern = path
         location.params = params
+        location.raw = history.createPath(location)
 
         let controllerType = typeof controller
         let initController = createInitController(location)
@@ -99,6 +100,7 @@ export default function createApp(appSettings) {
                 super(location, context)
                 this.location = this.location || location
                 this.context = this.context || context
+                this.history = history
             }
 
             // history apis

@@ -29,7 +29,7 @@ export default function createApp(appSettings) {
 
         if (!matches) {
             let error = new Error(`Did not match any route with path:${requestPath}`)
-            callback(error)
+            callback && callback(error)
             return Promise.reject(error)
         }
 
@@ -89,12 +89,10 @@ export default function createApp(appSettings) {
             let FinalController = getController(location.pattern, Controller)
             let controller = new FinalController(location, context)
             let component = controller.init()
-
             if (_.isThenable(component)) {
                 let promise = component.then(renderToString)
                 if (callback) {
-                    return promise
-                        .then(result => callback(null, result), callback)
+                    promise.then(result => callback(null, result), callback)
                 }
                 return promise
             }
@@ -115,7 +113,7 @@ export default function createApp(appSettings) {
         try {
             return render(requestPath, callback)
         } catch (error) {
-            callback(error)
+            callback && callback(error)
         }
     }
 
