@@ -1,13 +1,13 @@
 {
   "name": "create-app",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "configuring once, rendering both client and server.",
   "browser": "lib/client/index.js",
   "main": "lib/server/index.js",
   "scripts": {
     "test": "karma start",
     "build:lib": "babel ./src --out-dir ./lib",
-    "build": "node build.js & npm run build:lib",
+    "build": "npm run build:lib",
     "deploy": "gulp deploy",
     "prepublish": "npm run build"
   },
