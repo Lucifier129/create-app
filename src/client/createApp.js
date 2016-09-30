@@ -150,6 +150,13 @@ export default function createApp(appSettings) {
             if (currentLocation !== location) {
                 return
             }
+            if ((currentController instanceof Controller) && currentController.update) {
+                currentController.location = location
+                currentController.context = context
+                currentController.update()
+                return
+            }
+
             destroyController()
             let FinalController = getController(location.pattern, Controller)
             let controller = currentController = new FinalController(location, context)

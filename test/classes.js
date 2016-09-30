@@ -8,7 +8,14 @@ export class Home {
     init() {
         return this.render()
     }
+    update() {
+        this.isUpdate = true
+        this.refreshView()
+    }
     render() {
+        if (this.isUpdate) {
+            return 'home_update'
+        }
         return 'home'
     }
 }

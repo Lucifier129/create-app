@@ -212,6 +212,27 @@ function createTest() {
         app.history.push('/')
     })
 
+    it('should call update method when to location share the same controller and controller.update is existed', (done) => {
+        let steps = [
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('home')
+                expect(location.pathname).toEqual('/')
+                app.history.push('/home?test=1')
+            },
+            location => {
+                let content = document.body.innerHTML
+                expect(content).toEqual('home_update')
+                expect(location.search).toEqual('?test=1')
+                expect(location.query.test).toEqual(1)
+                expect(location.pathname).toEqual('/home')
+                done()
+            }
+        ]
+        execSteps(steps, app.subscribe, done)
+        app.history.push('/')
+    })
+
     it('should wait for promise resolved when controller.init return promise', (done) => {
         let start
         let steps = [
