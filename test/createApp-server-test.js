@@ -155,50 +155,65 @@ function createTest() {
                 done()
             }
         }
-        app.render('/', (error, content) => {
+        app.render('/', (error, {content}) => {
             expect(content).toEqual('home')
             cleanup()
         })
-        app.render('/list', (error, content) => {
+        app.render('/list', (error, {content}) => {
             expect(content).toEqual('list')
             cleanup()
         })
-        app.render('/detail', (error, content) => {
+        app.render('/detail', (error, {content}) => {
             expect(content).toEqual('detail')
             cleanup()
         })
-        app.render('/notfound', (error, content) => {
+        app.render('/notfound', (error, {content}) => {
             expect(content).toEqual('not found')
             cleanup()
         })
-        app.render(`/random-${Math.random().toString(36).substr(2)}`, (error, content) => {
+        app.render(`/random-${Math.random().toString(36).substr(2)}`, (error, {content}) => {
             expect(content).toEqual('not found')
             cleanup()
         })
     })
     it('should return string with a url by promise style', done => {
         let home = Promise.resolve(app.render('/'))
-            .then(content => {
+            .then(({content}) => {
                 expect(content).toEqual('home')
             })
         let list = Promise.resolve(app.render('/list'))
-            .then(content => {
+            .then(({content}) => {
                 expect(content).toEqual('list')
             })
         let detail = Promise.resolve(app.render('/detail'))
-            .then(content => {
+            .then(({content}) => {
                 expect(content).toEqual('detail')
             })
         let notfound = Promise.resolve(app.render('/notfound'))
-            .then(content => {
+            .then(({content}) => {
                 expect(content).toEqual('not found')
             })
         let random = Promise.resolve(app.render(`/random-${Math.random().toString(36).substr(2)}`))
-            .then(content => {
+            .then(({content}) => {
                 expect(content).toEqual('not found')
             })
         Promise.all([home, list, detail, notfound, random])
             .then(() => done())
-            .catch(console.error.bind(console))
+            .catch(error => console.error(error.stack))
+    })
+    it('should support inject context to app.render method', done => {
+        let home = Promise.resolve(app.render('/', { test: 1 }))
+            .then(({content, controller}) => {
+                expect(controller.context.test).toEqual(1)
+                expect(content).toEqual('home')
+            })
+        let list = Promise.resolve(app.render('/list', { test: 2 }))
+            .then(({content, controller}) => {
+                expect(controller.context.test).toEqual(2)
+                expect(content).toEqual('list')
+            })
+        Promise.all([home, list])
+            .then(() => done())
+            .catch(error => console.error(error.stack))
     })
 }

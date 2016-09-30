@@ -23,13 +23,52 @@ export default function createApp(appSettings) {
     let matcher = createMatcher(routes)
     let history = createHistory(finalAppSettings)
 
-    function render(requestPath, callback) {
+    function render(requestPath, injectContext, callback) {
+        let result = null
+
+        if (typeof injectContext === 'function') {
+            callback = injectContext
+            injectContext = null
+        }
+
+        try {
+            result = initController(fetchController(requestPath, injectContext))
+        } catch(error) {
+            callback && callback(error)
+            return Promise.reject(error)
+        }
+        
+        if (_.isThenable(result)) {
+            if (callback) {
+                result.then(result => callback(null, result), callback)
+            }
+            return result
+        }
+        callback && callback(null, result)
+        return result
+    }
+
+    function initController(controller) {
+        if (_.isThenable(controller)) {
+            return controller.then(initController)
+        }
+        let component = controller.init()
+        if (_.isThenable(component)) {
+            return component.then(component => {
+                let content = renderToString(component)
+                return { content, controller }
+            })
+        }
+        let content = renderToString(component)
+        return { content, controller }
+    }
+
+    function fetchController(requestPath, injectContext) {
         let location = history.createLocation(requestPath)
         let matches = matcher(location.pathname)
 
         if (!matches) {
             let error = new Error(`Did not match any route with path:${requestPath}`)
-            callback && callback(error)
             return Promise.reject(error)
         }
 
@@ -37,10 +76,9 @@ export default function createApp(appSettings) {
 
         location.pattern = path
         location.params = params
+        location.raw = requestPath
 
-        let initController = createInitController(location, callback)
         let controllerType = typeof controller
-
         let Controller = null
 
         if (controllerType === 'string') {
@@ -50,17 +88,27 @@ export default function createApp(appSettings) {
         } else {
             throw new Error('controller must be string or function')
         }
+        
+        let finalContext = {
+            ...context,
+            ...injectContext,
+        }
 
         if (_.isThenable(Controller)) {
-            return Controller.then(initController)
-        } else {
-            return initController(Controller)
+            return Controller.then(Controller => {
+                let Wrapper = wrapController(location.pattern, Controller)
+                return new Wrapper(location, finalContext)
+            })
         }
+
+        let Wrapper = wrapController(location.pattern, Controller)
+        return new Wrapper(location, finalContext)
     }
+
 
     let controllers = {}
 
-    function getController(pattern, Controller) {
+    function wrapController(pattern, Controller) {
         if (controllers.hasOwnProperty(pattern)) {
             return controllers[pattern]
         }
@@ -68,58 +116,30 @@ export default function createApp(appSettings) {
         // implement the controller's life-cycle and useful methods
         class WrapperController extends Controller {
             constructor(location, context) {
-                    super(location, context)
-                    this.location = this.location || location
-                    this.context = this.context || context
-                }
-                // history apis
-            goReplace(targetPath) {
-                return render(targetPath)
+                super(location, context)
+                this.location = this.location || location
+                this.context = this.context || context
             }
+
+            // history apis
             goTo(targetPath) {
-                return render(targetPath)
+                let controller = fetchController(targetPath)
+                return controller.init()
+            }
+            goReplace(targetPath) {
+                return this.goTo(targetPath)
             }
         }
         controllers[pattern] = WrapperController
         return WrapperController
     }
 
-    function createInitController(location, callback) {
-        return function initController(Controller) {
-            let FinalController = getController(location.pattern, Controller)
-            let controller = new FinalController(location, context)
-            let component = controller.init()
-            if (_.isThenable(component)) {
-                let promise = component.then(renderToString)
-                if (callback) {
-                    promise.then(result => callback(null, result), callback)
-                }
-                return promise
-            }
-
-            let result = renderToString(component)
-            if (callback) {
-                callback(null, result)
-            }
-            return result
-        }
-    }
-
     function renderToString(component) {
         return viewEngine.render(component)
     }
 
-    function publicRender(requestPath, callback) {
-        try {
-            return render(requestPath, callback)
-        } catch (error) {
-            callback && callback(error)
-            return Promise.reject(error)
-        }
-    }
-
     return {
-        render: publicRender,
+        render,
         history,
     }
 }

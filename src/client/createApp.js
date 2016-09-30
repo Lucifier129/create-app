@@ -66,7 +66,7 @@ export default function createApp(appSettings) {
 
         location.pattern = path
         location.params = params
-        location.raw = history.createPath(location)
+        location.raw = location.pathname + location.search + location.hash
 
         let controllerType = typeof controller
         let initController = createInitController(location)
@@ -181,7 +181,7 @@ export default function createApp(appSettings) {
 
 
             // if controller.init return false value, do nothing
-            if (!component) {
+            if (component == null) {
                 return null
             } else if (_.isThenable(component)) {
                 return component.then(result => {
