@@ -53,20 +53,20 @@ function describeTest(type) {
         })
     }
 
-    describe('works without loader', () => {
+    describe('works without custom loader', () => {
         beforeEach(() => {
             let routes = [{
                 path: '/(home|debug.html)?',
-                controller: () => Home,
+                controller: Home,
             }, {
                 path: '/list',
-                controller: () => List,
+                controller: List,
             }, {
                 path: '/detail',
-                controller: () => Detail,
+                controller: Detail,
             }, {
                 path: '*',
-                controller: () => NotFound,
+                controller: NotFound,
             }]
 
             return initApp({
@@ -76,7 +76,7 @@ function describeTest(type) {
         createTest()
     })
 
-    describe('works with loader', () => {
+    describe('works with custom loader', () => {
         let routes = [{
             path: '/(home|debug.html)?',
             controller: 'home',
@@ -91,7 +91,7 @@ function describeTest(type) {
             controller: '*',
         }]
 
-        describe('callback style at sync mode', () => {
+        describe('sync mode', () => {
             beforeEach(() => {
                 let loader = (controller) => {
                     let Controller
@@ -118,7 +118,7 @@ function describeTest(type) {
             createTest()
         })
 
-        describe('callback style at async mode', () => {
+        describe('async mode', () => {
             beforeEach(() => {
                 let loader = (controller) => {
                     let Controller

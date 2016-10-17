@@ -7,5 +7,6 @@ export const defaultAppSettings = {
 	container: '#container',
 	basename: '',
 	context: {},
-	type: 'createHistory',
+	type: 'createHashHistory',
+	loader: value => value,
 }

@@ -70,16 +70,7 @@ export default function createApp(appSettings) {
 
         let controllerType = typeof controller
         let initController = createInitController(location)
-
-        let Controller = null
-
-        if (controllerType === 'string') {
-            Controller = loader(controller, location)
-        } else if (controllerType === 'function') {
-            Controller = controller(location, loader)
-        } else {
-            throw new Error('controller must be string or function')
-        }
+        let Controller = loader(controller, location, context)
 
         if (_.isThenable(Controller)) {
             return Controller.then(initController)

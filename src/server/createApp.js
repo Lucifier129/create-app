@@ -79,16 +79,7 @@ export default function createApp(appSettings) {
         location.raw = requestPath
 
         let controllerType = typeof controller
-        let Controller = null
-
-        if (controllerType === 'string') {
-            Controller = loader(controller, location)
-        } else if (controllerType === 'function') {
-            Controller = controller(location, loader)
-        } else {
-            throw new Error('controller must be string or function')
-        }
-        
+        let Controller = loader(controller, location, context)
         let finalContext = {
             ...context,
             ...injectContext,

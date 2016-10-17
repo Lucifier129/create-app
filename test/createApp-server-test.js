@@ -23,21 +23,21 @@ describe('createApp-server', () => {
         })
     }
 
-    describe('feature: works without loader', () => {
+    describe('feature: works without custom loader', () => {
         describe('sync mode', () => {
             beforeEach(() => {
                 let routes = [{
                     path: '/(home|debug.html)?',
-                    controller: () => Home,
+                    controller: Home,
                 }, {
                     path: '/list',
-                    controller: () => List,
+                    controller: List,
                 }, {
                     path: '/detail',
-                    controller: () => Detail,
+                    controller: Detail,
                 }, {
                     path: '*',
-                    controller: () => NotFound,
+                    controller: NotFound,
                 }]
 
                 return initApp({
@@ -50,16 +50,16 @@ describe('createApp-server', () => {
             beforeEach(() => {
                 let routes = [{
                     path: '/(home|debug.html)?',
-                    controller: () => Promise.resolve(Home),
+                    controller: Promise.resolve(Home),
                 }, {
                     path: '/list',
-                    controller: () => Promise.resolve(List),
+                    controller: Promise.resolve(List),
                 }, {
                     path: '/detail',
-                    controller: () => Promise.resolve(Detail),
+                    controller: Promise.resolve(Detail),
                 }, {
                     path: '*',
-                    controller: () => Promise.resolve(NotFound),
+                    controller: Promise.resolve(NotFound),
                 }]
 
                 return initApp({
@@ -70,7 +70,7 @@ describe('createApp-server', () => {
         })
     })
 
-    describe('feature: works with loader', () => {
+    describe('feature: works with custom loader', () => {
         let routes = [{
             path: '/(home|debug.html)?',
             controller: 'home',
