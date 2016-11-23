@@ -3,7 +3,7 @@ var path = require('path');
 
 module.exports = {
     watch: true,
-    devtool: 'source-map',
+    // devtool: 'source-map',
     entry: {
         'simple-spa': ['babel-polyfill', './examples/simple-spa/src'],
     },

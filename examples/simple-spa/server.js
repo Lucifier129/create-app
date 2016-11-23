@@ -1,83 +1,66 @@
 import http from 'http'
 import fs from 'fs'
 import path from 'path'
-import url from 'url'
-import querystring from 'querystring'
-
-import routes from './src/routes'
 import createApp from '../../src/server'
-import ReactDOMServer from 'react-dom/server'
+import {renderToString} from 'react-dom/server'
+import routes from './src/routes'
 
-var finalRoutes = routes.map(route => {
-	var controller = path.join(__dirname, 'src', route.controller)
-	return {
-		path: route.path,
-		controller: controller,
-	}
+let appSettings = {
+    basename: '/examples/simple-spa',
+    viewEngine: {
+        render: renderToString
+    },
+    loader: module => module.default || module,
+    routes: routes,
+}
+
+let app = createApp(appSettings)
+
+let indexFile = fs.readFileSync(path.join(__dirname, './index.html')).toString()
+
+let server = http.createServer(async function(req, res) {
+
+    res.on('error', console.error.bind(console))
+
+    let url = req.url.replace(appSettings.basename, '')
+
+    // handle javascript file
+    if (/\.js/.test(req.url)) {
+        res.writeHead(200, {
+            'Content-Type': 'text/javascript'
+        })
+        let file = path.join(__dirname, url)
+        readFile(file).pipe(res)
+        return
+    }
+
+    // handle page
+    try {
+    	let { controller, content } = await app.render(url)
+    	res.writeHeader(200, {
+            'Content-Type': 'text/html'
+        })
+        let html = render(content)
+    	res.end(html)
+    } catch(error) {
+    	res.status(500)
+    	res.end(error.stack)
+    }
 })
 
-var commonjsLoader = url => {
-	var module = require(url)
-	return module.default || module
-}
-
-var viewEngine = {
-	render: ReactDOMServer.renderToString
-}
-var basename = '/examples/simple-spa'
-var appSettings = {
-	basename: basename,
-	viewEngine: viewEngine,
-	loader: commonjsLoader,
-	routes: finalRoutes,
-}
-
-var app = createApp(appSettings)
-
-var indexFile = fs.readFileSync('index.html').toString()
-
-var server = http.createServer(function(req, res) {
-
-	res.on('error', console.error.bind(console))
-
-	// handle javascript file
-	if (/\.js/.test(req.url)) {
-		var filepath = req.url.replace(basename, '')
-		var file = path.join(__dirname, filepath)
-		res.writeHead(200, {
-			'Content-Type': 'text/javascript'
-		})
-		readFile(file).pipe(res)
-		return
-	}
-
-
-	// handle page
-	app.render(req.url, (error, content) => {
-		if (error) {
-			// handle 404
-			res.writeHead(404)
-			res.end(JSON.stringify(error.message))
-			console.log(error)
-			return
-		}
-		res.writeHeader(200, {
-			'Content-Type': 'text/html'
-		})
-		res.end(render(content))
-	})
-})
-
-var port = 3002
+let port = 3002
 
 server.listen(port)
 
 console.log(`server start at ${port}`)
 
 function readFile(file) {
-	return fs.createReadStream(file)
+    return fs.createReadStream(file)
 }
 
 function render(content) {
-	return indexFile.replace(`<div id="container"></div>`, `<div id="container">${content}</div>`)
+    return indexFile.replace(
+    	`<div id="container"></div>`,
+    	`<div id="container">${content}</div>`
+    )
 }

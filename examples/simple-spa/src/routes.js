@@ -5,15 +5,15 @@
 export default [
 	{
 		path: '/(home)?',
-		controller: './home/controller'
+		controller: require('./home/controller'),
 	}, {
 		path: '/list',
-		controller: './list/controller'
+		controller: require('./list/controller'),
 	}, {
 		path: '/detail',
-		controller: './detail/controller'
+		controller: require('./detail/controller'),
 	},  {
 		path: '*',
-		controller: './detail/controller'
+		controller: require('./detail/controller'),
 	}
 ]
