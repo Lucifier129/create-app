@@ -18,6 +18,7 @@ export default function createApp(appSettings) {
         viewEngine,
         loader,
         context,
+        basename = '',
     } = finalAppSettings
 
     let matcher = createMatcher(routes)
@@ -112,13 +113,24 @@ export default function createApp(appSettings) {
                 this.context = this.context || context
             }
 
-            // history apis
+            // history apis in server just redirect the url
             goTo(targetPath) {
-                let controller = fetchController(targetPath)
-                return controller.init()
+                if (!_.isAbsoluteUrl(targetPath)) {
+                    targetPath = basename + targetPath
+                }
+                let { redirect } = this.context
+                if (redirect) {
+                    redirect(targetPath)
+                }
             }
             goReplace(targetPath) {
-                return this.goTo(targetPath)
+                if (!_.isAbsoluteUrl(targetPath)) {
+                    targetPath = basename + targetPath
+                }
+                let { redirect } = this.context
+                if (redirect) {
+                    redirect(targetPath)
+                }
             }
         }
         controllers[pattern] = WrapperController

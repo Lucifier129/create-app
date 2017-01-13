@@ -96,12 +96,22 @@ export default function createApp(appSettings) {
 
             // history apis
             goReplace(targetPath) {
+                if (_.isAbsoluteUrl(targetPath)) {
+                    let $location = this.context.location || location
+                    $location.href = targetPath
+                    return
+                }
                 if (ignoreInput(targetPath)) {
                     return
                 }
                 history.replace(targetPath)
             }
             goTo(targetPath) {
+                if (_.isAbsoluteUrl(targetPath)) {
+                    let $location = this.context.location || location
+                    $location.href = targetPath
+                    return
+                }
                 if (ignoreInput(targetPath)) {
                     return
                 }
@@ -177,16 +187,17 @@ export default function createApp(appSettings) {
 
             let component = controller.init()
 
-
             // if controller.init return false value, do nothing
             if (component == null) {
                 return null
             } else if (_.isThenable(component)) {
                 return component.then(result => {
                     if (currentLocation !== location) {
-                        return
+                        return null
                     }
-                    return renderToContainer(result)
+                    if (result != null) {
+                        return renderToContainer(result)
+                    }
                 })
             } else {
                 return renderToContainer(component)

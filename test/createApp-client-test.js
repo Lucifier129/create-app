@@ -4,6 +4,7 @@ import createApp from '../src/client'
 import { getController, Home, List, Detail, NotFound } from './classes'
 
 let app
+let context
 
 describe('createApp-client', () => {
 
@@ -39,15 +40,21 @@ function describeTest(type) {
             window.location.hash = ''
         }
 
+        context = {
+            location: {}
+        }
+
         app = createApp({
             container: 'body',
+            basename: '/abc',
             ...settings,
             type,
+            context,
         })
         return new Promise(resolve => {
             // do not match current location
             app.start(resolve, false)
-            let targetPath = `/random${Math.random().toString(36).substr(2)}`
+            let targetPath = `/random${Math.random().toString(36).substr(2, 6)}`
                 // render random location by default
             app.history.push(targetPath)
         })
@@ -246,8 +253,8 @@ function createTest() {
             location => {
                 let content = document.body.innerHTML
                 expect(location.pathname).toEqual('/list')
-                expect(new Date() - start >= 50).toBe(true)
                 expect(content).toEqual('list')
+                expect(new Date() - start >= 50).toBe(true)
                 done()
             }
         ]
@@ -287,5 +294,11 @@ function createTest() {
             expect(count).toBe(1)
         }
         getController().goTo('/detail')
+    })
+
+    it('should go to the another url', () => {
+        context.location.href = 'x'
+        getController().goTo('http://kanxinqing.cn/')
+        expect(context.location.href).toEqual('http://kanxinqing.cn/')
     })
 }
