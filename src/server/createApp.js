@@ -54,8 +54,16 @@ export default function createApp(appSettings) {
             return controller.then(initController)
         }
         let component = controller.init()
+
+        if (component == null) {
+            return { controller }
+        }
+
         if (_.isThenable(component)) {
             return component.then(component => {
+                if (component == null) {
+                    return { controller }
+                }
                 let content = renderToString(component)
                 return { content, controller }
             })
@@ -112,26 +120,6 @@ export default function createApp(appSettings) {
                 this.location = this.location || location
                 this.context = this.context || context
             }
-
-            // history apis in server just redirect the url
-            goTo(targetPath) {
-                if (!_.isAbsoluteUrl(targetPath)) {
-                    targetPath = basename + targetPath
-                }
-                let { redirect } = this.context
-                if (redirect) {
-                    redirect(targetPath)
-                }
-            }
-            goReplace(targetPath) {
-                if (!_.isAbsoluteUrl(targetPath)) {
-                    targetPath = basename + targetPath
-                }
-                let { redirect } = this.context
-                if (redirect) {
-                    redirect(targetPath)
-                }
-            }
         }
         controllers[pattern] = WrapperController
         return WrapperController
@@ -150,7 +138,9 @@ export default function createApp(appSettings) {
 
 function createHistory(settings) {
     let create = createMemoryHistory
-    create = History.useBasename(create)
+    if (settings.basename) {
+        create = History.useBasename(create)
+    }
     create = History.useQueries(create)
     return create(settings)
 }

@@ -1,6 +1,6 @@
 {
   "name": "create-app",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "configuring once, rendering both client and server.",
   "browser": "lib/client/index.js",
   "main": "lib/server/index.js",
@@ -60,7 +60,7 @@
     "webpack": "^1.12.2"
   },
   "dependencies": {
-    "create-history": "^1.0.0",
+    "create-history": "^1.0.1",
     "path-to-regexp": "^1.5.3"
   }
 }

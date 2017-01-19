@@ -38,20 +38,7 @@ export default function createApp(appSettings) {
         }
     }
 
-    function ignoreInput(input) {
-        if (!currentLocation) {
-            return false
-        }
-        let currentUrl = currentLocation.pathname + currentLocation.search + currentLocation.hash
-        let targetUrl = typeof input === 'string' ? input : input.pathname + input.search + input.hash
-        return currentUrl === targetUrl
-    }
-
     function render(targetPath) {
-        if (ignoreInput(targetPath)) {
-            return
-        }
-
         let location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
         context.prevLocation = currentLocation
         currentLocation = location
@@ -93,50 +80,14 @@ export default function createApp(appSettings) {
                 this.context = this.context || context
                 this.history = history
             }
-
-            // history apis
-            goReplace(targetPath) {
-                if (_.isAbsoluteUrl(targetPath)) {
-                    let $location = this.context.location || location
-                    $location.href = targetPath
-                    return
-                }
-                if (ignoreInput(targetPath)) {
-                    return
-                }
-                history.replace(targetPath)
-            }
-            goTo(targetPath) {
-                if (_.isAbsoluteUrl(targetPath)) {
-                    let $location = this.context.location || location
-                    $location.href = targetPath
-                    return
-                }
-                if (ignoreInput(targetPath)) {
-                    return
-                }
-                history.push(targetPath)
-            }
-            goIndex(index) {
-                history.go(index)
-            }
-            goBack() {
-                history.goBack()
-            }
-            goForward() {
-                history.goForward()
-            }
-
             // update view
             refreshView() {
                 renderToContainer(this.render())
             }
-
             // get container node
             getContainer() {
                 return getContainer()
             }
-
             // clear container
             clearContainer() {
                 clearContainer()
@@ -151,62 +102,33 @@ export default function createApp(appSettings) {
             if (currentLocation !== location) {
                 return
             }
-            if ((currentController instanceof Controller) && currentController.update) {
-                currentController.location = location
-                currentController.context = context
-                currentController.update()
-                return
-            }
 
             destroyController()
+
             let FinalController = getController(location.pattern, Controller)
             let controller = currentController = new FinalController(location, context)
-            let unlistenBeforeLeave = null
-            let unlistenBeforeUnload = null
-
-            if (controller.beforeLeave) {
-                let beforeLeave = controller.beforeLeave.bind(controller)
-                unlistenBeforeLeave = history.listenBefore(beforeLeave)
-            }
-
-            if (controller.beforeUnload) {
-                let beforeUnload = controller.beforeUnload.bind(controller)
-                unlistenBeforeUnload = history.listenBeforeUnload(beforeUnload)
-            }
-
-            controller.$unlisten = () => {
-                if (unlistenBeforeLeave) {
-                    unlistenBeforeLeave()
-                    unlistenBeforeLeave = null
-                }
-                if (unlistenBeforeUnload) {
-                    unlistenBeforeUnload()
-                    unlistenBeforeUnload = null
-                }
-            }
-
             let component = controller.init()
 
             // if controller.init return false value, do nothing
             if (component == null) {
                 return null
-            } else if (_.isThenable(component)) {
+            }
+
+            if (_.isThenable(component)) {
                 return component.then(result => {
-                    if (currentLocation !== location) {
+                    if (currentLocation !== location || result == null) {
                         return null
                     }
-                    if (result != null) {
-                        return renderToContainer(result)
-                    }
+                    return renderToContainer(result)
                 })
-            } else {
-                return renderToContainer(component)
             }
+
+            return renderToContainer(component)
         }
     }
 
     function renderToContainer(component) {
-        return viewEngine.render(component, getContainer(), currentLocation)
+        return viewEngine.render(component, getContainer())
     }
 
     function clearContainer() {
@@ -216,14 +138,10 @@ export default function createApp(appSettings) {
     }
 
     function destroyController() {
-        if (currentController) {
-            currentController.$unlisten()
-            if (currentController.destroy) {
-                currentController.destroy()
-            }
+        if (currentController && currentController.destroy) {
+            currentController.destroy()
             currentController = null
         }
-        clearContainer()
     }
 
     let listeners = []
@@ -293,7 +211,9 @@ export default function createApp(appSettings) {
 
 function createHistory(settings) {
     let create = History[settings.type]
-    create = History.useBasename(create)
+    if (settings.basename) {
+        create = History.useBasename(create)
+    }
     create = History.useBeforeUnload(create)
     create = History.useQueries(create)
     return create(settings)
