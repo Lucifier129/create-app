@@ -87,7 +87,6 @@ export default function createApp(appSettings) {
         location.params = params
         location.raw = requestPath
 
-        let controllerType = typeof controller
         let Controller = loader(controller, location, context)
         let finalContext = {
             ...context,
