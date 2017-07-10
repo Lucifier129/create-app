@@ -46,7 +46,9 @@ export default function createApp(appSettings) {
         let matches = matcher(location.pathname)
 
         if (!matches) {
-            throw new Error(`Did not match any route with pathname:${location.pathname}`)
+            let error = new Error(`Did not match any route with pathname:${location.pathname}`)
+            error.status = 404
+            throw error
         }
 
         let { path, params, controller } = matches

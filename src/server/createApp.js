@@ -78,6 +78,7 @@ export default function createApp(appSettings) {
 
         if (!matches) {
             let error = new Error(`Did not match any route with path:${requestPath}`)
+            error.status = 404
             return Promise.reject(error)
         }
 
