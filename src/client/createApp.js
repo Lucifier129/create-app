@@ -18,7 +18,13 @@ export default function createApp(appSettings) {
         loader,
         context,
         container,
+        cacheAmount,
     } = finalAppSettings
+
+    context = {
+        ...finalAppSettings.context,
+        ...appSettings.context,
+    }
 
     let history = createHistory(finalAppSettings)
     let matcher = createMatcher(routes)
@@ -26,6 +32,25 @@ export default function createApp(appSettings) {
     let currentLocation = null
     let unlisten = null
     let finalContainer = null
+
+
+    let cache = _.createCache(cacheAmount)
+
+    function saveControllerToCache(controller) {
+        if (controller.KeepAlive === true) {
+            cache.set(controller.location.raw, controller)
+        } else {
+            cache.remove(controller.location.raw)
+        }
+    }
+
+    function getControllerFromCache(location) {
+        return cache.get(location.raw)
+    }
+
+    function removeControllerFromCache(controller) {
+        cache.remove(controller.location.raw)
+    }
 
     function getContainer() {
         if (finalContainer) {
@@ -55,7 +80,7 @@ export default function createApp(appSettings) {
 
         location.pattern = path
         location.params = params
-        location.raw = location.pathname + location.search + location.hash
+        location.raw = location.pathname + location.search
 
         let controllerType = typeof controller
         let initController = createInitController(location)
@@ -94,6 +119,13 @@ export default function createApp(appSettings) {
             clearContainer() {
                 clearContainer()
             }
+            saveToCache() {
+                this.KeepAlive = true
+                saveControllerToCache(this)
+            }
+            removeFromCache() {
+                removeControllerFromCache(this)
+            }
         }
         controllers[pattern] = WrapperController
         return WrapperController
@@ -107,11 +139,21 @@ export default function createApp(appSettings) {
 
             destroyController()
 
-            let FinalController = getController(location.pattern, Controller)
-            let controller = currentController = new FinalController(location, context)
-            let component = controller.init()
+            let controller = currentController = getControllerFromCache(location)
+            let component = null
 
-            // if controller.init return false value, do nothing
+            if (controller) {
+                component = controller.restore(location, context)
+                controller.location = location
+                controller.context = context
+
+            } else {
+                let FinalController = getController(location.pattern, Controller)
+                controller = currentController = new FinalController(location, context)
+                component = controller.init()
+            }
+
+            // if controller#init|restore return false value, do nothing
             if (component == null) {
                 return null
             }
@@ -121,10 +163,11 @@ export default function createApp(appSettings) {
                     if (currentLocation !== location || result == null) {
                         return null
                     }
+                    saveControllerToCache(controller)
                     return renderToContainer(result)
                 })
             }
-
+            saveControllerToCache(controller)
             return renderToContainer(component)
         }
     }

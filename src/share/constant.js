@@ -6,7 +6,10 @@ export const isServer = !isClient
 export const defaultAppSettings = {
 	container: '#container',
 	basename: '',
-	context: {},
+	context: {
+		isServer,
+		isClient,
+	},
 	type: 'createHashHistory',
 	loader: value => value,
 }

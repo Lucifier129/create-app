@@ -19,16 +19,37 @@ export function extend(to, from) {
     return to
 }
 
-export function isAbsoluteUrl(url) {
-    if (typeof url !== 'string') {
-        throw new Error('expected url to be a string')
+export function createCache(amount=10) {
+    let cache = {}
+
+    function keys() {
+        return Object.keys(cache)
     }
-    if (url.charAt(0) === '/' && url.charAt(1) === '/') {
-        return true
+
+    function checkAmount() {
+        let cacheKeys = keys(cache)
+        if (cacheKeys.length > amount) {
+            remove(cacheKeys[0])
+        }
     }
-    var str1 = url.charAt(0) + url.charAt(1)
-    var str2 = str1 + url.charAt(2) + url.charAt(3)
-    return str1 === '//' || str2 === 'http'
+
+    function set(key, value) {
+        remove(key)
+        cache[key] = value
+        checkAmount()
+    }
+
+    function get(key) {
+        return cache[key]
+    }
+
+    function remove(key) {
+        if (cache.hasOwnProperty(key)) {
+            delete cache[key]
+        }
+    }
+
+    return { keys, get, set, remove }
 }
 
 if (!Object.freeze) {

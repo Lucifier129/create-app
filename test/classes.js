@@ -8,15 +8,12 @@ export class Home {
     init() {
         return this.render()
     }
-    update() {
-        this.isUpdate = true
-        this.refreshView()
-    }
     render() {
-        if (this.isUpdate) {
-            return 'home_update'
-        }
         return 'home'
+    }
+    restore() {
+        controller = this
+        return this.render()
     }
 }
 
@@ -57,5 +54,24 @@ export class NotFound {
     }
     render() {
         return 'not found'
+    }
+}
+
+export class Restore {
+    constructor() {
+        controller = this
+        this.KeepAlive = true
+        this.count = 0
+    }
+    init() {
+        return this.render()
+    }
+    restore() {
+        this.count += 1
+        controller = this
+        return this.render()
+    }
+    render() {
+        return 'restore'
     }
 }

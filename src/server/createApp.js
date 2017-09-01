@@ -21,6 +21,11 @@ export default function createApp(appSettings) {
         basename = '',
     } = finalAppSettings
 
+    context = {
+        ...finalAppSettings.context,
+        ...appSettings.context,
+    }
+
     let matcher = createMatcher(routes)
     let history = createHistory(finalAppSettings)
 
