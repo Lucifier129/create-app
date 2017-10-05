@@ -49,7 +49,11 @@ export function createCache(amount=10) {
         }
     }
 
-    return { keys, get, set, remove }
+    function getAll() {
+        return cache
+    }
+
+    return { keys, get, set, remove, getAll }
 }
 
 if (!Object.freeze) {

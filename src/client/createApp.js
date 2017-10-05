@@ -126,6 +126,9 @@ export default function createApp(appSettings) {
             removeFromCache() {
                 removeControllerFromCache(this)
             }
+            getAllCache() {
+                return cache.getAll()
+            }
         }
         controllers[pattern] = WrapperController
         return WrapperController
