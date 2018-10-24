@@ -17,8 +17,7 @@ export default function createApp(appSettings) {
         routes,
         viewEngine,
         loader,
-        context,
-        basename = '',
+        context
     } = finalAppSettings
 
     context = {
@@ -125,6 +124,8 @@ export default function createApp(appSettings) {
                 this.location = this.location || location
                 this.context = this.context || context
                 this.matcher = matcher
+                this.loader = loader
+                this.routes = routes
             }
         }
         controllers[pattern] = WrapperController

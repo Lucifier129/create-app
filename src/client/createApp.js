@@ -82,7 +82,6 @@ export default function createApp(appSettings) {
         location.params = params
         location.raw = location.pathname + location.search
 
-        let controllerType = typeof controller
         let initController = createInitController(location)
         let Controller = loader(controller, location, context)
 
@@ -107,6 +106,8 @@ export default function createApp(appSettings) {
                 this.context = this.context || context
                 this.history = history
                 this.matcher = matcher
+                this.loader = loader
+                this.routes = routes
             }
             // update view
             refreshView() {
