@@ -106,6 +106,7 @@ export default function createApp(appSettings) {
                 this.location = this.location || location
                 this.context = this.context || context
                 this.history = history
+                this.matcher = matcher
             }
             // update view
             refreshView() {

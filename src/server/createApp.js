@@ -124,6 +124,7 @@ export default function createApp(appSettings) {
                 super(location, context)
                 this.location = this.location || location
                 this.context = this.context || context
+                this.matcher = matcher
             }
         }
         controllers[pattern] = WrapperController
