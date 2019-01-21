@@ -92,11 +92,11 @@ export default function createApp(appSettings) {
         location.params = params
         location.raw = requestPath
 
-        let Controller = loader(controller, location, context)
         let finalContext = {
             ...context,
             ...injectContext,
         }
+        let Controller = loader(controller, location, finalContext)
 
         if (_.isThenable(Controller)) {
             return Controller.then(Controller => {
