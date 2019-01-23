@@ -100,21 +100,21 @@ export default function createApp(appSettings) {
 
         if (_.isThenable(Controller)) {
             return Controller.then(Controller => {
-                let Wrapper = wrapController(location.pattern, Controller)
+                let Wrapper = wrapController(Controller)
                 return new Wrapper(location, finalContext)
             })
         }
 
-        let Wrapper = wrapController(location.pattern, Controller)
+        let Wrapper = wrapController(Controller)
         return new Wrapper(location, finalContext)
     }
 
 
-    let controllers = {}
+    let controllers = _.createMap()
 
-    function wrapController(pattern, Controller) {
-        if (controllers.hasOwnProperty(pattern)) {
-            return controllers[pattern]
+    function wrapController(Controller) {
+        if (controllers.has(Controller)) {
+            return controllers.get(Controller)
         }
 
         // implement the controller's life-cycle and useful methods
@@ -128,7 +128,8 @@ export default function createApp(appSettings) {
                 this.routes = routes
             }
         }
-        controllers[pattern] = WrapperController
+
+        controllers.set(Controller, WrapperController)
         return WrapperController
     }
 

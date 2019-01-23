@@ -92,11 +92,11 @@ export default function createApp(appSettings) {
         }
     }
 
-    let controllers = {}
+    let controllers = _.createMap()
 
-    function getController(pattern, Controller) {
-        if (controllers.hasOwnProperty(pattern)) {
-            return controllers[pattern]
+    function wrapController(Controller) {
+        if (controllers.has(Controller)) {
+            return controllers.get(Controller)
         }
         // implement the controller's life-cycle and useful methods
         class WrapperController extends Controller {
@@ -132,7 +132,9 @@ export default function createApp(appSettings) {
                 return cache.getAll()
             }
         }
-        controllers[pattern] = WrapperController
+
+        controllers.set(Controller, WrapperController)
+        
         return WrapperController
     }
 
@@ -153,7 +155,7 @@ export default function createApp(appSettings) {
                 controller.context = context
 
             } else {
-                let FinalController = getController(location.pattern, Controller)
+                let FinalController = wrapController(Controller)
                 controller = currentController = new FinalController(location, context)
                 component = controller.init()
             }
