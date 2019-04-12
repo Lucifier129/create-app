@@ -37,11 +37,7 @@ export default function createApp(appSettings) {
     let cache = _.createCache(cacheAmount)
 
     function saveControllerToCache(controller) {
-        if (controller.KeepAlive === true) {
-            cache.set(controller.location.raw, controller)
-        } else {
-            cache.remove(controller.location.raw)
-        }
+        cache.set(controller.location.raw, controller)
     }
 
     function getControllerFromCache(location) {
@@ -126,6 +122,7 @@ export default function createApp(appSettings) {
                 saveControllerToCache(this)
             }
             removeFromCache() {
+                this.KeepAlive = false
                 removeControllerFromCache(this)
             }
             getAllCache() {
@@ -193,6 +190,9 @@ export default function createApp(appSettings) {
         if (currentController && currentController.destroy) {
             currentController.destroy()
             currentController = null
+        }
+        if (currentController && !currentController.KeepAlive) {
+            removeControllerFromCache(currentController)
         }
     }
 
