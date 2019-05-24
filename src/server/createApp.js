@@ -68,11 +68,11 @@ export default function createApp(appSettings) {
                 if (component == null) {
                     return { controller }
                 }
-                let content = renderToString(component)
+                let content = renderToString(component, controller)
                 return { content, controller }
             })
         }
-        let content = renderToString(component)
+        let content = renderToString(component, controller)
         return { content, controller }
     }
 
@@ -133,8 +133,8 @@ export default function createApp(appSettings) {
         return WrapperController
     }
 
-    function renderToString(component) {
-        return viewEngine.render(component)
+    function renderToString(component, controller) {
+        return viewEngine.render(component, controller)
     }
 
     return {
