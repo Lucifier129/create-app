@@ -187,12 +187,12 @@ export default function createApp(appSettings) {
     }
 
     function destroyController() {
+        if (currentController && !currentController.KeepAlive) {
+            removeControllerFromCache(currentController)
+        }
         if (currentController && currentController.destroy) {
             currentController.destroy()
             currentController = null
-        }
-        if (currentController && !currentController.KeepAlive) {
-            removeControllerFromCache(currentController)
         }
     }
 
