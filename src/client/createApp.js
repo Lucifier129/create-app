@@ -106,8 +106,8 @@ export default function createApp(appSettings) {
                 this.routes = routes
             }
             // update view
-            refreshView() {
-                renderToContainer(this.render(), this)
+            refreshView(view = this.render()) {
+                renderToContainer(view, this)
             }
             // get container node
             getContainer() {
@@ -167,16 +167,15 @@ export default function createApp(appSettings) {
                     if (currentLocation !== location || result == null) {
                         return null
                     }
-                    saveControllerToCache(controller)
                     return renderToContainer(result, controller)
                 })
             }
-            saveControllerToCache(controller)
             return renderToContainer(component, controller)
         }
     }
 
     function renderToContainer(component, controller) {
+        saveControllerToCache(controller)
         return viewEngine.render(component, getContainer(), controller)
     }
 
