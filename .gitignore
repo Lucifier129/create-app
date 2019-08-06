@@ -5,3 +5,4 @@ coverage
 _book
 _site
 .publish
+dist
