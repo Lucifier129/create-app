@@ -19,20 +19,20 @@ export const extend: (to: object, from: object) => object = (to, from) => {
   return to
 }
 
-export interface Cache {
+export interface Cache<T> {
   keys: () => string[]
-  get: (key: string) => any
+  get: (key: string) => T
   set: (key: string, value: any) => void
   remove: (key: string) => void
-  getAll: () => CacheStorage
+  getAll: () => CacheStorage<T>
 }
 
-export interface CacheStorage {
-  [key: string]: any
+export interface CacheStorage<T> {
+  [key: string]: T
 }
 
-export const createCache: (amount: number) => Cache = (amount = 10) => {
-  let cache: CacheStorage = {}
+export const createCache: <T>(amount: number) => Cache<T> = <T>(amount = 10) => {
+  let cache: CacheStorage<T> = {}
 
   const keys = () => {
     return Object.keys(cache)
@@ -45,13 +45,13 @@ export const createCache: (amount: number) => Cache = (amount = 10) => {
     }
   }
 
-  const set: (key: string, value: any) => void = (key, value) => {
+  const set: (key: string, value: T) => void = (key, value) => {
     remove(key)
     cache[key] = value
     checkAmount()
   }
 
-  const get: (key: string) => any = (key) => {
+  const get: (key: string) => T = (key) => {
     return cache[key]
   }
 
@@ -61,38 +61,47 @@ export const createCache: (amount: number) => Cache = (amount = 10) => {
     }
   }
 
-  const getAll = () => {
+  const getAll: () => CacheStorage<T> = () => {
     return cache
   }
 
   return { keys, get, set, remove, getAll }
 }
 
-export interface AppMap {
-  get: (key: string) => any
-  set: (key: string, value: any) => void
-  has: (key: string) => boolean
-  remove: (key: string) => void
+export interface AppMap<K, V> {
+  get: (key: K) => V
+  set: (key: K, value: V) => void
+  has: (key: K) => boolean
+  remove: (key: K) => void
 }
 
-export const createMap: () => AppMap = () => {
-  let list: any[] = []
+export interface CreateMap {
+  <K, V>(): AppMap<K, V>
+}
 
-  const find: (key) => any[] = (key) => {
+export interface MapItem<K, V> {
+  key: K
+  value: V
+}
+
+export const createMap: CreateMap = <K, V>() => {
+  let list: MapItem<K, V>[] = []
+
+  const find: (key: K) => MapItem<K, V>[] = (key) => {
     return list.filter(item => item.key === key)
   }
 
-  const has: (key: string) => boolean = (key) => {
+  const has: (key: K) => boolean = (key) => {
     let result = find(key)
     return result.length > 0
   }
 
-  const get: (key: string) => any = (key) => {
+  const get: (key: K) => V = (key) => {
     let result = find(key)
     return result.length ? result[0].value : undefined
   }
 
-  const set: (key: string, value: any) => void = (key, value) => {
+  const set: (key: K, value: V) => void = (key, value) => {
     let result = find(key)
 
     if (result.length === 0) {
@@ -103,7 +112,7 @@ export const createMap: () => AppMap = () => {
     }
   }
 
-  const remove: (key: string) => void = (key) => {
+  const remove: (key: K) => void = (key) => {
     list = list.filter(item => item.key !== key)
   }
 

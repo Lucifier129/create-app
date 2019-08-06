@@ -1,13 +1,20 @@
 /*
   key/value configs
 */
-import { Route } from './createMatcher'
+import React from 'react'
+import * as History from 'create-history'
+import pathToRegexp from 'path-to-regexp'
+import { Route, Matcher, Params } from './createMatcher'
+
 export const isClient: boolean = typeof window !== 'undefined'
 export const isServer: boolean = !isClient
+
 export interface ViewEngine {
-  (html: string, container: HTMLElement): HTMLElement
-} 
-export interface Settings{
+  render: (html: HTMLElement | React.ReactNode | void, container: HTMLElement | string, controller?: Controller) => React.ReactNode | HTMLElement
+  clear?: (container: HTMLElement | string) => void
+}
+
+export interface Settings extends History.HistoryOptions {
   container?: string
   basename?: string
   context?: {
@@ -16,11 +23,59 @@ export interface Settings{
     [propName: string]: any
   }
   type?: 'createHashHistory' | 'createMemoryHistory' | 'createBrowserHistory'
-  loader?: (value: any) => any
+  loader?: Loader
   cacheAmount?: number
   routes?: Route[]
-  viewEngine?: string
+  viewEngine?: ViewEngine
 }
+
+export interface App {
+  start
+  stop
+  render
+  history
+  subscribe
+}
+
+export interface Context {
+
+}
+
+export interface Location extends History.Location {
+  raw?: string
+  pattern?: pathToRegexp.Path
+  params?: Params
+}
+
+export interface Loader {
+  (controller: Controller, location: Location, context: Context)
+}
+
+export class Controller {
+  constructor (location: Location, context: Context) {
+
+  }
+  location: Location
+  context: Context
+  history: History.NativeHistory
+  matcher: Matcher
+  loader: Function
+  routes: Route[]
+  KeepAlive: boolean
+  restore: (location: Location, context: Context) => any = () => {
+
+  }
+  init: Function = () => {
+
+  }
+  render: () => HTMLElement | React.ReactNode | null | undefined | void | boolean = () => {
+
+  }
+  destroy: Function = () => {
+
+  }
+}
+
 export const defaultAppSettings: Settings = {
 	container: '#container',
 	basename: '',
