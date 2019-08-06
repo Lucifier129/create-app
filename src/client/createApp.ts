@@ -3,7 +3,7 @@
  */
 import * as _ from '../share/util'
 import createMatcher, { Matcher } from '../share/createMatcher'
-import { defaultAppSettings, Settings, ViewEngine, App, Controller, Location, Context } from '../share/constant'
+import { defaultAppSettings, Settings, App, Controller, Location, Context } from '../share/constant'
 import defaultViewEngine from './viewEngine'
 import * as History from 'create-history'
 
