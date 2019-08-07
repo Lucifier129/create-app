@@ -48,7 +48,7 @@ describe('createMatcher', () => {
 
             expect(result.path).toEqual('/param/:id')
             expect(result.controller).toEqual('test string with a id param')
-            expect(result.params.id).toEqual(404)
+            expect(result.params.id).toEqual('404')
         })
 
         it('should return a default route', () => {
