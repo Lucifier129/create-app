@@ -1,13 +1,40 @@
 /**
  * createApp at client
  */
-import * as _ from '../share/util'
-import createMatcher, { Matcher, Matches } from '../share/createMatcher'
-import { defaultAppSettings, Settings, App, Controller, Location, Context } from '../share/constant'
-import defaultViewEngine from './viewEngine'
 import * as History from 'create-history'
+import defaultViewEngine from './viewEngine'
+import * as _ from '../share/util'
+import createMatcher, {
+  Matcher,
+  Matches,
+  Route
+} from '../share/createMatcher'
+import {
+  defaultAppSettings,
+  Settings,
+  Controller,
+  Location,
+  ClientRender as Render,
+  Context,
+  CreateApp,
+  ControllerCacheFunc,
+  GetControllerByLocation,
+  GetContainer,
+  InitController,
+  WrapController,
+  CreateInitController,
+  RenderToContainer,
+  ClearContainer,
+  DestoryContainer,
+  Listener,
+  Subscribe,
+  Publish,
+  Start,
+  Stop,
+  CreateHistory
+} from '../share/constant'
 
-const createHistory: (settings: Settings) => History.NativeHistory = (settings) => {
+const createHistory: CreateHistory = (settings) => {
   let historyCreater: History.CreateHistoryFunc = History[settings.type]
   if (settings.basename) {
     historyCreater = History.useBasename(historyCreater)
@@ -17,7 +44,7 @@ const createHistory: (settings: Settings) => History.NativeHistory = (settings) 
   return historyCreater(settings)
 }
 
-const createApp: (appSettings: Settings) => App = (appSettings) => {
+const createApp: CreateApp = (appSettings) => {
   let finalAppSettings: Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -36,29 +63,28 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     ...appSettings.context,
   }
 
-  let history = createHistory(finalAppSettings)
+  let history: History.NativeHistory = createHistory(finalAppSettings)
   let matcher: Matcher = createMatcher(routes)
   let currentController: Controller = null
   let currentLocation: History.Location = null
   let unlisten: Function = null
   let finalContainer: HTMLElement = null
 
-
   let cache: _.Cache<Controller> = _.createCache(cacheAmount)
 
-  const saveControllerToCache: (controller: Controller) => void = (controller) => {
+  const saveControllerToCache: ControllerCacheFunc = (controller) => {
     cache.set(controller.location.raw, controller)
   }
 
-  const getControllerFromCache: (location: Location) => Controller = (location) => {
+  const getControllerFromCache: GetControllerByLocation = (location) => {
     return cache.get(location.raw)
   }
 
-  const removeControllerFromCache: (controller: Controller) => void = (controller) => {
+  const removeControllerFromCache: ControllerCacheFunc = (controller) => {
     cache.remove(controller.location.raw)
   }
 
-  const getContainer: () => HTMLElement = () => {
+  const getContainer: GetContainer = () => {
     if (finalContainer) {
       return finalContainer
     }
@@ -69,7 +95,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     }
   }
 
-  const render: (targetPath: string | Location) => any = (targetPath) => {
+  const render: Render = (targetPath) => {
     let location: Location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
     context.prevLocation = currentLocation
     currentLocation = location
@@ -89,33 +115,34 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     location.params = params
     location.raw = location.pathname + location.search
 
-    let initController = createInitController(location)
-    let Controller = loader(controller, location, context)
+    let initController: InitController = createInitController(location)
+    let iController: Controller | Promise<Controller> = loader(controller, location, context)
 
-    if (_.isThenable(Controller)) {
-      return Controller.then(initController)
+    if (_.isThenable(iController)) {
+      return (<Promise<Controller>>iController).then(initController)
     } else {
-      return initController(Controller)
+      return initController(<Controller>iController)
     }
   }
 
-  let controllers: _.AppMap<Controller, typeof Controller>
-    = _.createMap<Controller, typeof Controller>()
+  let controllers: _.AppMap<Controller, Controller>
+    = _.createMap<Controller, Controller>()
 
-  const wrapController: (IController: Controller) => any = (IController) => {
+  const wrapController: WrapController = (IController) => {
     if (controllers.has(IController)) {
       return controllers.get(IController)
     }
     // implement the controller's life-cycle and useful methods
-    class WrapperController extends Controller {
-      location = undefined
-      context = undefined
-      history = undefined
-      matcher = undefined
-      loader = undefined
-      routes = undefined
-      KeepAlive = undefined
-      constructor(location: Location, context: Context) {
+    class WrapperController extends IController {
+      public location: Location
+      public context: Context
+      public history: History.NativeHistory
+      public matcher: Matcher
+      public loader: Function
+      public routes: Route[]
+      public KeepAlive: boolean
+      public count: number
+      constructor(location?: Location, context?: Context) {
         super(location, context)
         this.location = this.location || location
         this.context = this.context || context
@@ -125,29 +152,28 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
         this.routes = routes
       }
       // update view
-      refreshView(view = this.render()) {
+      public refreshView(view = this.render()) {
         renderToContainer(view, this)
       }
       // get container node
-      getContainer() {
+      public getContainer() {
         return getContainer()
       }
       // clear container
-      clearContainer() {
+      public clearContainer() {
         clearContainer()
       }
-      saveToCache() {
+      public saveToCache() {
         this.KeepAlive = true
         saveControllerToCache(this)
       }
-      removeFromCache() {
+      public removeFromCache() {
         this.KeepAlive = false
         removeControllerFromCache(this)
       }
-      getAllCache() {
+      public getAllCache() {
         return cache.getAll()
       }
-      render: () => HTMLElement | React.ReactNode
     }
 
     controllers.set(IController, WrapperController)
@@ -155,10 +181,8 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     return WrapperController
   }
 
-  const createInitController: (location: Location) => (constroller: Controller) => HTMLElement | React.ReactNode
-  = (location) => {
-     const initController: (constroller: Controller) => HTMLElement | React.ReactNode
-     = (Controller) => {
+  const createInitController: CreateInitController = (location) => {
+    const initController: InitController = (iController) => {
       if (currentLocation !== location) {
         return
       }
@@ -174,7 +198,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
         controller.context = context
 
       } else {
-        let FinalController = wrapController(Controller)
+        let FinalController = wrapController(<Controller>iController)
         controller = currentController = new FinalController(location, context)
         component = controller.init()
       }
@@ -197,19 +221,18 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     return initController
   }
 
-  const renderToContainer: (component: HTMLElement | React.ReactNode | void, controller: Controller) => HTMLElement | React.ReactNode
-  = (component, controller) => {
+  const renderToContainer: RenderToContainer = (component, controller) => {
     saveControllerToCache(controller)
     return viewEngine.render(component, getContainer(), controller)
   }
 
-  const clearContainer: () => void = () => {
+  const clearContainer: ClearContainer = () => {
     if (viewEngine.clear) {
       return viewEngine.clear(getContainer())
     }
   }
 
-  const destroyController: () => void = () => {
+  const destroyController: DestoryContainer = () => {
     if (currentController && !currentController.KeepAlive) {
       removeControllerFromCache(currentController)
     }
@@ -219,9 +242,9 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     }
   }
 
-  let listeners: Function[] = []
+  let listeners: Listener[] = []
 
-  const subscribe: (listener: Function) => () => void = (listener) => {
+  const subscribe: Subscribe = (listener) => {
     let index: number = listeners.indexOf(listener)
     if (index === -1) {
       listeners.push(listener)
@@ -234,15 +257,14 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     }
   }
 
-  const publish: (location: Location) => void = (location) => {
+  const publish: Publish = (location) => {
     for (let i = 0, len = listeners.length; i < len; i++) {
       listeners[i](location, history)
     }
   }
 
-  const start: (callback: Function, shouldRenderWithCurrentLocation: boolean) => () => void
-  = (callback, shouldRenderWithCurrentLocation) => {
-    let listener = location => {
+  const start: Start = (callback, shouldRenderWithCurrentLocation) => {
+    let listener: (location: Location) => void = location => {
       let result = render(location)
       if (_.isThenable(result)) {
         result.then(() => {
@@ -263,7 +285,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     return unsubscribe
   }
 
-  const stop: () => void = () => {
+  const stop: Stop = () => {
     if (unlisten) {
       unlisten()
       destroyController()

@@ -4,6 +4,7 @@
 import { ViewEngine } from '../share/constant'
 const render = html => html.toString()
 
-export default {
+const viewEngine: ViewEngine = {
   render
 }
+export default viewEngine

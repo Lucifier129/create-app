@@ -1,14 +1,30 @@
 /**
  * createApp at server
  */
+import * as History from 'create-history'
 import * as _ from '../share/util'
-import createMatcher, { Matcher, Matches } from '../share/createMatcher'
-import { defaultAppSettings, Settings, App, Controller, Location, Context } from '../share/constant';
-import * as defaultViewEngine from './viewEngine'
-import History, { createMemoryHistory } from 'create-history'
+import defaultViewEngine from './viewEngine'
+import createMatcher, {
+  Matcher,
+  Matches,
+} from '../share/createMatcher'
+import {
+  defaultAppSettings,
+  Settings,
+  Controller,
+  Location,
+  ServerRender as Render,
+  Context,
+  CreateApp,
+  InitController,
+  FetchController,
+  WrapController,
+  CreateHistory,
+  RenderToString
+} from '../share/constant'
 
-const createHistory: (settings: Settings) => History.NativeHistory = (settings) => {
-  let create: History.CreateHistoryFunc = createMemoryHistory
+const createHistory: CreateHistory = (settings) => {
+  let create: History.CreateHistoryFunc = History.createMemoryHistory
   if (settings.basename) {
     create = History.useBasename(create)
   }
@@ -16,7 +32,7 @@ const createHistory: (settings: Settings) => History.NativeHistory = (settings) 
   return create(settings)
 }
 
-const createApp: (appSettings: Settings) => App = (appSettings) => {
+const createApp: CreateApp = (appSettings) => {
   let finalAppSettings: Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -36,8 +52,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
   let matcher: Matcher = createMatcher(routes)
   let history: History.NativeHistory = createHistory(finalAppSettings)
 
-  const render: (requestPath, injectContext, callback) => any
-  = (requestPath, injectContext, callback) => {
+  const render: Render = (requestPath, injectContext, callback) => {
     let result = null
 
     if (typeof injectContext === 'function') {
@@ -62,7 +77,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     return result
   }
 
-  const initController: (controller: Controller | Promise<Controller>) => any = (controller) => {
+  const initController: InitController = (controller) => {
     if (_.isThenable(controller)) {
       return (<Promise<Controller>>controller).then(initController)
     }
@@ -85,7 +100,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     return { content, controller }
   }
 
-  const fetchController = (requestPath, injectContext) => {
+  const fetchController: FetchController = (requestPath, injectContext) => {
     let location: Location = history.createLocation(requestPath)
     let matches: Matches = matcher(location.pathname)
 
@@ -106,30 +121,30 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
       ...context,
       ...injectContext,
     }
-    let Controller = loader(controller, location, finalContext)
+    let iController: Controller | Promise<Controller> = loader(controller, location, finalContext)
 
-    if (_.isThenable(Controller)) {
-      return Controller.then(Controller => {
-        let Wrapper = wrapController(Controller)
+    if (_.isThenable(iController)) {
+      return (<Promise<Controller>>iController).then(iController => {
+        let Wrapper = wrapController(iController)
         return new Wrapper(location, finalContext)
       })
     }
 
-    let Wrapper = wrapController(Controller)
+    let Wrapper = wrapController(<Controller>iController)
     return new Wrapper(location, finalContext)
   }
 
 
-  let controllers: _.AppMap<Controller, typeof Controller>
-    = _.createMap<Controller, typeof Controller>()
+  let controllers: _.AppMap<Controller, Controller>
+    = _.createMap<Controller, Controller>()
 
-  const wrapController: (iController: Controller) => typeof Controller = (iController) => {
+  const wrapController: WrapController = (iController) => {
     if (controllers.has(iController)) {
       return controllers.get(iController)
     }
 
     // implement the controller's life-cycle and useful methods
-    class WrapperController extends Controller {
+    class WrapperController extends iController {
       constructor(location, context) {
         super(location, context)
         this.location = this.location || location
@@ -144,11 +159,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     return WrapperController
   }
 
-  const renderToString: (
-    component: HTMLElement | React.ReactNode | void,
-    controller: Controller
-  ) => React.ReactNode | HTMLElement
-  = (component, controller) => {
+  const renderToString: RenderToString = (component, controller) => {
     return viewEngine.render(component, undefined, controller)
   }
 

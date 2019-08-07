@@ -1,10 +1,10 @@
 import { Controller } from '../../src/share/constant'
-let controller
 export let getController = () => controller
 
-export class Home extends Controller {
+let controller
+
+export class Home implements Controller {
   constructor() {
-    super()
     controller = this
   }
   init() {
@@ -19,9 +19,8 @@ export class Home extends Controller {
   }
 }
 
-export class List extends Controller {
+export class List {
   constructor() {
-    super()
     controller = this
   }
   init() {
@@ -36,9 +35,8 @@ export class List extends Controller {
   }
 }
 
-export class Detail extends Controller {
+export class Detail {
   constructor() {
-    super()
     controller = this
   }
   init() {
@@ -49,9 +47,8 @@ export class Detail extends Controller {
   }
 }
 
-export class NotFound extends Controller {
+export class NotFound {
   constructor() {
-    super()
     controller = this
   }
   init() {
@@ -62,11 +59,10 @@ export class NotFound extends Controller {
   }
 }
 
-export class Restore extends Controller {
+export class Restore {
   KeepAlive: boolean
   count: number
   constructor() {
-    super()
     controller = this
     this.KeepAlive = true
     this.count = 0

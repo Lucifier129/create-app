@@ -14,6 +14,7 @@ const execSteps: (
   }
 
   const execNextStep = (...args) => {
+    console.log('inner  ', document.body.innerHTML)
     try {
       steps[index++](...args)
 

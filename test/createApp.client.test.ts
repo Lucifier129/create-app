@@ -7,174 +7,11 @@ import { Route } from '../src/share/createMatcher'
 let app: App
 let context: Context
 
-describe('createApp-client', () => {
 
-    describe('result', () => {
-        it('should return an object', () => {
-            let app = createApp({
-                routes: [],
-            })
-            expect(typeof app).toBe('object')
-            expect(typeof app.start).toBe('function')
-            expect(typeof app.stop).toBe('function')
-            expect(typeof app.history).toBe('object')
-            expect(typeof app.render).toBe('function')
-        })
-    })
-
-    describe('feature: hash history', () => {
-        describeTest('createHashHistory')
-    })
-
-    describe('feature: pushState history', () => {
-        describeTest('createHistory')
-    })
-})
-
-
-const describeTest: (type: CreateHistoryType) => void = (type) => {
-    let initApp: (settings: Settings) => Promise<{}> = (settings) => {
-        // clear app and document.body
-        if (app) {
-            app.stop()
-            document.body.innerHTML = ''
-            window.location.hash = ''
-        }
-
-        context = {
-            location: {}
-        }
-
-        app = createApp({
-            container: 'body',
-            basename: '/abc',
-            ...settings,
-            type,
-            context,
-        })
-        return new Promise(resolve => {
-            // do not match current location
-            app.start(resolve, false)
-            let targetPath = `/random${Math.random().toString(36).substr(2, 6)}`
-                // render random location by default
-            app.history.push(targetPath)
-        })
-    }
-
-    describe('works without custom loader', () => {
-        beforeEach(() => {
-            let routes: Route[] = [{
-                path: '/(home|debug.html)?',
-                controller: Home as Controller,
-            }, {
-                path: '/list',
-                controller: List as Controller,
-            }, {
-                path: '/detail',
-                controller: Detail as Controller,
-            }, {
-                path: '/restore',
-                controller: Restore as Controller,
-            }, {
-                path: '*',
-                controller: NotFound as Controller,
-            }]
-
-            return initApp({
-                routes,
-            })
-        })
-        createTest()
-    })
-
-    describe('works with custom loader', () => {
-        let routes = [{
-            path: '/(home|debug.html)?',
-            controller: 'home',
-        }, {
-            path: '/list',
-            controller: 'list',
-        }, {
-            path: '/detail',
-            controller: 'detail',
-        }, {
-            path: '/restore',
-            controller: 'restore',
-        }, {
-            path: '*',
-            controller: '*',
-        }]
-
-        describe('sync mode', () => {
-            beforeEach(() => {
-                let loader = (controller: string) => {
-                    let iController: Controller
-                    switch (controller) {
-                        case 'home':
-                          iController = <Controller>Home
-                            break
-                        case 'list':
-                          iController = <Controller>List
-                            break
-                        case 'detail':
-                          iController = <Controller>Detail
-                            break
-                        case 'restore':
-                          iController = <Controller>Restore
-                            break
-                        default:
-                          iController = <Controller>NotFound
-                    }
-                    return iController
-                }
-                return initApp({
-                    routes,
-                    loader,
-                })
-            })
-            createTest()
-        })
-
-        describe('async mode', () => {
-            beforeEach(() => {
-                let loader = (controller) => {
-                    let Controller
-                    switch (controller) {
-                        case 'home':
-                            Controller = Home
-                            break
-                        case 'list':
-                            Controller = List
-                            break
-                        case 'detail':
-                            Controller = Detail
-                            break
-                        case 'restore':
-                            Controller = Restore
-                            break
-                        default:
-                            Controller = NotFound
-                    }
-
-                    return new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve(Controller)
-                        }, 10)
-                    })
-                }
-                return initApp({
-                    routes,
-                    loader,
-                })
-            })
-            createTest()
-        })
-    })
-}
-
-function createTest() {
+const createTest = () => {
 
     it('should get container by controller.getContainer', () => {
+        // console.log(getController())
         let container = getController().getContainer()
         expect(container).toBe(document.querySelector('body'))
     })
@@ -281,6 +118,7 @@ function createTest() {
 
     it('should call controller.destroy when go to another location', () => {
         let count = 0
+        console.log(getController())
         getController().destroy = function() {
             count += 1
             expect(count).toBe(1)
@@ -441,3 +279,167 @@ function createTest() {
         app.history.push('/')
     })
 }
+
+const describeTest: (type: CreateHistoryType) => void = (type) => {
+    let initApp: (settings: Settings) => Promise<{}> = (settings) => {
+        // clear app and document.body
+        if (app) {
+            app.stop()
+            document.body.innerHTML = ''
+            window.location.hash = ''
+        }
+
+        context = {
+            location: {}
+        }
+
+        app = createApp({
+            container: 'body',
+            basename: '/abc',
+            ...settings,
+            type,
+            context,
+        })
+        return new Promise(resolve => {
+            // do not match current location
+            // app.start(resolve, false)
+            let targetPath = `/random${Math.random().toString(36).substr(2, 6)}`
+                // render random location by default
+            app.history.push(targetPath)
+        })
+    }
+
+    describe('works without custom loader', () => {
+        beforeEach(() => {
+            let routes: Route[] = [{
+                path: '/(home|debug.html)?',
+                controller: Home,
+            }, {
+                path: '/list',
+                controller: List,
+            }, {
+                path: '/detail',
+                controller: Detail,
+            }, {
+                path: '/restore',
+                controller: Restore,
+            }, {
+                path: '*',
+                controller: NotFound,
+            }]
+
+            return initApp({
+                routes,
+            })
+        })
+        createTest()
+    })
+
+    describe('works with custom loader', () => {
+        let routes: Route[] = [{
+            path: '/(home|debug.html)?',
+            controller: 'home',
+        }, {
+            path: '/list',
+            controller: 'list',
+        }, {
+            path: '/detail',
+            controller: 'detail',
+        }, {
+            path: '/restore',
+            controller: 'restore',
+        }, {
+            path: '*',
+            controller: '*',
+        }]
+
+        describe('sync mode', () => {
+            beforeEach(() => {
+                let loader = (controller: string) => {
+                    let iController: Controller
+                    switch (controller) {
+                        case 'home':
+                          iController = Home
+                            break
+                        case 'list':
+                          iController = List
+                            break
+                        case 'detail':
+                          iController = Detail
+                            break
+                        case 'restore':
+                          iController = Restore
+                            break
+                        default:
+                          iController = NotFound
+                    }
+                    return iController
+                }
+                return initApp({
+                    routes,
+                    loader,
+                })
+            })
+            createTest()
+        })
+
+        describe('async mode', () => {
+            beforeEach(() => {
+                let loader = (controller: string) => {
+                    let iController: Controller
+                    switch (controller) {
+                        case 'home':
+                          iController = Home as Controller
+                            break
+                        case 'list':
+                          iController = List as Controller
+                            break
+                        case 'detail':
+                          iController = Detail as Controller
+                            break
+                        case 'restore':
+                          iController = Restore as Controller
+                            break
+                        default:
+                          iController = NotFound as Controller
+                    }
+
+                    return new Promise((resolve) => {
+                        setTimeout(() => {
+                            resolve(iController)
+                        }, 10)
+                    })
+                }
+                return initApp({
+                    routes,
+                    loader,
+                })
+            })
+            createTest()
+        })
+    })
+}
+
+describe('createApp-client', () => {
+
+    describe('result', () => {
+        it('should return an object', () => {
+            let app = createApp({
+                routes: [],
+            })
+            expect(typeof app).toBe('object')
+            expect(typeof app.start).toBe('function')
+            expect(typeof app.stop).toBe('function')
+            expect(typeof app.history).toBe('object')
+            expect(typeof app.render).toBe('function')
+        })
+    })
+
+    describe('feature: hash history', () => {
+        describeTest('createHashHistory')
+    })
+
+    // describe('feature: pushState history', () => {
+    //     describeTest('createHistory')
+    // })
+})
