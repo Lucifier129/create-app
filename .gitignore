@@ -6,3 +6,4 @@ _book
 _site
 .publish
 dist
+*-lock.json
