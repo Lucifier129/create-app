@@ -30,11 +30,11 @@ export interface Settings extends History.HistoryOptions {
 }
 
 export interface App {
-  start
-  stop
-  render
-  history
-  subscribe
+  start?
+  stop?
+  render?
+  history?
+  subscribe?
 }
 
 export interface Context {

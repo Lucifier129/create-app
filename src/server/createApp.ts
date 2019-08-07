@@ -3,7 +3,7 @@
  */
 import * as _ from '../share/util'
 import createMatcher, { Matcher } from '../share/createMatcher'
-import { defaultAppSettings, Settings, App, Controller, Location, Context } from '../share/constant'
+import { defaultAppSettings, Settings, App, Controller, Location, Context } from '../share/constant';
 import * as defaultViewEngine from './viewEngine'
 import History, { createMemoryHistory } from 'create-history'
 
@@ -16,7 +16,7 @@ const createHistory: (settings: Settings) => History.NativeHistory = (settings) 
   return create(settings)
 }
 
-const createApp = (appSettings) => {
+const createApp: (appSettings: Settings) => = (appSettings) => {
   let finalAppSettings: Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -62,11 +62,11 @@ const createApp = (appSettings) => {
     return result
   }
 
-  const initController: (controller: Controller) => any = (controller) => {
+  const initController: (controller: Controller | Promise<Controller>) => any = (controller) => {
     if (_.isThenable(controller)) {
-      return controller.then(initController)
+      return (<Promise<Controller>>controller).then(initController)
     }
-    let component = controller.init()
+    let component = (<Controller>controller).init()
 
     if (component == null) {
       return { controller }
