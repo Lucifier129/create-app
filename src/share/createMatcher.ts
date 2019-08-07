@@ -6,7 +6,7 @@ export interface Route {
   keys?: pathToRegexp.Key[]
   regexp?: RegExp
   path?: pathToRegexp.Path
-  controller?: Controller
+  controller?: Controller | string
 }
 
 export interface Params {

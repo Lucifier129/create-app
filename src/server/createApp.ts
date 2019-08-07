@@ -73,7 +73,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     }
 
     if (_.isThenable(component)) {
-      return component.then(component => {
+      return (<Promise<{}>>component).then(component => {
         if (component == null) {
           return { controller }
         }

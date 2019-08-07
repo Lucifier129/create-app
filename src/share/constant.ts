@@ -14,15 +14,18 @@ export interface ViewEngine {
   clear?: (container: HTMLElement | string) => void
 }
 
+export type CreateHistoryType = 'createHashHistory' | 'createMemoryHistory' | 'createBrowserHistory' | 'createHistory'
+
 export interface Settings extends History.HistoryOptions {
   container?: string
   basename?: string
   context?: {
-    isServer: boolean
-    isClient: boolean
+    isServer?: boolean
+    isClient?: boolean
+    location?: Location
     [propName: string]: any
   }
-  type?: 'createHashHistory' | 'createMemoryHistory' | 'createBrowserHistory'
+  type?: CreateHistoryType
   loader?: Loader
   cacheAmount?: number
   routes?: Route[]
@@ -48,30 +51,30 @@ export interface Location extends History.Location {
 }
 
 export interface Loader {
-  (controller: Controller, location: Location, context: Context)
+  (controller: Controller | string, location: Location, context: Context)
 }
 
 export class Controller {
-  constructor (location: Location, context: Context) {
+  constructor (location?: Location, context?: Context) {
 
   }
-  location: Location
-  context: Context
-  history: History.NativeHistory
-  matcher: Matcher
-  loader: Function
-  routes: Route[]
-  KeepAlive: boolean
-  restore: (location: Location, context: Context) => any = () => {
+  location?: Location
+  context?: Context
+  history?: History.NativeHistory
+  matcher?: Matcher
+  loader?: Function
+  routes?: Route[]
+  KeepAlive?: boolean
+  restore?(location: Location, context: Context): any {
 
   }
-  init: Function = () => {
+  init?(): any {
 
   }
-  render: () => HTMLElement | React.ReactNode | null | undefined | void | boolean = () => {
+  render?(): HTMLElement | React.ReactNode | null | undefined | void | boolean {
 
   }
-  destroy: Function = () => {
+  destroy?() {
 
   }
 }

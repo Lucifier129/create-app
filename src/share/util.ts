@@ -31,7 +31,7 @@ export interface CacheStorage<T> {
   [key: string]: T
 }
 
-export const createCache: <T>(amount: number) => Cache<T> = <T>(amount = 10) => {
+export const createCache: <T>(amount?: number) => Cache<T> = <T>(amount = 10) => {
   let cache: CacheStorage<T> = {}
 
   const keys = () => {
