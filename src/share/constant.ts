@@ -10,7 +10,7 @@ export const isClient: boolean = typeof window !== 'undefined'
 export const isServer: boolean = !isClient
 
 export interface ViewEngine {
-  render: (html: HTMLElement | React.ReactNode | void, container: HTMLElement | string, controller?: Controller) => React.ReactNode | HTMLElement
+  render: (html: HTMLElement | React.ReactNode | void, container?: HTMLElement | string, controller?: Controller) => React.ReactNode | HTMLElement
   clear?: (container: HTMLElement | string) => void
 }
 

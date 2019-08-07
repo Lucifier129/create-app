@@ -2,7 +2,7 @@
  * createApp at client
  */
 import * as _ from '../share/util'
-import createMatcher, { Matcher } from '../share/createMatcher'
+import createMatcher, { Matcher, Matches } from '../share/createMatcher'
 import { defaultAppSettings, Settings, App, Controller, Location, Context } from '../share/constant'
 import defaultViewEngine from './viewEngine'
 import * as History from 'create-history'
@@ -74,7 +74,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     context.prevLocation = currentLocation
     currentLocation = location
 
-    let matches = matcher(location.pathname)
+    let matches: Matches = matcher(location.pathname)
 
     if (!matches) {
       let error = new Error(`Did not match any route with pathname:${location.pathname}`)
@@ -99,7 +99,8 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
     }
   }
 
-  let controllers = _.createMap<Controller, typeof Controller>()
+  let controllers: _.AppMap<Controller, typeof Controller>
+    = _.createMap<Controller, typeof Controller>()
 
   const wrapController: (IController: Controller) => any = (IController) => {
     if (controllers.has(IController)) {
@@ -164,7 +165,7 @@ const createApp: (appSettings: Settings) => App = (appSettings) => {
 
       destroyController()
 
-      let controller = currentController = getControllerFromCache(location)
+      let controller: Controller = currentController = getControllerFromCache(location)
       let component = null
 
       if (controller) {

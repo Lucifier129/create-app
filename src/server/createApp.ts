@@ -2,13 +2,13 @@
  * createApp at server
  */
 import * as _ from '../share/util'
-import createMatcher, { Matcher } from '../share/createMatcher'
+import createMatcher, { Matcher, Matches } from '../share/createMatcher'
 import { defaultAppSettings, Settings, App, Controller, Location, Context } from '../share/constant';
 import * as defaultViewEngine from './viewEngine'
 import History, { createMemoryHistory } from 'create-history'
 
 const createHistory: (settings: Settings) => History.NativeHistory = (settings) => {
-  let create = createMemoryHistory
+  let create: History.CreateHistoryFunc = createMemoryHistory
   if (settings.basename) {
     create = History.useBasename(create)
   }
@@ -16,7 +16,7 @@ const createHistory: (settings: Settings) => History.NativeHistory = (settings) 
   return create(settings)
 }
 
-const createApp: (appSettings: Settings) => = (appSettings) => {
+const createApp: (appSettings: Settings) => App = (appSettings) => {
   let finalAppSettings: Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -77,20 +77,21 @@ const createApp: (appSettings: Settings) => = (appSettings) => {
         if (component == null) {
           return { controller }
         }
-        let content = renderToString(component, controller)
+        let content = renderToString(component, controller as Controller)
         return { content, controller }
       })
     }
-    let content = renderToString(component, controller)
+    let content = renderToString(component, controller as Controller)
     return { content, controller }
   }
 
-  function fetchController(requestPath, injectContext) {
-    let location = history.createLocation(requestPath)
-    let matches = matcher(location.pathname)
+  const fetchController = (requestPath, injectContext) => {
+    let location: Location = history.createLocation(requestPath)
+    let matches: Matches = matcher(location.pathname)
 
     if (!matches) {
       let error = new Error(`Did not match any route with path:${requestPath}`)
+      // @ts-ignore
       error.status = 404
       return Promise.reject(error)
     }
@@ -101,7 +102,7 @@ const createApp: (appSettings: Settings) => = (appSettings) => {
     location.params = params
     location.raw = requestPath
 
-    let finalContext = {
+    let finalContext: Context = {
       ...context,
       ...injectContext,
     }
@@ -119,11 +120,12 @@ const createApp: (appSettings: Settings) => = (appSettings) => {
   }
 
 
-  let controllers = _.createMap()
+  let controllers: _.AppMap<Controller, typeof Controller>
+    = _.createMap<Controller, typeof Controller>()
 
-  function wrapController(Controller) {
-    if (controllers.has(Controller)) {
-      return controllers.get(Controller)
+  const wrapController: (iController: Controller) => typeof Controller = (iController) => {
+    if (controllers.has(iController)) {
+      return controllers.get(iController)
     }
 
     // implement the controller's life-cycle and useful methods
@@ -138,12 +140,16 @@ const createApp: (appSettings: Settings) => = (appSettings) => {
       }
     }
 
-    controllers.set(Controller, WrapperController)
+    controllers.set(iController, WrapperController)
     return WrapperController
   }
 
-  function renderToString(component, controller) {
-    return viewEngine.render(component, controller)
+  const renderToString: (
+    component: HTMLElement | React.ReactNode | void,
+    controller: Controller
+  ) => React.ReactNode | HTMLElement
+  = (component, controller) => {
+    return viewEngine.render(component, undefined, controller)
   }
 
   return {
