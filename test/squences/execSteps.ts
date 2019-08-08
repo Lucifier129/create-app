@@ -14,7 +14,6 @@ const execSteps: (
   }
 
   const execNextStep = (...args) => {
-    console.log('inner  ', document.body.innerHTML)
     try {
       steps[index++](...args)
 
@@ -25,7 +24,7 @@ const execSteps: (
     }
   }
 
-  if (steps.length) {
+  if (steps.length > 0) {
     unsubscribe = subscribe(execNextStep)
   } else {
     done()

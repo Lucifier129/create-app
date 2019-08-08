@@ -13,6 +13,9 @@ import {
   defaultAppSettings,
   Settings,
   Controller,
+  ControllerConstructor,
+  ClientInitController,
+  createController,
   Location,
   ClientRender as Render,
   Context,
@@ -20,7 +23,6 @@ import {
   ControllerCacheFunc,
   GetControllerByLocation,
   GetContainer,
-  InitController,
   WrapController,
   CreateInitController,
   RenderToContainer,
@@ -115,18 +117,18 @@ const createApp: CreateApp = (appSettings) => {
     location.params = params
     location.raw = location.pathname + location.search
 
-    let initController: InitController = createInitController(location)
-    let iController: Controller | Promise<Controller> = loader(controller, location, context)
+    let initController: ClientInitController = createInitController(location)
+    let iController: ControllerConstructor | Promise<ControllerConstructor> = loader(controller, location, context)
 
     if (_.isThenable(iController)) {
-      return (<Promise<Controller>>iController).then(initController)
+      return (<Promise<ControllerConstructor>>iController).then(initController)
     } else {
-      return initController(<Controller>iController)
+      return initController(<ControllerConstructor>iController)
     }
   }
 
-  let controllers: _.AppMap<Controller, Controller>
-    = _.createMap<Controller, Controller>()
+  let controllers: _.AppMap<ControllerConstructor, Controller>
+    = _.createMap<ControllerConstructor, Controller>()
 
   const wrapController: WrapController = (IController) => {
     if (controllers.has(IController)) {
@@ -134,14 +136,6 @@ const createApp: CreateApp = (appSettings) => {
     }
     // implement the controller's life-cycle and useful methods
     class WrapperController extends IController {
-      public location: Location
-      public context: Context
-      public history: History.NativeHistory
-      public matcher: Matcher
-      public loader: Function
-      public routes: Route[]
-      public KeepAlive: boolean
-      public count: number
       constructor(location?: Location, context?: Context) {
         super(location, context)
         this.location = this.location || location
@@ -152,7 +146,7 @@ const createApp: CreateApp = (appSettings) => {
         this.routes = routes
       }
       // update view
-      public refreshView(view = this.render()) {
+      public refreshView(view = (this as Controller).render()) {
         renderToContainer(view, this)
       }
       // get container node
@@ -176,13 +170,13 @@ const createApp: CreateApp = (appSettings) => {
       }
     }
 
-    controllers.set(IController, WrapperController)
+    controllers.set(IController, WrapperController as Controller)
 
     return WrapperController
   }
 
   const createInitController: CreateInitController = (location) => {
-    const initController: InitController = (iController) => {
+    const initController: ClientInitController = (iController) => {
       if (currentLocation !== location) {
         return
       }
@@ -198,8 +192,8 @@ const createApp: CreateApp = (appSettings) => {
         controller.context = context
 
       } else {
-        let FinalController = wrapController(<Controller>iController)
-        controller = currentController = new FinalController(location, context)
+        let FinalController = wrapController(<ControllerConstructor>iController)
+        controller = currentController = createController(FinalController, location, context)
         component = controller.init()
       }
 

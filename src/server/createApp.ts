@@ -7,6 +7,7 @@ import defaultViewEngine from './viewEngine'
 import createMatcher, {
   Matcher,
   Matches,
+  Route,
 } from '../share/createMatcher'
 import {
   defaultAppSettings,
@@ -20,7 +21,9 @@ import {
   FetchController,
   WrapController,
   CreateHistory,
-  RenderToString
+  RenderToString,
+  ControllerConstructor,
+  createController
 } from '../share/constant'
 
 const createHistory: CreateHistory = (settings) => {
@@ -81,9 +84,9 @@ const createApp: CreateApp = (appSettings) => {
     if (_.isThenable(controller)) {
       return (<Promise<Controller>>controller).then(initController)
     }
-    let component = (<Controller>controller).init()
+    let component = (<Controller>controller).init && (<Controller>controller).init()
 
-    if (component == null) {
+    if (component === null) {
       return { controller }
     }
 
@@ -121,22 +124,22 @@ const createApp: CreateApp = (appSettings) => {
       ...context,
       ...injectContext,
     }
-    let iController: Controller | Promise<Controller> = loader(controller, location, finalContext)
+    let iController: ControllerConstructor | Promise<ControllerConstructor> = loader(controller, location, finalContext)
 
     if (_.isThenable(iController)) {
-      return (<Promise<Controller>>iController).then(iController => {
+      return (<Promise<ControllerConstructor>>iController).then(iController => {
         let Wrapper = wrapController(iController)
-        return new Wrapper(location, finalContext)
+        return createController(Wrapper, location, finalContext)
       })
     }
 
-    let Wrapper = wrapController(<Controller>iController)
-    return new Wrapper(location, finalContext)
+    let Wrapper = wrapController(<ControllerConstructor>iController)
+    return createController(Wrapper, location, finalContext)
   }
 
 
-  let controllers: _.AppMap<Controller, Controller>
-    = _.createMap<Controller, Controller>()
+  let controllers: _.AppMap<ControllerConstructor, Controller>
+    = _.createMap<ControllerConstructor, Controller>()
 
   const wrapController: WrapController = (iController) => {
     if (controllers.has(iController)) {
@@ -155,7 +158,7 @@ const createApp: CreateApp = (appSettings) => {
       }
     }
 
-    controllers.set(iController, WrapperController)
+    controllers.set(iController, WrapperController as Controller)
     return WrapperController
   }
 

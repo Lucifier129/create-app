@@ -1,12 +1,12 @@
 import pathToRegexp from 'path-to-regexp'
 import * as _ from './util'
-import { Controller } from './constant'
+import { Controller, ControllerConstructor } from './constant'
 
 export interface Route {
   keys?: pathToRegexp.Key[]
   regexp?: RegExp
   path?: pathToRegexp.Path
-  controller?: Controller | string
+  controller?: ControllerConstructor | string
 }
 
 export interface Params {
@@ -16,7 +16,7 @@ export interface Params {
 export interface Matches {
   path: pathToRegexp.Path
   params: Params
-  controller: Controller
+  controller: ControllerConstructor
 }
 
 export interface Matcher {

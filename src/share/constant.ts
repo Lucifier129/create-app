@@ -90,12 +90,16 @@ export interface InitController {
   (c: Controller | Promise<Controller>): HTMLElement | React.ReactNode
 }
 
+export interface ClientInitController {
+  (c: ControllerConstructor | Promise<ControllerConstructor>): HTMLElement | React.ReactNode
+}
+
 export interface WrapController {
-  (IController: Controller): any
+  (IController: ControllerConstructor): any
 }
 
 export interface CreateInitController {
-  (location: Location): InitController
+  (location: Location): ClientInitController
 }
 
 export interface RenderToContainer {
@@ -162,14 +166,17 @@ export interface Location extends History.Location {
 
 export interface Loader {
   (
-    controller: Controller | string,
+    controller: ControllerConstructor | string,
     location: Location,
     context: Context
-  ): Controller | Promise<Controller>
+  ): ControllerConstructor | Promise<ControllerConstructor>
+}
+
+export interface ControllerConstructor {
+  new (location?: Location, context?: Context): Controller;
 }
 
 export interface Controller {
-  new (location?: Location, context?: Context): Controller
   location?: Location
   context?: Context
   history?: History.NativeHistory
@@ -178,12 +185,20 @@ export interface Controller {
   routes?: Route[]
   KeepAlive?: boolean
   count?: number
-  restore?(location: Location, context: Context): any
+  restore?(location?: Location, context?: Context): any
   init?(): any
   render?(): HTMLElement | React.ReactNode | null | undefined | boolean
   destroy?(): void
   getContainer?(): string | HTMLElement
   refreshView?()
+}
+
+export interface CreateController {
+  (c: ControllerConstructor, location: Location, context: Context): Controller
+}
+
+export const createController: CreateController = (c, location, context) => {
+  return new c(location, context)
 }
 
 export const defaultAppSettings: Settings = {
@@ -194,5 +209,5 @@ export const defaultAppSettings: Settings = {
 		isClient,
 	},
 	type: 'createHashHistory',
-	loader: value => value as Controller
+	loader: value => value as ControllerConstructor
 }

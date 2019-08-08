@@ -1,7 +1,7 @@
 import execSteps from './squences/execSteps'
 import createApp from '../src/client'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
-import { App, Context, CreateHistoryType, Settings, Controller } from '../src/share/constant'
+import { App, Context, CreateHistoryType, Settings, Controller, ControllerConstructor, createController, Loader } from '../src/share/constant'
 import { Route } from '../src/share/createMatcher'
 
 let app: App
@@ -118,7 +118,6 @@ const createTest = () => {
 
     it('should call controller.destroy when go to another location', () => {
         let count = 0
-        console.log(getController())
         getController().destroy = function() {
             count += 1
             expect(count).toBe(1)
@@ -281,18 +280,18 @@ const createTest = () => {
 }
 
 const describeTest: (type: CreateHistoryType) => void = (type) => {
-    let initApp: (settings: Settings) => Promise<{}> = (settings) => {
+    const initApp: (settings: Settings) => Promise<{}> = (settings) => {
         // clear app and document.body
         if (app) {
             app.stop()
             document.body.innerHTML = ''
             window.location.hash = ''
         }
-
+    
         context = {
             location: {}
         }
-
+    
         app = createApp({
             container: 'body',
             basename: '/abc',
@@ -302,13 +301,13 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
         })
         return new Promise(resolve => {
             // do not match current location
-            // app.start(resolve, false)
+            app.start(resolve, false)
             let targetPath = `/random${Math.random().toString(36).substr(2, 6)}`
                 // render random location by default
             app.history.push(targetPath)
         })
     }
-
+    
     describe('works without custom loader', () => {
         beforeEach(() => {
             let routes: Route[] = [{
@@ -356,7 +355,7 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
         describe('sync mode', () => {
             beforeEach(() => {
                 let loader = (controller: string) => {
-                    let iController: Controller
+                    let iController: ControllerConstructor
                     switch (controller) {
                         case 'home':
                           iController = Home
@@ -385,23 +384,23 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
 
         describe('async mode', () => {
             beforeEach(() => {
-                let loader = (controller: string) => {
-                    let iController: Controller
+                let loader: Loader = (controller: string) => {
+                    let iController: ControllerConstructor
                     switch (controller) {
                         case 'home':
-                          iController = Home as Controller
+                          iController = Home
                             break
                         case 'list':
-                          iController = List as Controller
+                          iController = List
                             break
                         case 'detail':
-                          iController = Detail as Controller
+                          iController = Detail
                             break
                         case 'restore':
-                          iController = Restore as Controller
+                          iController = Restore
                             break
                         default:
-                          iController = NotFound as Controller
+                          iController = NotFound
                     }
 
                     return new Promise((resolve) => {
@@ -439,7 +438,7 @@ describe('createApp-client', () => {
         describeTest('createHashHistory')
     })
 
-    // describe('feature: pushState history', () => {
-    //     describeTest('createHistory')
-    // })
+    describe('feature: pushState history', () => {
+        describeTest('createHistory')
+    })
 })

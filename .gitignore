@@ -7,3 +7,4 @@ _site
 .publish
 dist
 *-lock.json
+.vscode

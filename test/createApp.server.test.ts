@@ -182,26 +182,23 @@ function createTest() {
             .then(({content}) => {
                 expect(content).toEqual('home')
             })
-        // let list = Promise.resolve(app.render('/list'))
-        //     .then(({content}) => {
-        //         expect(content).toEqual('list')
-        //     })
-        // let detail = Promise.resolve(app.render('/detail'))
-        //     .then(({content}) => {
-        //         expect(content).toEqual('detail')
-        //     })
-        // let notfound = Promise.resolve(app.render('/notfound'))
-        //     .then(({content}) => {
-        //         expect(content).toEqual('not found')
-        //     })
-        // let random = Promise.resolve(app.render(`/random-${Math.random().toString(36).substr(2)}`))
-        //     .then(({content}) => {
-        //         expect(content).toEqual('not found')
-        //     })
-        // Promise.all([home, list, detail, notfound, random])
-        //     .then(() => done())
-        //     .catch(error => console.error(error.stack))
-        Promise.all([home])
+        let list = Promise.resolve(app.render('/list'))
+            .then(({content}) => {
+                expect(content).toEqual('list')
+            })
+        let detail = Promise.resolve(app.render('/detail'))
+            .then(({content}) => {
+                expect(content).toEqual('detail')
+            })
+        let notfound = Promise.resolve(app.render('/notfound'))
+            .then(({content}) => {
+                expect(content).toEqual('not found')
+            })
+        let random = Promise.resolve(app.render(`/random-${Math.random().toString(36).substr(2)}`))
+            .then(({content}) => {
+                expect(content).toEqual('not found')
+            })
+        Promise.all([home, list, detail, notfound, random])
             .then(() => done())
             .catch(error => console.error(error.stack))
     })
