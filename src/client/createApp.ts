@@ -1,7 +1,7 @@
 /**
  * createApp at client
  */
-import * as History from 'create-history'
+import History from 'create-history'
 import defaultViewEngine from './viewEngine'
 import * as _ from '../share/util'
 import createMatcher, {
@@ -37,7 +37,7 @@ import {
 } from '../share/constant'
 
 const createHistory: CreateHistory = (settings) => {
-  let historyCreater: History.CreateHistoryFunc = History[settings.type]
+  let historyCreater: History.CreateHistory = History[settings.type]
   if (settings.basename) {
     historyCreater = History.useBasename(historyCreater)
   }

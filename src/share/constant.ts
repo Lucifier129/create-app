@@ -2,7 +2,7 @@
   key/value configs
 */
 import React from 'react'
-import * as History from 'create-history'
+import History from 'create-history'
 import pathToRegexp from 'path-to-regexp'
 import { Route, Matcher, Params } from './createMatcher'
 
