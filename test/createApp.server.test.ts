@@ -1,10 +1,9 @@
 import execSteps from './squences/execSteps'
 import createApp from '../src/server'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
-import { App, Context, CreateHistoryType, Settings, Controller } from '../src/share/constant'
-import { Route } from '../src/share/createMatcher'
+import CA from '../src'
 
-let app: App
+let app: CA.App
 
 describe('createApp-server', () => {
     describe('result', () => {

@@ -1,11 +1,10 @@
 import execSteps from './squences/execSteps'
 import createApp from '../src/client'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
-import { App, Context, CreateHistoryType, Settings, Controller, ControllerConstructor, createController, Loader } from '../src/share/constant'
-import { Route } from '../src/share/createMatcher'
+import CA from '../src/index'
 
-let app: App
-let context: Context
+let app: CA.App
+let context: CA.Context
 
 
 const createTest = () => {
@@ -279,8 +278,8 @@ const createTest = () => {
     })
 }
 
-const describeTest: (type: CreateHistoryType) => void = (type) => {
-    const initApp: (settings: Settings) => Promise<{}> = (settings) => {
+const describeTest: (type: CA.CreateHistoryType) => void = (type) => {
+    const initApp: (settings: CA.Settings) => Promise<{}> = (settings) => {
         // clear app and document.body
         if (app) {
             app.stop()
@@ -310,7 +309,7 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
     
     describe('works without custom loader', () => {
         beforeEach(() => {
-            let routes: Route[] = [{
+            let routes: CA.Route[] = [{
                 path: '/(home|debug.html)?',
                 controller: Home,
             }, {
@@ -335,7 +334,7 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
     })
 
     describe('works with custom loader', () => {
-        let routes: Route[] = [{
+        let routes: CA.Route[] = [{
             path: '/(home|debug.html)?',
             controller: 'home',
         }, {
@@ -355,7 +354,7 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
         describe('sync mode', () => {
             beforeEach(() => {
                 let loader = (controller: string) => {
-                    let iController: ControllerConstructor
+                    let iController: CA.ControllerConstructor
                     switch (controller) {
                         case 'home':
                           iController = Home
@@ -384,8 +383,8 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
 
         describe('async mode', () => {
             beforeEach(() => {
-                let loader: Loader = (controller: string) => {
-                    let iController: ControllerConstructor
+                let loader: CA.Loader = (controller: string) => {
+                    let iController: CA.ControllerConstructor
                     switch (controller) {
                         case 'home':
                           iController = Home
