@@ -41,7 +41,7 @@ export const createCache: CA.CreateCache = <T>(amount = 10) => {
   }
 
   const get: (key: string) => T = (key) => {
-    return cache[key]
+    return <T>cache[key]
   }
 
   const remove: (key: string) => void = (key) => {
@@ -54,7 +54,7 @@ export const createCache: CA.CreateCache = <T>(amount = 10) => {
     return cache
   }
 
-  return { keys, get, set, remove, getAll }
+  return { keys, get, set, remove, getAll } as CA.Cache<T>
 }
 
 export const createMap: CA.CreateMap = <K, V>() => {
@@ -89,7 +89,7 @@ export const createMap: CA.CreateMap = <K, V>() => {
     list = list.filter(item => item.key !== key)
   }
 
-  return { get, set, has, remove }
+  return { get, set, has, remove } as CA.AppMap<K, V>
 }
 
 if (!Object.freeze) {
