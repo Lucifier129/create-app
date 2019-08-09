@@ -4,39 +4,11 @@
 import History from 'create-history'
 import defaultViewEngine from './viewEngine'
 import * as _ from '../share/util'
-import createMatcher, {
-  Matcher,
-  Matches,
-  Route
-} from '../share/createMatcher'
-import {
-  defaultAppSettings,
-  Settings,
-  Controller,
-  ControllerConstructor,
-  ClientInitController,
-  createController,
-  Location,
-  ClientRender as Render,
-  Context,
-  CreateApp,
-  ControllerCacheFunc,
-  GetControllerByLocation,
-  GetContainer,
-  WrapController,
-  CreateInitController,
-  RenderToContainer,
-  ClearContainer,
-  DestoryContainer,
-  Listener,
-  Subscribe,
-  Publish,
-  Start,
-  Stop,
-  CreateHistory
-} from '../share/constant'
+import createMatcher from '../share/createMatcher'
+import defaultAppSettings from '../share/defaultSettings'
+import CA, { createController } from '../index'
 
-const createHistory: CreateHistory = (settings) => {
+const createHistory: CA.CreateHistory = (settings) => {
   let historyCreater: History.CreateHistory = History[settings.type]
   if (settings.basename) {
     historyCreater = History.useBasename(historyCreater)
@@ -46,8 +18,8 @@ const createHistory: CreateHistory = (settings) => {
   return historyCreater(settings)
 }
 
-const createApp: CreateApp = (appSettings) => {
-  let finalAppSettings: Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
+const createApp: CA.CreateApp = (appSettings) => {
+  let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
 
@@ -66,27 +38,27 @@ const createApp: CreateApp = (appSettings) => {
   }
 
   let history: History.NativeHistory = createHistory(finalAppSettings)
-  let matcher: Matcher = createMatcher(routes)
-  let currentController: Controller = null
+  let matcher: CA.Matcher = createMatcher(routes)
+  let currentController: CA.Controller = null
   let currentLocation: History.Location = null
   let unlisten: Function = null
   let finalContainer: HTMLElement = null
 
-  let cache: _.Cache<Controller> = _.createCache(cacheAmount)
+  let cache: CA.Cache<CA.Controller> = _.createCache(cacheAmount)
 
-  const saveControllerToCache: ControllerCacheFunc = (controller) => {
+  const saveControllerToCache: CA.ControllerCacheFunc = (controller) => {
     cache.set(controller.location.raw, controller)
   }
 
-  const getControllerFromCache: GetControllerByLocation = (location) => {
+  const getControllerFromCache: CA.GetControllerByLocation = (location) => {
     return cache.get(location.raw)
   }
 
-  const removeControllerFromCache: ControllerCacheFunc = (controller) => {
+  const removeControllerFromCache: CA.ControllerCacheFunc = (controller) => {
     cache.remove(controller.location.raw)
   }
 
-  const getContainer: GetContainer = () => {
+  const getContainer: CA.GetContainer = () => {
     if (finalContainer) {
       return finalContainer
     }
@@ -97,12 +69,12 @@ const createApp: CreateApp = (appSettings) => {
     }
   }
 
-  const render: Render = (targetPath) => {
-    let location: Location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+  const render: CA.ClientRender = (targetPath) => {
+    let location: CA.Location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
     context.prevLocation = currentLocation
     currentLocation = location
 
-    let matches: Matches = matcher(location.pathname)
+    let matches: CA.Matches = matcher(location.pathname)
 
     if (!matches) {
       let error = new Error(`Did not match any route with pathname:${location.pathname}`)
@@ -117,26 +89,26 @@ const createApp: CreateApp = (appSettings) => {
     location.params = params
     location.raw = location.pathname + location.search
 
-    let initController: ClientInitController = createInitController(location)
-    let iController: ControllerConstructor | Promise<ControllerConstructor> = loader(controller, location, context)
+    let initController: CA.ClientInitController = createInitController(location)
+    let iController: CA.ControllerConstructor | Promise<CA.ControllerConstructor> = loader(controller, location, context)
 
     if (_.isThenable(iController)) {
-      return (<Promise<ControllerConstructor>>iController).then(initController)
+      return (<Promise<CA.ControllerConstructor>>iController).then(initController)
     } else {
-      return initController(<ControllerConstructor>iController)
+      return initController(<CA.ControllerConstructor>iController)
     }
   }
 
-  let controllers: _.AppMap<ControllerConstructor, Controller>
-    = _.createMap<ControllerConstructor, Controller>()
+  let controllers: CA.AppMap<CA.ControllerConstructor, CA.Controller>
+    = _.createMap<CA.ControllerConstructor, CA.Controller>()
 
-  const wrapController: WrapController = (IController) => {
+  const wrapController: CA.WrapController = (IController) => {
     if (controllers.has(IController)) {
       return controllers.get(IController)
     }
     // implement the controller's life-cycle and useful methods
     class WrapperController extends IController {
-      constructor(location?: Location, context?: Context) {
+      constructor(location?: CA.Location, context?: CA.Context) {
         super(location, context)
         this.location = this.location || location
         this.context = this.context || context
@@ -146,7 +118,7 @@ const createApp: CreateApp = (appSettings) => {
         this.routes = routes
       }
       // update view
-      public refreshView(view = (this as Controller).render()) {
+      public refreshView(view = (this as CA.Controller).render()) {
         renderToContainer(view, this)
       }
       // get container node
@@ -170,20 +142,20 @@ const createApp: CreateApp = (appSettings) => {
       }
     }
 
-    controllers.set(IController, WrapperController as Controller)
+    controllers.set(IController, WrapperController as CA.Controller)
 
     return WrapperController
   }
 
-  const createInitController: CreateInitController = (location) => {
-    const initController: ClientInitController = (iController) => {
+  const createInitController: CA.CreateInitController = (location) => {
+    const initController: CA.ClientInitController = (iController) => {
       if (currentLocation !== location) {
         return
       }
 
       destroyController()
 
-      let controller: Controller = currentController = getControllerFromCache(location)
+      let controller: CA.Controller = currentController = getControllerFromCache(location)
       let component = null
 
       if (controller) {
@@ -192,7 +164,7 @@ const createApp: CreateApp = (appSettings) => {
         controller.context = context
 
       } else {
-        let FinalController = wrapController(<ControllerConstructor>iController)
+        let FinalController = wrapController(<CA.ControllerConstructor>iController)
         controller = currentController = createController(FinalController, location, context)
         component = controller.init()
       }
@@ -215,18 +187,18 @@ const createApp: CreateApp = (appSettings) => {
     return initController
   }
 
-  const renderToContainer: RenderToContainer = (component, controller) => {
+  const renderToContainer: CA.RenderToContainer = (component, controller) => {
     saveControllerToCache(controller)
     return viewEngine.render(component, getContainer(), controller)
   }
 
-  const clearContainer: ClearContainer = () => {
+  const clearContainer: CA.ClearContainer = () => {
     if (viewEngine.clear) {
       return viewEngine.clear(getContainer())
     }
   }
 
-  const destroyController: DestoryContainer = () => {
+  const destroyController: CA.DestoryContainer = () => {
     if (currentController && !currentController.KeepAlive) {
       removeControllerFromCache(currentController)
     }
@@ -236,9 +208,9 @@ const createApp: CreateApp = (appSettings) => {
     }
   }
 
-  let listeners: Listener[] = []
+  let listeners: CA.Listener[] = []
 
-  const subscribe: Subscribe = (listener) => {
+  const subscribe: CA.Subscribe = (listener) => {
     let index: number = listeners.indexOf(listener)
     if (index === -1) {
       listeners.push(listener)
@@ -251,14 +223,14 @@ const createApp: CreateApp = (appSettings) => {
     }
   }
 
-  const publish: Publish = (location) => {
+  const publish: CA.Publish = (location) => {
     for (let i = 0, len = listeners.length; i < len; i++) {
       listeners[i](location, history)
     }
   }
 
-  const start: Start = (callback, shouldRenderWithCurrentLocation) => {
-    let listener: (location: Location) => void = location => {
+  const start: CA.Start = (callback, shouldRenderWithCurrentLocation) => {
+    let listener: (location: CA.Location) => void = location => {
       let result = render(location)
       if (_.isThenable(result)) {
         result.then(() => {
@@ -279,7 +251,7 @@ const createApp: CreateApp = (appSettings) => {
     return unsubscribe
   }
 
-  const stop: Stop = () => {
+  const stop: CA.Stop = () => {
     if (unlisten) {
       unlisten()
       destroyController()

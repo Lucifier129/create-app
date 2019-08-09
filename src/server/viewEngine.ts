@@ -1,7 +1,7 @@
 /**
  * default view engine for server
  */
-import { ViewEngine } from '../share/constant'
+import CA from '../index'
 const render = html => {
 	if (typeof html === 'string') {
     return html
@@ -10,7 +10,7 @@ const render = html => {
   }
 }
 
-const viewEngine: ViewEngine = {
+const viewEngine: CA.ViewEngine = {
   render
 }
 export default viewEngine

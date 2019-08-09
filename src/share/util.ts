@@ -1,13 +1,14 @@
 // util
-export const isThenable: (obj: any) => boolean = (obj) => {
+import CA from '../index'
+export const isThenable: CA.IsThenable = (obj) => {
   return obj !== undefined && obj !== null && typeof obj.then === 'function'
 }
 
-export const identity: (obj: object) => object = (obj) => {
+export const identity: CA.Identity = (obj) => {
   return obj
 }
 
-export const extend: (to: object, from: object) => object = (to, from) => {
+export const extend: CA.Extend = (to, from) => {
   if (!from) {
     return to
   }
@@ -19,20 +20,8 @@ export const extend: (to: object, from: object) => object = (to, from) => {
   return to
 }
 
-export interface Cache<T> {
-  keys: () => string[]
-  get: (key: string) => T
-  set: (key: string, value: any) => void
-  remove: (key: string) => void
-  getAll: () => CacheStorage<T>
-}
-
-export interface CacheStorage<T> {
-  [key: string]: T
-}
-
-export const createCache: <T>(amount?: number) => Cache<T> = <T>(amount = 10) => {
-  let cache: CacheStorage<T> = {}
+export const createCache: CA.CreateCache = <T>(amount = 10) => {
+  let cache: CA.CacheStorage<T> = {}
 
   const keys = () => {
     return Object.keys(cache)
@@ -45,7 +34,7 @@ export const createCache: <T>(amount?: number) => Cache<T> = <T>(amount = 10) =>
     }
   }
 
-  const set: (key: string, value: T) => void = (key, value) => {
+  const set: CA.Cache<T> = (key, value) => {
     remove(key)
     cache[key] = value
     checkAmount()
@@ -61,33 +50,17 @@ export const createCache: <T>(amount?: number) => Cache<T> = <T>(amount = 10) =>
     }
   }
 
-  const getAll: () => CacheStorage<T> = () => {
+  const getAll: () => CA.CacheStorage<T> = () => {
     return cache
   }
 
   return { keys, get, set, remove, getAll }
 }
 
-export interface AppMap<K, V> {
-  get: (key: K) => V
-  set: (key: K, value: V) => void
-  has: (key: K) => boolean
-  remove: (key: K) => void
-}
+export const createMap: CA.CreateMap = <K, V>() => {
+  let list: CA.MapItem<K, V>[] = []
 
-export interface CreateMap {
-  <K, V>(): AppMap<K, V>
-}
-
-export interface MapItem<K, V> {
-  key: K
-  value: V
-}
-
-export const createMap: CreateMap = <K, V>() => {
-  let list: MapItem<K, V>[] = []
-
-  const find: (key: K) => MapItem<K, V>[] = (key) => {
+  const find: (key: K) => CA.MapItem<K, V>[] = (key) => {
     return list.filter(item => item.key === key)
   }
 
@@ -120,5 +93,5 @@ export const createMap: CreateMap = <K, V>() => {
 }
 
 if (!Object.freeze) {
-  Object.freeze = <{ <T>(a: T[]): readonly T[]; <T extends Function>(f: T): T; <T>(o: T): Readonly<T>; }>identity
+  Object.freeze = <{ <T>(a: T[]): ReadonlyArray<T>; <T extends Function>(f: T): T; <T>(o: T): Readonly<T>; }>identity
 }

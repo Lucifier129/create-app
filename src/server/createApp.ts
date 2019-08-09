@@ -4,29 +4,11 @@
 import History from 'create-history'
 import * as _ from '../share/util'
 import defaultViewEngine from './viewEngine'
-import createMatcher, {
-  Matcher,
-  Matches,
-  Route,
-} from '../share/createMatcher'
-import {
-  defaultAppSettings,
-  Settings,
-  Controller,
-  Location,
-  ServerRender as Render,
-  Context,
-  CreateApp,
-  InitController,
-  FetchController,
-  WrapController,
-  CreateHistory,
-  RenderToString,
-  ControllerConstructor,
-  createController
-} from '../share/constant'
+import createMatcher from '../share/createMatcher'
+import defaultAppSettings from '../share/defaultSettings'
+import CA, { createController } from '../index'
 
-const createHistory: CreateHistory = (settings) => {
+const createHistory: CA.CreateHistory = (settings) => {
   let create: History.CreateHistory = History.createMemoryHistory
   if (settings.basename) {
     create = History.useBasename(create)
@@ -35,8 +17,8 @@ const createHistory: CreateHistory = (settings) => {
   return create(settings)
 }
 
-const createApp: CreateApp = (appSettings) => {
-  let finalAppSettings: Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
+const createApp: CA.CreateApp = (appSettings) => {
+  let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
 
@@ -52,10 +34,10 @@ const createApp: CreateApp = (appSettings) => {
     ...appSettings.context,
   }
 
-  let matcher: Matcher = createMatcher(routes)
+  let matcher: CA.Matcher = createMatcher(routes)
   let history: History.NativeHistory = createHistory(finalAppSettings)
 
-  const render: Render = (requestPath, injectContext, callback) => {
+  const render: CA.ServerRender = (requestPath, injectContext, callback) => {
     let result = null
 
     if (typeof injectContext === 'function') {
@@ -80,11 +62,11 @@ const createApp: CreateApp = (appSettings) => {
     return result
   }
 
-  const initController: InitController = (controller) => {
+  const initController: CA.InitController = (controller) => {
     if (_.isThenable(controller)) {
-      return (<Promise<Controller>>controller).then(initController)
+      return (<Promise<CA.Controller>>controller).then(initController)
     }
-    let component = (<Controller>controller).init && (<Controller>controller).init()
+    let component = (<CA.Controller>controller).init && (<CA.Controller>controller).init()
 
     if (component === null) {
       return { controller }
@@ -95,17 +77,17 @@ const createApp: CreateApp = (appSettings) => {
         if (component == null) {
           return { controller }
         }
-        let content = renderToString(component, controller as Controller)
+        let content = renderToString(component, controller as CA.Controller)
         return { content, controller }
       })
     }
-    let content = renderToString(component, controller as Controller)
+    let content = renderToString(component, controller as CA.Controller)
     return { content, controller }
   }
 
-  const fetchController: FetchController = (requestPath, injectContext) => {
-    let location: Location = history.createLocation(requestPath)
-    let matches: Matches = matcher(location.pathname)
+  const fetchController: CA.FetchController = (requestPath, injectContext) => {
+    let location: CA.Location = history.createLocation(requestPath)
+    let matches: CA.Matches = matcher(location.pathname)
 
     if (!matches) {
       let error = new Error(`Did not match any route with path:${requestPath}`)
@@ -120,28 +102,28 @@ const createApp: CreateApp = (appSettings) => {
     location.params = params
     location.raw = requestPath
 
-    let finalContext: Context = {
+    let finalContext: CA.Context = {
       ...context,
       ...injectContext,
     }
-    let iController: ControllerConstructor | Promise<ControllerConstructor> = loader(controller, location, finalContext)
+    let iController: CA.ControllerConstructor | Promise<CA.ControllerConstructor> = loader(controller, location, finalContext)
 
     if (_.isThenable(iController)) {
-      return (<Promise<ControllerConstructor>>iController).then(iController => {
+      return (<Promise<CA.ControllerConstructor>>iController).then(iController => {
         let Wrapper = wrapController(iController)
         return createController(Wrapper, location, finalContext)
       })
     }
 
-    let Wrapper = wrapController(<ControllerConstructor>iController)
+    let Wrapper = wrapController(<CA.ControllerConstructor>iController)
     return createController(Wrapper, location, finalContext)
   }
 
 
-  let controllers: _.AppMap<ControllerConstructor, Controller>
-    = _.createMap<ControllerConstructor, Controller>()
+  let controllers: CA.AppMap<CA.ControllerConstructor, CA.Controller>
+    = _.createMap<CA.ControllerConstructor, CA.Controller>()
 
-  const wrapController: WrapController = (iController) => {
+  const wrapController: CA.WrapController = (iController) => {
     if (controllers.has(iController)) {
       return controllers.get(iController)
     }
@@ -158,11 +140,11 @@ const createApp: CreateApp = (appSettings) => {
       }
     }
 
-    controllers.set(iController, WrapperController as Controller)
+    controllers.set(iController, WrapperController as CA.Controller)
     return WrapperController
   }
 
-  const renderToString: RenderToString = (component, controller) => {
+  const renderToString: CA.RenderToString = (component, controller) => {
     return viewEngine.render(component, undefined, controller)
   }
 
