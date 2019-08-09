@@ -34,7 +34,7 @@ export const createCache: CA.CreateCache = <T>(amount = 10) => {
     }
   }
 
-  const set: CA.Cache<T> = (key, value) => {
+  const set: (key: string, value: T) => void = (key, value) => {
     remove(key)
     cache[key] = value
     checkAmount()
