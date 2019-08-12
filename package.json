@@ -7,6 +7,7 @@
   "scripts": {
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll",
+    "prebuild": "rimraf dist",
     "build": "tsc --module commonjs"
   },
   "repository": {
@@ -36,6 +37,7 @@
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-lite": "^0.15.17",
+    "rimraf": "^2.6.3",
     "ts-jest": "^23.0.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
