@@ -5,13 +5,16 @@ import React from 'react'
 import History from 'create-history'
 import pathToRegexp from 'path-to-regexp'
 
-import server from './server/index'
-import client from './client/index'
+import _server from './server/index'
+import _client from './client/index'
 
 const CA = {
-  server,
-  client
+  server: _server,
+  client: _client
 }
+
+export const server = _server
+export const client = _client
 
 export default CA
 
