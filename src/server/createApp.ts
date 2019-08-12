@@ -17,7 +17,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return create(settings)
 }
 
-const createApp: CA.CreateApp = (appSettings) => {
+const createApp: CA.CreateServer = (appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)

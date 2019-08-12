@@ -3,7 +3,7 @@ import createApp from '../src/client'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
 import CA from '../src/index'
 
-let app: CA.App
+let app: CA.Client
 let context: CA.Context
 
 

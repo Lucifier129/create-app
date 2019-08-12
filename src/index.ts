@@ -83,12 +83,19 @@ namespace CA {
     viewEngine?: ViewEngine
   }
   
-  export interface App {
+  export type App = Client | Server
+
+  export interface Client {
     start?: Start
     stop?: Stop
-    render?: Render
+    render?: ClientRender
     history?: History.NativeHistory
     subscribe?: Subscribe
+  }
+
+  export interface Server {
+    render?: ServerRender
+    history?: History.NativeHistory
   }
   
   export interface CreateHistory {
@@ -102,10 +109,16 @@ namespace CA {
   export interface GetControllerByLocation {
     (location: Location): Controller
   }
-  
-  export interface CreateApp {
-    (settings: Settings): App
+
+  export interface CreateServer {
+    (settings: Settings): Server
   }
+
+  export interface CreateClient {
+    (settings: Settings): Client
+  }
+  
+  export type CreateApp = CreateServer | CreateClient
   
   export interface ClientRender {
     (targetPath: string | Location): any
