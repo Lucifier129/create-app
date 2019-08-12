@@ -1,10 +1,10 @@
-import { Controller, Location, Context } from '../../src/share/constant'
+import CA from '../../src'
 export let getController = () => controller
 
 let controller
 
-export class Home implements Controller {
-  constructor(location?: Location, context?: Context) {
+export class Home implements CA.Controller {
+  constructor() {
     controller = this
   }
   init() {
@@ -19,7 +19,7 @@ export class Home implements Controller {
   }
 }
 
-export class List implements Controller {
+export class List implements CA.Controller {
   constructor() {
     controller = this
   }
@@ -35,7 +35,7 @@ export class List implements Controller {
   }
 }
 
-export class Detail implements Controller {
+export class Detail implements CA.Controller {
   constructor() {
     controller = this
   }
@@ -47,7 +47,7 @@ export class Detail implements Controller {
   }
 }
 
-export class NotFound implements Controller {
+export class NotFound implements CA.Controller {
   constructor() {
     controller = this
   }
@@ -59,7 +59,7 @@ export class NotFound implements Controller {
   }
 }
 
-export class Restore implements Controller {
+export class Restore implements CA.Controller {
   KeepAlive: boolean
   count: number
   constructor() {

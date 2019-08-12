@@ -201,10 +201,14 @@ namespace CA {
   
   export interface Loader {
     (
-      controller: ControllerConstructor | string,
+      controller: ControllerConstructor | LoadController | string,
       location: Location,
       context: Context
     ): ControllerConstructor | Promise<ControllerConstructor>
+  }
+
+  export interface LoadController {
+    (location?: Location, context?: Context): ControllerConstructor | Promise<ControllerConstructor>
   }
   
   export interface ControllerConstructor {

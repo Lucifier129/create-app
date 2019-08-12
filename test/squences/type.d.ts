@@ -1,7 +1,7 @@
-import { Location } from '../../src/share/constant'
+import CA from '../../src/'
 
 export interface Step {
-  (location?: Location): void
+  (location?: CA.Location): void
 }
 
 export interface Done {

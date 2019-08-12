@@ -1,5 +1,4 @@
 import execSteps from './squences/execSteps'
-import createApp from '../src/server'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
 import CA from '../src'
 
@@ -8,7 +7,7 @@ let app: CA.App
 describe('createApp-server', () => {
     describe('result', () => {
         it('should return an object', () => {
-            let app = createApp({
+            let app = CA.server({
                 routes: [],
             })
             expect(typeof app).toBe('object')
@@ -18,7 +17,7 @@ describe('createApp-server', () => {
     })
 
     let initApp = settings => {
-        app = createApp({
+        app = CA.server({
             ...settings,
         })
     }
@@ -155,45 +154,45 @@ function createTest() {
                 done()
             }
         }
-        app.render('/', (error, {content}) => {
+        (<CA.ServerRender>app.render)('/', {}, (error, {content}) => {
             expect(content).toEqual('home')
             cleanup()
         })
-        app.render('/list', (error, {content}) => {
+        (<CA.ServerRender>app.render)('/list', {}, (error, {content}) => {
             expect(content).toEqual('list')
             cleanup()
         })
-        app.render('/detail', (error, {content}) => {
+        (<CA.ServerRender>app.render)('/detail', {}, (error, {content}) => {
             expect(content).toEqual('detail')
             cleanup()
         })
-        app.render('/notfound', (error, {content}) => {
+        (<CA.ServerRender>app.render)('/notfound', {}, (error, {content}) => {
             expect(content).toEqual('not found')
             cleanup()
         })
-        app.render(`/random-${Math.random().toString(36).substr(2)}`, (error, {content}) => {
+        (<CA.ServerRender>app.render)(`/random-${Math.random().toString(36).substr(2)}`, {}, (error, {content}) => {
             expect(content).toEqual('not found')
             cleanup()
         })
     })
     it('should return string with a url by promise style', done => {
-        let home = Promise.resolve(app.render('/'))
+        let home = Promise.resolve((<CA.ServerRender>app.render)('/'))
             .then(({content}) => {
                 expect(content).toEqual('home')
             })
-        let list = Promise.resolve(app.render('/list'))
+        let list = Promise.resolve((<CA.ServerRender>app.render)('/list'))
             .then(({content}) => {
                 expect(content).toEqual('list')
             })
-        let detail = Promise.resolve(app.render('/detail'))
+        let detail = Promise.resolve((<CA.ServerRender>app.render)('/detail'))
             .then(({content}) => {
                 expect(content).toEqual('detail')
             })
-        let notfound = Promise.resolve(app.render('/notfound'))
+        let notfound = Promise.resolve((<CA.ServerRender>app.render)('/notfound'))
             .then(({content}) => {
                 expect(content).toEqual('not found')
             })
-        let random = Promise.resolve(app.render(`/random-${Math.random().toString(36).substr(2)}`))
+        let random = Promise.resolve((<CA.ServerRender>app.render)(`/random-${Math.random().toString(36).substr(2)}`))
             .then(({content}) => {
                 expect(content).toEqual('not found')
             })
@@ -202,12 +201,12 @@ function createTest() {
             .catch(error => console.error(error.stack))
     })
     it('should support inject context to app.render method', done => {
-        let home = Promise.resolve(app.render('/', { test: 1 }))
+        let home = Promise.resolve((<CA.ServerRender>app.render)('/', { test: 1 }))
             .then(({content, controller}) => {
                 expect(controller.context.test).toEqual(1)
                 expect(content).toEqual('home')
             })
-        let list = Promise.resolve(app.render('/list', { test: 2 }))
+        let list = Promise.resolve((<CA.ServerRender>app.render)('/list', { test: 2 }))
             .then(({content, controller}) => {
                 expect(controller.context.test).toEqual(2)
                 expect(content).toEqual('list')
