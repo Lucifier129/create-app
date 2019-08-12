@@ -49,10 +49,10 @@ namespace CA {
     clear?: ViewEngineClear
   }
   
-  export interface ViewEngineRender {
+  export interface ViewEngineRender extends ReactDOM.Renderer {
     (
-      html: HTMLElement | React.ReactNode | void,
-      container?: HTMLElement | string,
+      html: Element | React.ReactNode | void,
+      container?: Element | string,
       controller?: Controller
     ): React.ReactNode | HTMLElement
   }
