@@ -51,7 +51,7 @@ namespace CA {
   
   export interface ViewEngineRender extends ReactDOM.Renderer {
     (
-      html: Element | React.ReactNode | void,
+      html: Element | React.ReactNode,
       container?: Element | string,
       controller?: Controller
     ): React.ReactNode | HTMLElement
@@ -152,14 +152,14 @@ namespace CA {
   
   export interface RenderToContainer {
     (
-      component: HTMLElement | React.ReactNode | void,
+      component: HTMLElement | React.ReactNode,
       controller: Controller
     ): HTMLElement | React.ReactNode
   }
   
   export interface RenderToString {
     (
-      component: HTMLElement | React.ReactNode | void,
+      component: HTMLElement | React.ReactNode,
       controller: Controller
     ): React.ReactNode | HTMLElement
   }
