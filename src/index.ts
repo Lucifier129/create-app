@@ -2,7 +2,7 @@
   key/value configs
 */
 import React from 'react'
-import History from 'create-history'
+import History, { Location as HistoryLocation } from 'create-history'
 import pathToRegexp from 'path-to-regexp'
 
 import _server from './server/index'
@@ -206,7 +206,7 @@ namespace CA {
   
   }
   
-  export interface Location extends History.Location {
+  export interface Location extends HistoryLocation {
     raw?: string
     pattern?: pathToRegexp.Path
     params?: Params

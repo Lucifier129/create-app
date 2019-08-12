@@ -1,7 +1,7 @@
 /**
  * createApp at client
  */
-import History from 'create-history'
+import History, { Location } from 'create-history'
 import defaultViewEngine from './viewEngine'
 import * as _ from '../share/util'
 import createMatcher from '../share/createMatcher'
@@ -40,7 +40,7 @@ const createApp: CA.CreateClient = (appSettings) => {
   let history: History.NativeHistory = createHistory(finalAppSettings)
   let matcher: CA.Matcher = createMatcher(routes)
   let currentController: CA.Controller = null
-  let currentLocation: History.Location = null
+  let currentLocation: CA.Location = null
   let unlisten: Function = null
   let finalContainer: HTMLElement = null
 
