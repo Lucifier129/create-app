@@ -6,5 +6,6 @@ _book
 _site
 .publish
 dist
+lib
 *-lock.json
 .vscode
