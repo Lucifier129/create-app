@@ -7,6 +7,7 @@ import pathToRegexp from 'path-to-regexp'
 
 import _server from './server/index'
 import _client from './client/index'
+import CH from 'create-history';
 
 const CA = {
   server: _server,
@@ -70,12 +71,7 @@ namespace CA {
   export interface Settings extends History.HistoryOptions {
     container?: string | HTMLElement
     basename?: string
-    context?: {
-      isServer?: boolean
-      isClient?: boolean
-      location?: Location
-      [propName: string]: any
-    }
+    context?: Context
     type?: CreateHistoryType
     loader?: Loader
     cacheAmount?: number
@@ -203,7 +199,11 @@ namespace CA {
   }
   
   export interface Context {
-  
+    isClient?: boolean
+    isServer?: boolean
+    prevLocation?: object | null
+    location?: Location
+    [propName: string]: any
   }
   
   export interface Location extends HistoryLocation {
