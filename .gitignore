@@ -7,5 +7,5 @@ _site
 .publish
 dist
 lib
-*-lock.json
+package-lock.json
 .vscode
