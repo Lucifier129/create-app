@@ -66,14 +66,14 @@ const createApp: CA.CreateServer = (appSettings) => {
     if (_.isThenable(controller)) {
       return (<Promise<CA.Controller>>controller).then(initController)
     }
-    let component = (<CA.Controller>controller).init && (<CA.Controller>controller).init()
+    let component: React.ReactElement | Promise<React.ReactElement> = (<CA.Controller>controller).init && (<CA.Controller>controller).init()
 
     if (component === null) {
       return { controller }
     }
 
     if (_.isThenable(component)) {
-      return (<Promise<{}>>component).then(component => {
+      return (<Promise<React.ReactElement>>component).then(component => {
         if (component == null) {
           return { controller }
         }
@@ -81,7 +81,7 @@ const createApp: CA.CreateServer = (appSettings) => {
         return { content, controller }
       })
     }
-    let content = renderToString(component, controller as CA.Controller)
+    let content = renderToString(<React.ReactElement>component, controller as CA.Controller)
     return { content, controller }
   }
 

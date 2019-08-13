@@ -51,14 +51,14 @@ namespace CA {
   
   export interface ViewEngineRender extends ReactDOM.Renderer {
     (
-      html: Element | React.ReactNode,
-      container?: Element | string,
+      html: React.ReactElement,
+      container: Element | null,
       controller?: Controller
-    ): React.ReactNode | HTMLElement
+    ): Element
   }
   
   export interface ViewEngineClear {
-    (container: HTMLElement | string): void
+    (container: Element): void
   }
   
   export type CreateHistoryType = 
@@ -131,7 +131,7 @@ namespace CA {
   export type Render = ClientRender | ServerRender
   
   export interface GetContainer {
-    (): string | HTMLElement
+    (): Element
   }
   
   export interface InitController {
@@ -152,16 +152,16 @@ namespace CA {
   
   export interface RenderToContainer {
     (
-      component: HTMLElement | React.ReactNode,
+      component: React.ReactElement,
       controller: Controller
-    ): HTMLElement | React.ReactNode
+    ): Element
   }
   
   export interface RenderToString {
     (
-      component: HTMLElement | React.ReactNode,
+      component: React.ReactElement,
       controller: Controller
-    ): React.ReactNode | HTMLElement
+    ): Element
   }
   
   export interface FetchController {
@@ -241,7 +241,7 @@ namespace CA {
     init?(): any
     render?(): HTMLElement | React.ReactNode | null | undefined | boolean
     destroy?(): void
-    getContainer?(): string | HTMLElement
+    getContainer?(): Element
     refreshView?()
   }
 

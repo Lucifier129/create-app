@@ -3,7 +3,7 @@
  */
 import CA from '../index'
 
-const render = (html, container) => {
+const render: CA.ViewEngineRender = (html, container) => {
 	container.innerHTML = html
 	return container
 }
