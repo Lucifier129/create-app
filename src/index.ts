@@ -46,7 +46,7 @@ namespace CA {
   }
   
   export interface ViewEngine {
-    render: ViewEngineRender
+    render: ViewEngineRender | RenderTo
     clear?: ViewEngineClear
   }
   
@@ -145,18 +145,22 @@ namespace CA {
   export interface CreateInitController {
     (location: Location): ClientInitController
   }
+
+  export interface RenderTo {
+    (element: React.ReactElement): any
+  }
   
-  export interface RenderToContainer {
+  export interface RenderToContainer extends RenderTo {
     (
       component: React.ReactElement,
-      controller: Controller
+      controller?: Controller
     ): Element
   }
   
-  export interface RenderToString {
+  export interface RenderToString extends RenderTo {
     (
       component: React.ReactElement,
-      controller: Controller
+      controller?: Controller
     ): Element
   }
   

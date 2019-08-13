@@ -187,9 +187,9 @@ const createApp: CA.CreateClient = (appSettings) => {
     return initController
   }
 
-  const renderToContainer: CA.RenderToContainer = (component, controller) => {
+  const renderToContainer: CA.RenderToContainer = (component: React.ReactElement, controller?: CA.Controller) => {
     saveControllerToCache(controller)
-    return viewEngine.render(component, getContainer(), controller)
+    return (viewEngine.render as CA.ViewEngineRender)(component, getContainer(), controller)
   }
 
   const clearContainer: CA.ClearContainer = () => {

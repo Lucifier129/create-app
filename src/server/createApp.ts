@@ -144,8 +144,8 @@ const createApp: CA.CreateServer = (appSettings) => {
     return WrapperController
   }
 
-  const renderToString: CA.RenderToString = (component, controller) => {
-    return viewEngine.render(component, undefined, controller)
+  const renderToString: CA.RenderToString = (component: React.ReactElement, controller?: CA.Controller) => {
+    return (viewEngine.render as CA.ViewEngineRender)(component, undefined, controller)
   }
 
   return {
