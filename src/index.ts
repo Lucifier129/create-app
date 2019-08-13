@@ -193,8 +193,8 @@ namespace CA {
   
   export interface Start {
     (
-      callback: Callback,
-      shouldRenderWithCurrentLocation: boolean
+      callback?: Callback,
+      shouldRenderWithCurrentLocation?: boolean
     ): () => void
   }
   
