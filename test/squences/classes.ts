@@ -1,4 +1,4 @@
-import CA from '../../src'
+import CA from '../../src/share/types'
 export let getController = () => controller
 
 let controller

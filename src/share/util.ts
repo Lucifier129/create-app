@@ -1,5 +1,5 @@
 // util
-import CA from '../index'
+import CA from './types'
 export const isThenable: CA.IsThenable = (obj) => {
   return obj !== undefined && obj !== null && typeof obj.then === 'function'
 }

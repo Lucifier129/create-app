@@ -6,7 +6,8 @@ import * as _ from '../share/util'
 import defaultViewEngine from './viewEngine'
 import createMatcher from '../share/createMatcher'
 import defaultAppSettings from '../share/defaultSettings'
-import CA, { createController } from '../index'
+import createController from '../share/createController'
+import CA from './index'
 
 const createHistory: CA.CreateHistory = (settings) => {
   let create: History.CreateHistory = History.createMemoryHistory
@@ -17,7 +18,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return create(settings)
 }
 
-const createApp: CA.CreateServer = (appSettings) => {
+const createApp: CA.CreateApp = (appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)

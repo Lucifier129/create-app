@@ -1,7 +1,7 @@
 /**
  * default view engine for server
  */
-import CA from '../index'
+import CA from '.'
 const render = html => {
 	if (typeof html === 'string') {
     return html

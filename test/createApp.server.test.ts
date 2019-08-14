@@ -1,13 +1,14 @@
 import execSteps from './squences/execSteps'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
-import CA from '../src'
+import CA from '../src/server'
+import createApp from '../src/server/createApp';
 
-let app: CA.Server
+let app: CA.App
 
 describe('createApp-server', () => {
     describe('result', () => {
         it('should return an object', () => {
-            let app = CA.server({
+            let app = createApp({
                 routes: [],
             })
             expect(typeof app).toBe('object')
@@ -17,7 +18,7 @@ describe('createApp-server', () => {
     })
 
     let initApp = settings => {
-        app = CA.server({
+        app = createApp({
             ...settings,
         })
     }

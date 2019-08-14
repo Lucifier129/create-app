@@ -19,7 +19,17 @@
       "node_modules/@types"
     ]
   },
-  "include": [
-    "src",
+  "files": [
+    "./src/client/index.d.ts",
+    "./src/client/createApp.ts",
+    "./src/client/viewEngine.ts",
+    "./src/server/index.d.ts",
+    "./src/server/createApp.ts",
+    "./src/server/viewEngine.ts",
+    "./src/share/createController.ts",
+    "./src/share/createMatcher.ts",
+    "./src/share/defaultSettings.ts",
+    "./src/share/types.d.ts",
+    "./src/share/util.ts"
   ]
 }

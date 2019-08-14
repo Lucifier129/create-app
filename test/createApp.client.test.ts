@@ -1,9 +1,9 @@
 import execSteps from './squences/execSteps'
-import createApp from '../src/client'
+import createApp from '../src/client/createApp'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
-import CA from '../src/index'
+import CA from '../src/client'
 
-let app: CA.Client
+let app: CA.App
 let context: CA.Context
 
 
