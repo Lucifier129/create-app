@@ -5,3 +5,7 @@ coverage
 _book
 _site
 .publish
+dist
+lib
+package-lock.json
+.vscode

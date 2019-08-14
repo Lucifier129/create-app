@@ -1,15 +1,14 @@
 {
   "name": "create-app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "configuring once, rendering both client and server.",
-  "browser": "lib/client/index.js",
-  "main": "lib/server/index.js",
+  "main": "dist/lib/index.js",
+  "typings": "dist/types/index.d.ts",
   "scripts": {
-    "test": "karma start",
-    "build:lib": "babel ./src --out-dir ./lib",
-    "build": "npm run build:lib",
-    "deploy": "gulp deploy",
-    "prepublish": "npm run build"
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watchAll",
+    "prebuild": "rimraf dist",
+    "build": "tsc --module commonjs"
   },
   "repository": {
     "type": "git",
@@ -28,39 +27,23 @@
   },
   "homepage": "https://github.com/Lucifier129/create-app#readme",
   "devDependencies": {
-    "babel-cli": "^6.14.0",
-    "babel-loader": "^6.2.5",
-    "babel-polyfill": "^6.13.0",
-    "babel-preset-latest": "^6.14.0",
-    "babel-preset-react": "^6.11.1",
-    "babel-preset-stage-0": "^6.5.0",
-    "babel-register": "^6.14.0",
-    "bundle-loader": "^0.5.4",
-    "classnames": "^2.2.5",
-    "expect": "^1.20.2",
-    "fastclick": "^1.0.6",
-    "gulp": "^3.9.1",
-    "gulp-gh-pages": "^0.5.4",
-    "isomorphic-fetch": "^2.2.1",
-    "karma": "^1.1.2",
-    "karma-chrome-launcher": "^1.0.1",
-    "karma-mocha": "^1.1.1",
-    "karma-mocha-reporter": "^2.0.5",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^1.7.0",
-    "lodash": "^4.15.0",
-    "markdown": "^0.5.0",
-    "mocha": "^2.5.3",
-    "moment": "^2.14.1",
+    "@types/jest": "^23.0.1",
+    "@types/node": "^12.6.9",
+    "@types/react": "^16.8.24",
+    "@types/react-dom": "^16.8.5",
+    "jest": "^23.0.1",
     "querystring": "^0.2.0",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-lite": "^0.15.17",
-    "relite": "^1.0.0",
-    "webpack": "^1.12.2"
+    "rimraf": "^2.6.3",
+    "ts-jest": "^23.0.1",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
-    "create-history": "^1.0.1",
+    "create-history": "^2.0.2",
     "path-to-regexp": "^1.5.3"
   }
 }
