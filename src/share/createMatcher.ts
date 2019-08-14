@@ -1,6 +1,6 @@
 import pathToRegexp from 'path-to-regexp'
 import * as _ from './util'
-import CA from '../index'
+import CA from './types'
 
 
 const createMatcher: (routes: CA.Route[]) => CA.Matcher = (routes) => {

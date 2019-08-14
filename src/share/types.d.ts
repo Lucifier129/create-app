@@ -4,26 +4,12 @@
 import React from 'react'
 import History, { Location as HistoryLocation } from 'create-history'
 import pathToRegexp from 'path-to-regexp'
-
-import _server from './server/index'
-import _client from './client/index'
-import CH from 'create-history';
-
-const CA = {
-  server: _server,
-  client: _client
-}
-
-export const server = _server
-export const client = _client
+import Client from '../client'
+import Server from '../server'
 
 export default CA
 
-export const createController: CA.CreateController = (c, location, context) => {
-  return new c(location, context)
-}
-
-namespace CA {
+export namespace CA {
   export interface Route {
     keys?: pathToRegexp.Key[]
     regexp?: RegExp
@@ -79,21 +65,8 @@ namespace CA {
     viewEngine?: ViewEngine
   }
   
-  export type App = Client | Server
+  export type App = Client.App | Server.App
 
-  export interface Client {
-    start?: Start
-    stop?: Stop
-    render?: ClientRender
-    history?: History.NativeHistory
-    subscribe?: Subscribe
-  }
-
-  export interface Server {
-    render?: ServerRender
-    history?: History.NativeHistory
-  }
-  
   export interface CreateHistory {
     (settings: Settings): History.NativeHistory
   }
@@ -102,105 +75,25 @@ namespace CA {
     (controller: Controller): void
   }
   
-  export interface GetControllerByLocation {
-    (location: Location): Controller
-  }
-
-  export interface CreateServer {
-    (settings: Settings): Server
-  }
-
-  export interface CreateClient {
-    (settings: Settings): Client
-  }
-  
-  export type CreateApp = CreateServer | CreateClient
-  
-  export interface ClientRender {
-    (targetPath: string | Location): any
-  }
+  export type CreateApp = Server.CreateApp | Client.CreateApp
   
   export interface ServerRender {
     (requestPath: string, injectContext?: Context, callback?: Callback): any
   }
   
-  export type Render = ClientRender | ServerRender
-  
-  export interface GetContainer {
-    (): Element
-  }
-  
-  export interface InitController {
-    (c: Controller | Promise<Controller>): HTMLElement | React.ReactNode
-  }
-  
-  export interface ClientInitController {
-    (c: ControllerConstructor | Promise<ControllerConstructor>): HTMLElement | React.ReactNode
-  }
+  export type Render = Client.Render | ServerRender
   
   export interface WrapController {
     (IController: ControllerConstructor): any
   }
   
-  export interface CreateInitController {
-    (location: Location): ClientInitController
-  }
-
   export interface RenderTo {
     (element: React.ReactElement): any
   }
   
-  export interface RenderToContainer extends RenderTo {
-    (
-      component: React.ReactElement,
-      controller?: Controller
-    ): Element
-  }
-  
-  export interface RenderToString extends RenderTo {
-    (
-      component: React.ReactElement,
-      controller?: Controller
-    ): Element
-  }
-  
-  export interface FetchController {
-    (
-      requestPath: string,
-      injectContext: Context
-    ): any
-  }
-  
-  export interface ClearContainer {
-    (): void
-  }
-  
-  export interface DestoryContainer {
-    (): void
-  }
-  
   export type Listener = Function
   
-  export interface Subscribe {
-    (listener: Listener): () => void
-  }
-  
-  export interface Publish {
-    (location: Location): void
-  }
-  
   export type Callback = Function
-  
-  export interface Start {
-    (
-      callback?: Callback,
-      shouldRenderWithCurrentLocation?: boolean
-    ): () => void
-  }
-  
-  export interface Stop {
-    (): void
-  }
   
   export interface Context {
     isClient?: boolean
@@ -223,7 +116,7 @@ namespace CA {
       context: Context
     ): ControllerConstructor | Promise<ControllerConstructor>
   }
-
+  
   export interface LoadController {
     (location?: Location, context?: Context): ControllerConstructor | Promise<ControllerConstructor>
   }
@@ -248,11 +141,11 @@ namespace CA {
     getContainer?(): Element
     refreshView?()
   }
-
+  
   export interface CreateController {
     (c: CA.ControllerConstructor, location: CA.Location, context: CA.Context): CA.Controller
   }
-
+  
   export interface Cache<T> {
     keys: () => string[]
     get: (key: string) => T
@@ -260,40 +153,41 @@ namespace CA {
     remove: (key: string) => void
     getAll: () => CacheStorage<T>
   }
-
+  
   export interface CacheStorage<T> {
     [key: string]: T
   }
-
+  
   export interface CreateCache {
     <T>(amount?: number): Cache<T>
   }
-
+  
   export interface AppMap<K, V> {
     get: (key: K) => V
     set: (key: K, value: V) => void
     has: (key: K) => boolean
     remove: (key: K) => void
   }
-
+  
   export interface MapItem<K, V> {
     key: K
     value: V
   }
-
+  
   export interface CreateMap {
     <K, V>(): AppMap<K, V>
   }
-
+  
   export interface IsThenable {
     (obj: any): boolean
   }
-
+  
   export interface Identity {
     (obj: object): object
   }
-
+  
   export interface Extend {
     (to: object, from: object): object
   }
 }
+

@@ -6,7 +6,8 @@ import defaultViewEngine from './viewEngine'
 import * as _ from '../share/util'
 import createMatcher from '../share/createMatcher'
 import defaultAppSettings from '../share/defaultSettings'
-import CA, { createController } from '../index'
+import createController from '../share/createController'
+import CA from './index'
 
 const createHistory: CA.CreateHistory = (settings) => {
   let historyCreater: History.CreateHistory = History[settings.type]
@@ -18,7 +19,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return historyCreater(settings)
 }
 
-const createApp: CA.CreateClient = (appSettings) => {
+const createApp: CA.CreateApp = (appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -69,7 +70,7 @@ const createApp: CA.CreateClient = (appSettings) => {
     }
   }
 
-  const render: CA.ClientRender = (targetPath) => {
+  const render: CA.Render = (targetPath) => {
     let location: CA.Location = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
     context.prevLocation = currentLocation
     currentLocation = location
@@ -89,7 +90,7 @@ const createApp: CA.CreateClient = (appSettings) => {
     location.params = params
     location.raw = location.pathname + location.search
 
-    let initController: CA.ClientInitController = createInitController(location)
+    let initController: CA.InitController = createInitController(location)
     let iController: CA.ControllerConstructor | Promise<CA.ControllerConstructor> = loader(controller, location, context)
 
     if (_.isThenable(iController)) {
@@ -148,7 +149,7 @@ const createApp: CA.CreateClient = (appSettings) => {
   }
 
   const createInitController: CA.CreateInitController = (location) => {
-    const initController: CA.ClientInitController = (iController) => {
+    const initController: CA.InitController = (iController) => {
       if (currentLocation !== location) {
         return
       }

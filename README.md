@@ -9,21 +9,22 @@ Using [npm](https://www.npmjs.com/):
 
 ```js
 // using an ES6 transpiler, like babel
-import createApp from 'create-app'
+import createApp from 'create-app/client'
+createApp()
 
-createApp.client()
-createApp.server()
+import createApp from 'create-app/server'
+createApp()
 
 // not using an ES6 transpiler
-var client = require('create-app').client
-var server = require('create-app').server
+var createApp = require('create-app/client')
+var createApp = require('create-app/server')
 ```
 
 ## Basic Usage
 ```js
-import createApp from 'create-app'
+import createApp from 'create-app/client'
 
-const app = createApp.client({
+const app = createApp({
   container: 'body',
   basename: '/abc',
 })
