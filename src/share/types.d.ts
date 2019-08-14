@@ -66,9 +66,7 @@ export namespace CA {
   }
   
   export type App = Client.App | Server.App
-  
-  
-  
+
   export interface CreateHistory {
     (settings: Settings): History.NativeHistory
   }
@@ -77,11 +75,7 @@ export namespace CA {
     (controller: Controller): void
   }
   
-  
-  
-  
   export type CreateApp = Server.CreateApp | Client.CreateApp
-  
   
   export interface ServerRender {
     (requestPath: string, injectContext?: Context, callback?: Callback): any
@@ -92,7 +86,6 @@ export namespace CA {
   export interface WrapController {
     (IController: ControllerConstructor): any
   }
-  
   
   export interface RenderTo {
     (element: React.ReactElement): any

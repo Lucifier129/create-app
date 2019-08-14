@@ -1,7 +1,6 @@
 /**
  * createApp at client
  */
-/// <reference path="./index.d.ts"/>
 import History, { Location } from 'create-history'
 import defaultViewEngine from './viewEngine'
 import * as _ from '../share/util'
