@@ -4,4 +4,7 @@ node_modules
 coverage
 _book
 _site
+dist
 .publish
+package-lock.json
+.vscode
