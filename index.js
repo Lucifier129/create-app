@@ -1,0 +1,1 @@
+throw new Error(`Please import 'create-app/server' or 'create-app/client'`)

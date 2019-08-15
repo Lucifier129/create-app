@@ -1,5 +1,7 @@
-import BaseTypes from '../share/types'
 import CH from 'create-history'
+import BaseTypes from '../share/types'
+
+declare const CA: CA.CreateApp
 
 export = CA
 
@@ -20,6 +22,7 @@ declare namespace CA {
   interface AppMap<K, V> extends BaseTypes.AppMap<K, V> {}
   interface ControllerCacheFunc extends BaseTypes.ControllerCacheFunc {}
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
+  interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
   interface RenderTo extends BaseTypes.RenderTo {}
   interface ViewEngineRender extends BaseTypes.ViewEngineRender {}
