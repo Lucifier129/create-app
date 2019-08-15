@@ -9,7 +9,6 @@ export default CA
 declare namespace CA {
   interface Callback extends BaseTypes.Callback {}
   interface Listener extends BaseTypes.Listener {}
-
   interface CreateHistory extends BaseTypes.CreateHistory {}
   interface Settings extends BaseTypes.Settings {}
   interface Route extends BaseTypes.Route {}
@@ -25,10 +24,8 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo extends BaseTypes.RenderTo {}
-  interface ViewEngineRender extends BaseTypes.ViewEngineRender {}
+  interface RenderTo<E = string> extends BaseTypes.RenderTo<E> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
-  
   type CreateHistoryType = BaseTypes.CreateHistoryType
 
   interface CreateApp {
@@ -67,16 +64,18 @@ declare namespace CA {
   }
 
   interface InitController {
-    (c: ControllerConstructor | Promise<ControllerConstructor>): HTMLElement | React.ReactNode
+    (
+      c: ControllerConstructor | Promise<ControllerConstructor>
+    ): HTMLElement | Element | string | number | boolean | null | undefined
   }
 
   interface CreateInitController {
     (location: Location): InitController
   }
 
-  interface RenderToContainer extends RenderTo {
+  interface RenderToContainer<E = string> extends RenderTo<E> {
     (
-      component: React.ReactElement,
+      element: E,
       controller?: Controller
     ): Element
   }
@@ -95,5 +94,13 @@ declare namespace CA {
 
   interface GetControllerByLocation {
     (location: Location): Controller
+  }
+  
+  export interface ViewEngineRender<E = string> {
+    (
+      element: E,
+      container: Element | null,
+      controller?: Controller
+    ): Element
   }
 }

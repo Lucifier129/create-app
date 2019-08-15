@@ -25,27 +25,32 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo extends BaseTypes.RenderTo {}
-  interface ViewEngineRender extends BaseTypes.ViewEngineRender {}
+  interface RenderTo<E = string>  extends BaseTypes.RenderTo<E> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
   
   type CreateHistoryType = BaseTypes.CreateHistoryType
 
   export interface App {
-    render?: ServerRender
+    render?: Render
     history?: CH.NativeHistory
   }
 
-  export interface ServerRender {
-    (requestPath: string, injectContext?: Context, callback?: Callback): any
+  export interface Render {
+    (
+      requestPath: string,
+      injectContext?: Context,
+      callback?: Callback
+    ): any
   }
 
   interface CreateApp {
     (settings: Settings): App
   }
   
-  interface InitController {
-    (c: Controller | Promise<Controller>): HTMLElement | React.ReactNode
+  interface InitController<E = string> {
+    <E = string>(
+      c: Controller | Promise<Controller>
+    ): HTMLElement | Element | string | number | boolean | null | undefined
   }
 
   interface CreateInitController {
@@ -59,9 +64,9 @@ declare namespace CA {
     ): any
   }
 
-  export interface RenderToString extends RenderTo {
+  export interface RenderToString<E = string> extends RenderTo<E> {
     (
-      component: React.ReactElement,
+      component: E,
       controller?: Controller
     ): Element
   }

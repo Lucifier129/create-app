@@ -38,7 +38,7 @@ const createApp: CA.CreateApp = (appSettings) => {
   let matcher: CA.Matcher = createMatcher(routes)
   let history: History.NativeHistory = createHistory(finalAppSettings)
 
-  const render: CA.ServerRender = (requestPath, injectContext, callback) => {
+  const render: CA.Render = (requestPath, injectContext, callback) => {
     let result = null
 
     if (typeof injectContext === 'function') {
@@ -63,18 +63,18 @@ const createApp: CA.CreateApp = (appSettings) => {
     return result
   }
 
-  const initController: CA.InitController = (controller) => {
+  const initController: CA.InitController = <E>(controller) => {
     if (_.isThenable(controller)) {
       return (<Promise<CA.Controller>>controller).then(initController)
     }
-    let component: React.ReactElement | Promise<React.ReactElement> = (<CA.Controller>controller).init && (<CA.Controller>controller).init()
+    let component: E | Promise<E> = (<CA.Controller>controller).init && (<CA.Controller>controller).init()
 
     if (component === null) {
       return { controller }
     }
 
     if (_.isThenable(component)) {
-      return (<Promise<React.ReactElement>>component).then(component => {
+      return (<Promise<E>>component).then(component => {
         if (component == null) {
           return { controller }
         }
@@ -82,7 +82,7 @@ const createApp: CA.CreateApp = (appSettings) => {
         return { content, controller }
       })
     }
-    let content = renderToString(<React.ReactElement>component, controller as CA.Controller)
+    let content = renderToString(<E>component, controller as CA.Controller)
     return { content, controller }
   }
 
@@ -145,8 +145,8 @@ const createApp: CA.CreateApp = (appSettings) => {
     return WrapperController
   }
 
-  const renderToString: CA.RenderToString = (component: React.ReactElement, controller?: CA.Controller) => {
-    return (viewEngine.render as CA.ViewEngineRender)(component, undefined, controller)
+  const renderToString: CA.RenderToString = <E>(element: E, controller?: CA.Controller) => {
+    return (viewEngine.render as CA.RenderTo)(component, undefined, controller)
   }
 
   return {

@@ -1,7 +1,6 @@
 /*
   key/value configs
 */
-import React from 'react'
 import History, { Location as HistoryLocation } from 'create-history'
 import pathToRegexp from 'path-to-regexp'
 import Client from '../client'
@@ -32,20 +31,16 @@ declare namespace CA {
   }
   
   export interface ViewEngine {
-    render: ViewEngineRender | RenderTo
+    render: Client.ViewEngineRender | RenderTo
     clear?: ViewEngineClear
-  }
-  
-  export interface ViewEngineRender extends ReactDOM.Renderer {
-    (
-      html: React.ReactElement,
-      container: Element | null,
-      controller?: Controller
-    ): Element
   }
   
   export interface ViewEngineClear {
     (container: Element): void
+  }
+
+  export interface RenderTo<E = string> {
+    (element: E): any
   }
   
   export type CreateHistoryType = 
@@ -76,19 +71,12 @@ declare namespace CA {
   }
   
   export type CreateApp = Server.CreateApp | Client.CreateApp
+
   
-  export interface ServerRender {
-    (requestPath: string, injectContext?: Context, callback?: Callback): any
-  }
-  
-  export type Render = Client.Render | ServerRender
+  export type Render = Client.Render | Server.Render
   
   export interface WrapController {
     (IController: ControllerConstructor): any
-  }
-  
-  export interface RenderTo {
-    (element: React.ReactElement): any
   }
   
   export type Listener = Function
@@ -136,7 +124,7 @@ declare namespace CA {
     count?: number
     restore?(location?: Location, context?: Context): any
     init?(): any
-    render?(): HTMLElement | React.ReactNode | null | undefined | boolean
+    render?(): Element | HTMLElement | string | number | boolean | null | undefined
     destroy?(): void
     getContainer?(): Element
     refreshView?()
