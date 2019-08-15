@@ -1,2 +1,2 @@
-var server = require('./dist/lib/server')
+var server = require('./dist/lib/server/createApp')
 module.exports = server

@@ -1,8 +1,9 @@
 import CH from 'create-history'
 import BaseTypes from '../share/types'
-import CA from './createApp'
 
-export default CA
+declare const CA: CA.CreateApp
+
+export = CA
 
 declare namespace CA {
   interface Callback extends BaseTypes.Callback {}
