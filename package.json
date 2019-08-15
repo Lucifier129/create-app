@@ -2,8 +2,7 @@
   "name": "create-app",
   "version": "2.0.0",
   "description": "configuring once, rendering both client and server.",
-  "main": "dist/lib/index.js",
-  "typings": "dist/types/index.d.ts",
+  "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll",
