@@ -1,6 +1,6 @@
 {
   "name": "create-app",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "configuring once, rendering both client and server.",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,14 @@
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs"
   },
+  "files": [
+    "dist",
+    "index.js",
+    "server.js",
+    "server.d.ts",
+    "client.js",
+    "client.d.ts"    
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lucifier129/create-app.git"
