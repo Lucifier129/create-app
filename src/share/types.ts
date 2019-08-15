@@ -9,7 +9,7 @@ import Server from '../server'
 
 export default CA
 
-export namespace CA {
+declare namespace CA {
   export interface Route {
     keys?: pathToRegexp.Key[]
     regexp?: RegExp

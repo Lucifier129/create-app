@@ -7,8 +7,7 @@
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll",
     "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs",
-    "postbuild": "node ./postbuild.js"
+    "build": "tsc --module commonjs"
   },
   "repository": {
     "type": "git",

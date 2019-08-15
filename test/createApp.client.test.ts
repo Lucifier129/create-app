@@ -1,5 +1,5 @@
 import execSteps from './squences/execSteps'
-import createApp from '../client'
+import createApp from '../src/client'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
 
 let app: createApp.App
