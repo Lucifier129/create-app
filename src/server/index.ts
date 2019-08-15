@@ -1,9 +1,10 @@
 import CH from 'create-history'
 import BaseTypes from '../share/types'
+import createApp from './createApp'
 
-declare const CA: CA.CreateApp
+const CA = createApp
 
-export = CA
+export default CA
 
 declare namespace CA {
   interface Callback extends BaseTypes.Callback {}
@@ -30,69 +31,38 @@ declare namespace CA {
   
   type CreateHistoryType = BaseTypes.CreateHistoryType
 
+  export interface App {
+    render?: ServerRender
+    history?: CH.NativeHistory
+  }
+
+  export interface ServerRender {
+    (requestPath: string, injectContext?: Context, callback?: Callback): any
+  }
+
   interface CreateApp {
     (settings: Settings): App
   }
-
-  interface Render {
-    (targetPath: string | Location): any
-  }
-
-  interface Start {
-    (
-      callback?: Callback,
-      shouldRenderWithCurrentLocation?: boolean
-    ): () => void
-  }
   
-  interface Stop {
-    (): void
-  }
-
-  interface Publish {
-    (location: Location): void
-  }
-
-  interface App {
-    start?: Start
-    stop?: Stop
-    render?: Render
-    history?: CH.NativeHistory
-    subscribe?: Subscribe
-  }
-
-  interface Subscribe {
-    (listener: Listener): () => void
-  }
-
   interface InitController {
-    (c: ControllerConstructor | Promise<ControllerConstructor>): HTMLElement | React.ReactNode
+    (c: Controller | Promise<Controller>): HTMLElement | React.ReactNode
   }
 
   interface CreateInitController {
     (location: Location): InitController
   }
+  
+  export interface FetchController {
+    (
+      requestPath: string,
+      injectContext: Context
+    ): any
+  }
 
-  interface RenderToContainer extends RenderTo {
+  export interface RenderToString extends RenderTo {
     (
       component: React.ReactElement,
       controller?: Controller
     ): Element
-  }
-  
-  interface ClearContainer {
-    (): void
-  }
-  
-  interface DestoryContainer {
-    (): void
-  }
-
-  interface GetContainer {
-    (): Element
-  }
-
-  interface GetControllerByLocation {
-    (location: Location): Controller
   }
 }
