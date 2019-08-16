@@ -24,8 +24,10 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo<E> extends BaseTypes.RenderTo<E> {}
+  interface RenderTo<E = string> extends BaseTypes.RenderTo<E> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
+  interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {}
+
   type CreateHistoryType = BaseTypes.CreateHistoryType
 
   interface CreateApp {
@@ -66,18 +68,18 @@ declare namespace CA {
   interface InitController {
     (
       c: ControllerConstructor | Promise<ControllerConstructor>
-    ): HTMLElement | Element | string | number | boolean | null | undefined
+    ): BaseTypes.AppElement
   }
 
   interface CreateInitController {
     (location: Location): InitController
   }
 
-  interface RenderToContainer<E = string> extends RenderTo<E> {
+  interface RenderToContainer<E> extends RenderTo<E> {
     (
       element: E,
       controller?: Controller
-    ): Element
+    ): BaseTypes.AppElement
   }
   
   interface ClearContainer {
@@ -94,13 +96,5 @@ declare namespace CA {
 
   interface GetControllerByLocation {
     (location: Location): Controller
-  }
-  
-  export interface ViewEngineRender<E> {
-    (
-      element: E,
-      container: Element | null,
-      controller?: Controller
-    ): Element
   }
 }

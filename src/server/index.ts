@@ -9,7 +9,6 @@ export default CA
 declare namespace CA {
   interface Callback extends BaseTypes.Callback {}
   interface Listener extends BaseTypes.Listener {}
-
   interface CreateHistory extends BaseTypes.CreateHistory {}
   interface Settings extends BaseTypes.Settings {}
   interface Route extends BaseTypes.Route {}
@@ -25,10 +24,12 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo<E = string>  extends BaseTypes.RenderTo<E> {}
+  interface RenderTo<E>  extends BaseTypes.RenderTo<E> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
+  interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {}
   
   type CreateHistoryType = BaseTypes.CreateHistoryType
+  type AppElement = BaseTypes.AppElement
 
   export interface App {
     render?: Render
@@ -47,18 +48,15 @@ declare namespace CA {
     (settings: Settings): App
   }
 
-  type AppElement = HTMLElement | Element | string | number | boolean | null | undefined
-  
+  interface InitControllerReturn {
+    content?: BaseTypes.AppElement
+    controller: Controller
+  }
+
   interface InitController {
-    <E = string>(
+    <E>(
       c: Controller | Promise<Controller>
-    ): {
-      content: AppElement
-      controller: Controller
-    } | Promise<{
-      content: AppElement
-      controller: Controller
-    }>
+    ): InitControllerReturn | Promise<InitControllerReturn>
   }
 
   interface CreateInitController {
@@ -72,10 +70,10 @@ declare namespace CA {
     ): any
   }
 
-  export interface RenderToString<E = string> extends RenderTo<E> {
+  export interface RenderToString<E> extends RenderTo<E> {
     (
       element: E,
       controller?: Controller
-    ): AppElement
+    ): BaseTypes.AppElement
   }
 }

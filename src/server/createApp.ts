@@ -18,7 +18,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return create(settings)
 }
 
-const createApp: CA.CreateApp = (appSettings) => {
+const createApp: CA.CreateApp = <E>(appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -63,27 +63,27 @@ const createApp: CA.CreateApp = (appSettings) => {
     return result
   }
 
-  const initController: CA.InitController = (controller: CA.Controller) => {
+  const initController: CA.InitController = (controller: CA.Controller | Promise<CA.Controller>) => {
     if (_.isThenable(controller)) {
       return (<Promise<CA.Controller>>controller).then(initController)
     }
-    let element: E | Promise<E> = controller.init && controller.init()
+    let element: E | Promise<E> = (controller as CA.Controller).init && (controller as CA.Controller).init()
 
     if (element === null) {
-      return { controller }
+      return { controller: controller as CA.Controller }
     }
 
     if (_.isThenable(element)) {
       return (<Promise<E>>element).then(component => {
         if (component == null) {
-          return { controller }
+          return { controller: controller as CA.Controller }
         }
-        let content = renderToString(element, controller as CA.Controller)
-        return { content, controller }
+        let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
+        return { content, controller: controller as CA.Controller }
       })
     }
-    let content = renderToString(element, controller as CA.Controller)
-    return { content, controller }
+    let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
+    return { content, controller } as CA.InitControllerReturn
   }
 
   const fetchController: CA.FetchController = (requestPath, injectContext) => {
@@ -145,8 +145,8 @@ const createApp: CA.CreateApp = (appSettings) => {
     return WrapperController
   }
 
-  const renderToString: CA.RenderToString = <E>(element: E, controller?: CA.Controller) => {
-    return viewEngine.render(component, undefined, controller)
+  const renderToString: CA.RenderToString<E> = (element: E, controller?: CA.Controller) => {
+    return (viewEngine.render as CA.ViewEngineRender<E>)(element, undefined, controller)
   }
 
   return {

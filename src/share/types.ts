@@ -31,7 +31,7 @@ declare namespace CA {
   }
   
   export interface ViewEngine {
-    render: Client.ViewEngineRender | RenderTo
+    render: ViewEngineRender<any> | RenderTo<any>
     clear?: ViewEngineClear
   }
   
@@ -176,6 +176,16 @@ declare namespace CA {
   
   export interface Extend {
     (to: object, from: object): object
+  }
+
+  type AppElement = HTMLElement | Element | string | number | boolean | null | undefined
+  
+  export interface ViewEngineRender<E = string> {
+    (
+      element: E,
+      container: Element | null,
+      controller?: Controller
+    ): AppElement
   }
 }
 

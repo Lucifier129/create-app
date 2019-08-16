@@ -19,7 +19,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return historyCreater(settings)
 }
 
-const createApp: CA.CreateApp = (appSettings) => {
+const createApp: CA.CreateApp = <E>(appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -188,9 +188,9 @@ const createApp: CA.CreateApp = (appSettings) => {
     return initController
   }
 
-  const renderToContainer: CA.RenderToContainer = (component: string, controller?: CA.Controller) => {
+  const renderToContainer: CA.RenderToContainer<E> = (element: E, controller?: CA.Controller) => {
     saveControllerToCache(controller)
-    return (viewEngine.render as CA.ViewEngineRender)(component, getContainer(), controller)
+    return (viewEngine.render as CA.ViewEngineRender<E>)(element, getContainer(), controller)
   }
 
   const clearContainer: CA.ClearContainer = () => {
