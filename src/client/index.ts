@@ -29,6 +29,7 @@ declare namespace CA {
   interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {}
 
   type CreateHistoryType = BaseTypes.CreateHistoryType
+  type AppElement = BaseTypes.AppElement
 
   interface CreateApp {
     (settings: Settings): App
