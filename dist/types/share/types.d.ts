@@ -1,4 +1,3 @@
-import React from 'react';
 import History, { Location as HistoryLocation } from 'create-history';
 import pathToRegexp from 'path-to-regexp';
 import Client from '../client';
@@ -23,14 +22,14 @@ declare namespace CA {
         (pathname: string): Matches;
     }
     interface ViewEngine {
-        render: ViewEngineRender | RenderTo;
+        render: ViewEngineRender<any> | RenderTo<any>;
         clear?: ViewEngineClear;
-    }
-    interface ViewEngineRender extends ReactDOM.Renderer {
-        (html: React.ReactElement, container: Element | null, controller?: Controller): Element;
     }
     interface ViewEngineClear {
         (container: Element): void;
+    }
+    interface RenderTo<E = string> {
+        (element: E): any;
     }
     type CreateHistoryType = 'createHashHistory' | 'createMemoryHistory' | 'createBrowserHistory' | 'createHistory';
     interface Settings extends History.HistoryOptions {
@@ -51,15 +50,9 @@ declare namespace CA {
         (controller: Controller): void;
     }
     type CreateApp = Server.CreateApp | Client.CreateApp;
-    interface ServerRender {
-        (requestPath: string, injectContext?: Context, callback?: Callback): any;
-    }
-    type Render = Client.Render | ServerRender;
+    type Render = Client.Render | Server.Render;
     interface WrapController {
         (IController: ControllerConstructor): any;
-    }
-    interface RenderTo {
-        (element: React.ReactElement): any;
     }
     type Listener = Function;
     type Callback = Function;
@@ -95,7 +88,7 @@ declare namespace CA {
         count?: number;
         restore?(location?: Location, context?: Context): any;
         init?(): any;
-        render?(): HTMLElement | React.ReactNode | null | undefined | boolean;
+        render?(): Element | HTMLElement | string | number | boolean | null | undefined;
         destroy?(): void;
         getContainer?(): Element;
         refreshView?(): any;
@@ -137,5 +130,9 @@ declare namespace CA {
     }
     interface Extend {
         (to: object, from: object): object;
+    }
+    type AppElement = HTMLElement | Element | string | number | boolean | null | undefined;
+    interface ViewEngineRender<E = string> {
+        (element: E, container: Element | null, controller?: Controller): AppElement;
     }
 }

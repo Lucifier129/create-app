@@ -162,36 +162,36 @@ var createApp = function (appSettings) {
             }
             destroyController();
             var controller = currentController = getControllerFromCache(location);
-            var component = null;
+            var element = null;
             if (controller) {
-                component = controller.restore(location, context);
+                element = controller.restore(location, context);
                 controller.location = location;
                 controller.context = context;
             }
             else {
                 var FinalController = wrapController(iController);
                 controller = currentController = createController_1.default(FinalController, location, context);
-                component = controller.init();
+                element = controller.init();
             }
             // if controller#init|restore return false value, do nothing
-            if (component == null) {
+            if (element == null) {
                 return null;
             }
-            if (_.isThenable(component)) {
-                return component.then(function (result) {
+            if (_.isThenable(element)) {
+                return element.then(function (result) {
                     if (currentLocation !== location || result == null) {
                         return null;
                     }
                     return renderToContainer(result, controller);
                 });
             }
-            return renderToContainer(component, controller);
+            return renderToContainer(element, controller);
         };
         return initController;
     };
-    var renderToContainer = function (component, controller) {
+    var renderToContainer = function (element, controller) {
         saveControllerToCache(controller);
-        return viewEngine.render(component, getContainer(), controller);
+        return viewEngine.render(element, getContainer(), controller);
     };
     var clearContainer = function () {
         if (viewEngine.clear) {

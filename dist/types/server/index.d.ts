@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import CH from 'create-history';
 import BaseTypes from '../share/types';
 declare const CA: CA.CreateApp;
@@ -38,25 +37,30 @@ declare namespace CA {
     }
     interface WrapController extends BaseTypes.WrapController {
     }
-    interface RenderTo extends BaseTypes.RenderTo {
-    }
-    interface ViewEngineRender extends BaseTypes.ViewEngineRender {
+    interface RenderTo<E> extends BaseTypes.RenderTo<E> {
     }
     interface ViewEngine extends BaseTypes.ViewEngine {
     }
+    interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {
+    }
     type CreateHistoryType = BaseTypes.CreateHistoryType;
+    type AppElement = BaseTypes.AppElement;
     interface App {
-        render?: ServerRender;
+        render?: Render;
         history?: CH.NativeHistory;
     }
-    interface ServerRender {
+    interface Render {
         (requestPath: string, injectContext?: Context, callback?: Callback): any;
     }
     interface CreateApp {
         (settings: Settings): App;
     }
+    interface InitControllerReturn {
+        content?: BaseTypes.AppElement;
+        controller: Controller;
+    }
     interface InitController {
-        (c: Controller | Promise<Controller>): HTMLElement | React.ReactNode;
+        <E>(c: Controller | Promise<Controller>): InitControllerReturn | Promise<InitControllerReturn>;
     }
     interface CreateInitController {
         (location: Location): InitController;
@@ -64,7 +68,7 @@ declare namespace CA {
     interface FetchController {
         (requestPath: string, injectContext: Context): any;
     }
-    interface RenderToString extends RenderTo {
-        (component: React.ReactElement, controller?: Controller): Element;
+    interface RenderToString<E> extends RenderTo<E> {
+        (element: E, controller?: Controller): BaseTypes.AppElement;
     }
 }

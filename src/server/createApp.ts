@@ -41,24 +41,31 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
   const render: CA.Render = (requestPath, injectContext, callback) => {
     let result = null
 
+    console.log(0)
+
     if (typeof injectContext === 'function') {
       callback = injectContext
       injectContext = null
     }
 
     try {
+      console.log('1')
       result = initController(fetchController(requestPath, injectContext))
+      console.log('2')
     } catch (error) {
+      console.log(3)
       callback && callback(error)
       return Promise.reject(error)
     }
-
+    console.log(4)
     if (_.isThenable(result)) {
+      console.log(5)
       if (callback) {
         result.then(result => callback(null, result), callback)
       }
       return result
     }
+    console.log(6)
     callback && callback(null, result)
     return result
   }
@@ -74,8 +81,8 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     }
 
     if (_.isThenable(element)) {
-      return (<Promise<E>>element).then(component => {
-        if (component == null) {
+      return (<Promise<E>>element).then(element => {
+        if (element == null) {
           return { controller: controller as CA.Controller }
         }
         let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
@@ -83,7 +90,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
       })
     }
     let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
-    return { content, controller } as CA.InitControllerReturn
+    return { content, controller: controller as CA.Controller}
   }
 
   const fetchController: CA.FetchController = (requestPath, injectContext) => {

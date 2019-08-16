@@ -60,23 +60,30 @@ var createApp = function (appSettings) {
     var history = createHistory(finalAppSettings);
     var render = function (requestPath, injectContext, callback) {
         var result = null;
+        console.log(0);
         if (typeof injectContext === 'function') {
             callback = injectContext;
             injectContext = null;
         }
         try {
+            console.log('1');
             result = initController(fetchController(requestPath, injectContext));
+            console.log('2');
         }
         catch (error) {
+            console.log(3);
             callback && callback(error);
             return Promise.reject(error);
         }
+        console.log(4);
         if (_.isThenable(result)) {
+            console.log(5);
             if (callback) {
                 result.then(function (result) { return callback(null, result); }, callback);
             }
             return result;
         }
+        console.log(6);
         callback && callback(null, result);
         return result;
     };
@@ -84,20 +91,20 @@ var createApp = function (appSettings) {
         if (_.isThenable(controller)) {
             return controller.then(initController);
         }
-        var component = controller.init && controller.init();
-        if (component === null) {
+        var element = controller.init && controller.init();
+        if (element === null) {
             return { controller: controller };
         }
-        if (_.isThenable(component)) {
-            return component.then(function (component) {
-                if (component == null) {
+        if (_.isThenable(element)) {
+            return element.then(function (element) {
+                if (element == null) {
                     return { controller: controller };
                 }
-                var content = renderToString(component, controller);
+                var content = renderToString(element, controller);
                 return { content: content, controller: controller };
             });
         }
-        var content = renderToString(component, controller);
+        var content = renderToString(element, controller);
         return { content: content, controller: controller };
     };
     var fetchController = function (requestPath, injectContext) {
@@ -146,8 +153,8 @@ var createApp = function (appSettings) {
         controllers.set(iController, WrapperController);
         return WrapperController;
     };
-    var renderToString = function (component, controller) {
-        return viewEngine.render(component, undefined, controller);
+    var renderToString = function (element, controller) {
+        return viewEngine.render(element, undefined, controller);
     };
     return {
         render: render,

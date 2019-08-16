@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import CH from 'create-history';
 import BaseTypes from '../share/types';
 declare const CA: CA.CreateApp;
@@ -38,11 +37,11 @@ declare namespace CA {
     }
     interface WrapController extends BaseTypes.WrapController {
     }
-    interface RenderTo extends BaseTypes.RenderTo {
-    }
-    interface ViewEngineRender extends BaseTypes.ViewEngineRender {
+    interface RenderTo<E = string> extends BaseTypes.RenderTo<E> {
     }
     interface ViewEngine extends BaseTypes.ViewEngine {
+    }
+    interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {
     }
     type CreateHistoryType = BaseTypes.CreateHistoryType;
     interface CreateApp {
@@ -71,13 +70,13 @@ declare namespace CA {
         (listener: Listener): () => void;
     }
     interface InitController {
-        (c: ControllerConstructor | Promise<ControllerConstructor>): HTMLElement | React.ReactNode;
+        (c: ControllerConstructor | Promise<ControllerConstructor>): BaseTypes.AppElement;
     }
     interface CreateInitController {
         (location: Location): InitController;
     }
-    interface RenderToContainer extends RenderTo {
-        (component: React.ReactElement, controller?: Controller): Element;
+    interface RenderToContainer<E> extends RenderTo<E> {
+        (element: E, controller?: Controller): BaseTypes.AppElement;
     }
     interface ClearContainer {
         (): void;

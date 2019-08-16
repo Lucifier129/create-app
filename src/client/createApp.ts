@@ -157,33 +157,33 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
       destroyController()
 
       let controller: CA.Controller = currentController = getControllerFromCache(location)
-      let component = null
+      let element = null
 
       if (controller) {
-        component = controller.restore(location, context)
+        element = controller.restore(location, context)
         controller.location = location
         controller.context = context
 
       } else {
         let FinalController = wrapController(<CA.ControllerConstructor>iController)
         controller = currentController = createController(FinalController, location, context)
-        component = controller.init()
+        element = controller.init()
       }
 
       // if controller#init|restore return false value, do nothing
-      if (component == null) {
+      if (element == null) {
         return null
       }
 
-      if (_.isThenable(component)) {
-        return component.then(result => {
+      if (_.isThenable(element)) {
+        return element.then(result => {
           if (currentLocation !== location || result == null) {
             return null
           }
           return renderToContainer(result, controller)
         })
       }
-      return renderToContainer(component, controller)
+      return renderToContainer(element, controller)
     }
     return initController
   }
