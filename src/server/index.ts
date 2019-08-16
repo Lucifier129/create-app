@@ -46,11 +46,19 @@ declare namespace CA {
   interface CreateApp {
     (settings: Settings): App
   }
+
+  type AppElement = HTMLElement | Element | string | number | boolean | null | undefined
   
-  interface InitController<E = string> {
+  interface InitController {
     <E = string>(
       c: Controller | Promise<Controller>
-    ): HTMLElement | Element | string | number | boolean | null | undefined
+    ): {
+      content: AppElement
+      controller: Controller
+    } | Promise<{
+      content: AppElement
+      controller: Controller
+    }>
   }
 
   interface CreateInitController {
@@ -66,8 +74,8 @@ declare namespace CA {
 
   export interface RenderToString<E = string> extends RenderTo<E> {
     (
-      component: E,
+      element: E,
       controller?: Controller
-    ): Element
+    ): AppElement
   }
 }

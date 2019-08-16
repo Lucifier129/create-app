@@ -63,26 +63,26 @@ const createApp: CA.CreateApp = (appSettings) => {
     return result
   }
 
-  const initController: CA.InitController = <E>(controller) => {
+  const initController: CA.InitController = (controller: CA.Controller) => {
     if (_.isThenable(controller)) {
       return (<Promise<CA.Controller>>controller).then(initController)
     }
-    let component: E | Promise<E> = (<CA.Controller>controller).init && (<CA.Controller>controller).init()
+    let element: E | Promise<E> = controller.init && controller.init()
 
-    if (component === null) {
+    if (element === null) {
       return { controller }
     }
 
-    if (_.isThenable(component)) {
-      return (<Promise<E>>component).then(component => {
+    if (_.isThenable(element)) {
+      return (<Promise<E>>element).then(component => {
         if (component == null) {
           return { controller }
         }
-        let content = renderToString(component, controller as CA.Controller)
+        let content = renderToString(element, controller as CA.Controller)
         return { content, controller }
       })
     }
-    let content = renderToString(<E>component, controller as CA.Controller)
+    let content = renderToString(element, controller as CA.Controller)
     return { content, controller }
   }
 
@@ -146,7 +146,7 @@ const createApp: CA.CreateApp = (appSettings) => {
   }
 
   const renderToString: CA.RenderToString = <E>(element: E, controller?: CA.Controller) => {
-    return (viewEngine.render as CA.RenderTo)(component, undefined, controller)
+    return viewEngine.render(component, undefined, controller)
   }
 
   return {
