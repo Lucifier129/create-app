@@ -19,7 +19,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return historyCreater(settings)
 }
 
-const createApp: CA.CreateApp = (appSettings) => {
+const createApp: CA.CreateApp = <E>(appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -157,40 +157,40 @@ const createApp: CA.CreateApp = (appSettings) => {
       destroyController()
 
       let controller: CA.Controller = currentController = getControllerFromCache(location)
-      let component = null
+      let element = null
 
       if (controller) {
-        component = controller.restore(location, context)
+        element = controller.restore(location, context)
         controller.location = location
         controller.context = context
 
       } else {
         let FinalController = wrapController(<CA.ControllerConstructor>iController)
         controller = currentController = createController(FinalController, location, context)
-        component = controller.init()
+        element = controller.init()
       }
 
       // if controller#init|restore return false value, do nothing
-      if (component == null) {
+      if (element == null) {
         return null
       }
 
-      if (_.isThenable(component)) {
-        return component.then(result => {
+      if (_.isThenable(element)) {
+        return element.then(result => {
           if (currentLocation !== location || result == null) {
             return null
           }
           return renderToContainer(result, controller)
         })
       }
-      return renderToContainer(component, controller)
+      return renderToContainer(element, controller)
     }
     return initController
   }
 
-  const renderToContainer: CA.RenderToContainer = (component: React.ReactElement, controller?: CA.Controller) => {
+  const renderToContainer: CA.RenderToContainer<E> = (element: E, controller?: CA.Controller) => {
     saveControllerToCache(controller)
-    return (viewEngine.render as CA.ViewEngineRender)(component, getContainer(), controller)
+    return (viewEngine.render as CA.ViewEngineRender<E>)(element, getContainer(), controller)
   }
 
   const clearContainer: CA.ClearContainer = () => {

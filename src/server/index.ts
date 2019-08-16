@@ -9,7 +9,6 @@ export default CA
 declare namespace CA {
   interface Callback extends BaseTypes.Callback {}
   interface Listener extends BaseTypes.Listener {}
-
   interface CreateHistory extends BaseTypes.CreateHistory {}
   interface Settings extends BaseTypes.Settings {}
   interface Route extends BaseTypes.Route {}
@@ -25,27 +24,39 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo extends BaseTypes.RenderTo {}
-  interface ViewEngineRender extends BaseTypes.ViewEngineRender {}
+  interface RenderTo<E>  extends BaseTypes.RenderTo<E> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
+  interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {}
   
   type CreateHistoryType = BaseTypes.CreateHistoryType
+  type AppElement = BaseTypes.AppElement
 
   export interface App {
-    render?: ServerRender
+    render?: Render
     history?: CH.NativeHistory
   }
 
-  export interface ServerRender {
-    (requestPath: string, injectContext?: Context, callback?: Callback): any
+  export interface Render {
+    (
+      requestPath: string,
+      injectContext?: Context,
+      callback?: Callback
+    ): any
   }
 
   interface CreateApp {
     (settings: Settings): App
   }
-  
+
+  interface InitControllerReturn {
+    content?: BaseTypes.AppElement
+    controller: Controller
+  }
+
   interface InitController {
-    (c: Controller | Promise<Controller>): HTMLElement | React.ReactNode
+    <E>(
+      c: Controller | Promise<Controller>
+    ): InitControllerReturn | Promise<InitControllerReturn>
   }
 
   interface CreateInitController {
@@ -59,10 +70,10 @@ declare namespace CA {
     ): any
   }
 
-  export interface RenderToString extends RenderTo {
+  export interface RenderToString<E> extends RenderTo<E> {
     (
-      component: React.ReactElement,
+      element: E,
       controller?: Controller
-    ): Element
+    ): BaseTypes.AppElement
   }
 }
