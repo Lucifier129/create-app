@@ -69,7 +69,7 @@ declare namespace CA {
         params?: Params;
     }
     interface Loader {
-        (controller: ControllerConstructor | LoadController | string, location: Location, context: Context): ControllerConstructor | Promise<ControllerConstructor>;
+        (controller: ControllerConstructor | LoadController | string, location?: Location, context?: Context): ControllerConstructor | Promise<ControllerConstructor>;
     }
     interface LoadController {
         (location?: Location, context?: Context): ControllerConstructor | Promise<ControllerConstructor>;

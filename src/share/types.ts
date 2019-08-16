@@ -100,8 +100,8 @@ declare namespace CA {
   export interface Loader {
     (
       controller: ControllerConstructor | LoadController | string,
-      location: Location,
-      context: Context
+      location?: Location,
+      context?: Context
     ): ControllerConstructor | Promise<ControllerConstructor>
   }
   

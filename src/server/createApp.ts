@@ -41,31 +41,23 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
   const render: CA.Render = (requestPath, injectContext, callback) => {
     let result = null
 
-    console.log(0)
-
     if (typeof injectContext === 'function') {
       callback = injectContext
       injectContext = null
     }
 
     try {
-      console.log('1')
       result = initController(fetchController(requestPath, injectContext))
-      console.log('2')
     } catch (error) {
-      console.log(3)
       callback && callback(error)
       return Promise.reject(error)
     }
-    console.log(4)
     if (_.isThenable(result)) {
-      console.log(5)
       if (callback) {
         result.then(result => callback(null, result), callback)
       }
       return result
     }
-    console.log(6)
     callback && callback(null, result)
     return result
   }
