@@ -88,7 +88,7 @@ declare namespace CA {
         count?: number;
         restore?(location?: Location, context?: Context): any;
         init?(): any;
-        render?(): Element | HTMLElement | string | number | boolean | null | undefined;
+        render?(): AppElement;
         destroy?(): void;
         getContainer?(): Element;
         refreshView?(): any;
@@ -131,7 +131,10 @@ declare namespace CA {
     interface Extend {
         (to: object, from: object): object;
     }
-    type AppElement = Element | string | number | boolean | null | undefined;
+    interface OtherElement {
+        [propName: string]: any;
+    }
+    type AppElement = Element | OtherElement | string | number | boolean | null | undefined;
     interface ViewEngineRender<E = string> {
         (element: E, container: Element | null, controller?: Controller): AppElement;
     }

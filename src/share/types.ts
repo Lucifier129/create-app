@@ -178,7 +178,11 @@ declare namespace CA {
     (to: object, from: object): object
   }
 
-  type AppElement = Element | string | number | boolean | null | undefined
+  export interface OtherElement {
+    [propName: string]: any
+  }
+
+  type AppElement = Element | OtherElement | string | number | boolean | null | undefined
   
   export interface ViewEngineRender<E = string> {
     (
