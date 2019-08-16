@@ -178,7 +178,7 @@ declare namespace CA {
     (to: object, from: object): object
   }
 
-  type AppElement = HTMLElement | Element | string | number | boolean | null | undefined
+  type AppElement = Element | string | number | boolean | null | undefined
   
   export interface ViewEngineRender<E = string> {
     (

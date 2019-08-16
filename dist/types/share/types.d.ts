@@ -131,7 +131,7 @@ declare namespace CA {
     interface Extend {
         (to: object, from: object): object;
     }
-    type AppElement = HTMLElement | Element | string | number | boolean | null | undefined;
+    type AppElement = Element | string | number | boolean | null | undefined;
     interface ViewEngineRender<E = string> {
         (element: E, container: Element | null, controller?: Controller): AppElement;
     }
