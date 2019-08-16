@@ -124,7 +124,7 @@ declare namespace CA {
     count?: number
     restore?(location?: Location, context?: Context): any
     init?(): any
-    render?(): Element | HTMLElement | string | number | boolean | null | undefined
+    render?(): AppElement
     destroy?(): void
     getContainer?(): Element
     refreshView?()
