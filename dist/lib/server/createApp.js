@@ -104,9 +104,7 @@ var createApp = function (appSettings) {
         var location = history.createLocation(requestPath);
         var matches = matcher(location.pathname);
         if (!matches) {
-            var error = new Error("Did not match any route with path:" + requestPath);
-            // @ts-ignore
-            error.status = 404;
+            var error = new _.ReqError("Did not match any route with path:" + requestPath, 404);
             return Promise.reject(error);
         }
         var path = matches.path, params = matches.params, controller = matches.controller;

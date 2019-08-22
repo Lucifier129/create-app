@@ -37,7 +37,7 @@ declare namespace CA {
     }
     interface WrapController extends BaseTypes.WrapController {
     }
-    interface RenderTo<E> extends BaseTypes.RenderTo<E> {
+    interface RenderTo<E = string> extends BaseTypes.RenderTo<E> {
     }
     interface ViewEngine extends BaseTypes.ViewEngine {
     }
@@ -60,7 +60,7 @@ declare namespace CA {
         controller: Controller;
     }
     interface InitController {
-        <E>(c: Controller | Promise<Controller>): InitControllerReturn | Promise<InitControllerReturn>;
+        (c: Controller | Promise<Controller>): InitControllerReturn | Promise<InitControllerReturn>;
     }
     interface CreateInitController {
         (location: Location): InitController;

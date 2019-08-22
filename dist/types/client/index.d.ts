@@ -86,7 +86,7 @@ declare namespace CA {
         (): void;
     }
     interface GetContainer {
-        (): Element;
+        (): HTMLElement;
     }
     interface GetControllerByLocation {
         (location: Location): Controller;

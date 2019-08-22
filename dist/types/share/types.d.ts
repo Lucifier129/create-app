@@ -74,10 +74,10 @@ declare namespace CA {
     interface LoadController {
         (location?: Location, context?: Context): ControllerConstructor | Promise<ControllerConstructor>;
     }
-    interface ControllerConstructor {
-        new (location?: Location, context?: Context): Controller;
+    interface ControllerConstructor<E = any> {
+        new (location?: Location, context?: Context): Controller<E>;
     }
-    interface Controller {
+    interface Controller<E = any> {
         location?: Location;
         context?: Context;
         history?: History.NativeHistory;
@@ -86,11 +86,11 @@ declare namespace CA {
         routes?: Route[];
         KeepAlive?: boolean;
         count?: number;
-        restore?(location?: Location, context?: Context): any;
-        init?(): any;
+        restore?(location?: Location, context?: Context): E | Promise<E>;
+        init?(): E | Promise<E>;
         render?(): AppElement;
         destroy?(): void;
-        getContainer?(): Element;
+        getContainer?(): HTMLElement;
         refreshView?(): any;
     }
     interface CreateController {

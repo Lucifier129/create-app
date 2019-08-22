@@ -24,7 +24,7 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo<E>  extends BaseTypes.RenderTo<E> {}
+  interface RenderTo<E= string>  extends BaseTypes.RenderTo<E> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
   interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {}
   
@@ -54,7 +54,7 @@ declare namespace CA {
   }
 
   interface InitController {
-    <E>(
+    (
       c: Controller | Promise<Controller>
     ): InitControllerReturn | Promise<InitControllerReturn>
   }

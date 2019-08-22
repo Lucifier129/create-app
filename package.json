@@ -7,7 +7,7 @@
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll",
     "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs"
+    "build": "tsc"
   },
   "files": [
     "dist",

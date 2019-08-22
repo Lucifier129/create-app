@@ -90,9 +90,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     let matches: CA.Matches = matcher(location.pathname)
 
     if (!matches) {
-      let error = new Error(`Did not match any route with path:${requestPath}`)
-      // @ts-ignore
-      error.status = 404
+      let error = new _.ReqError(`Did not match any route with path:${requestPath}`, 404)
       return Promise.reject(error)
     }
 

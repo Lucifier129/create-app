@@ -78,9 +78,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     let matches: CA.Matches = matcher(location.pathname)
 
     if (!matches) {
-      let error = new Error(`Did not match any route with pathname:${location.pathname}`)
-      // @ts-ignore
-      error.status = 404
+      let error = new _.ReqError(`Did not match any route with pathname:${location.pathname}`, 404)
       throw error
     }
 
@@ -157,7 +155,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
       destroyController()
 
       let controller: CA.Controller = currentController = getControllerFromCache(location)
-      let element = null
+      let element: E | Promise<E> = null
 
       if (controller) {
         element = controller.restore(location, context)
@@ -176,14 +174,14 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
       }
 
       if (_.isThenable(element)) {
-        return element.then(result => {
+        return (element as Promise<E>).then(result => {
           if (currentLocation !== location || result == null) {
             return null
           }
           return renderToContainer(result, controller)
         })
       }
-      return renderToContainer(element, controller)
+      return renderToContainer(element as E, controller)
     }
     return initController
   }
