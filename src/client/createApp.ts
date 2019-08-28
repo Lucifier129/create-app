@@ -98,8 +98,8 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     }
   }
 
-  let controllers: CA.AppMap<CA.ControllerConstructor, CA.Controller>
-    = _.createMap<CA.ControllerConstructor, CA.Controller>()
+  let controllers: CA.AppMap<CA.ControllerConstructor, CA.ControllerConstructor>
+    = _.createMap<CA.ControllerConstructor, CA.ControllerConstructor>()
 
   const wrapController: CA.WrapController = (IController) => {
     if (controllers.has(IController)) {
@@ -141,7 +141,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
       }
     }
 
-    controllers.set(IController, WrapperController as CA.Controller)
+    controllers.set(IController, WrapperController)
 
     return WrapperController
   }
