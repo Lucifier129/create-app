@@ -23,7 +23,7 @@ declare namespace CA {
   export interface Matches {
     path: pathToRegexp.Path
     params: Params
-    controller: ControllerConstructor
+    controller: ControllerConstructor | string
   }
   
   export interface Matcher {

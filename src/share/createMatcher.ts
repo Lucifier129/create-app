@@ -15,11 +15,11 @@ const createMatcher: (routes: CA.Route[]) => CA.Matcher = (routes) => {
         continue
       }
       let params: CA.Params = getParams(strMatches, route.keys)
-      let controller: any = route.controller
+      let controller: CA.ControllerConstructor | string = route.controller
       return {
         path: route.path,
         params,
-        controller,
+        controller
       }
     }
   }
