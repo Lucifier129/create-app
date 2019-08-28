@@ -46,8 +46,8 @@ declare namespace CA {
     type CreateHistoryType = BaseTypes.CreateHistoryType;
     type AppElement = BaseTypes.AppElement;
     interface App {
-        render?: Render;
-        history?: CH.NativeHistory;
+        render: Render;
+        history: CH.NativeHistory;
     }
     interface Render {
         (requestPath: string, injectContext?: Context, callback?: Callback): any;

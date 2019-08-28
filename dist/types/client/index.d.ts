@@ -61,11 +61,11 @@ declare namespace CA {
         (location: Location): void;
     }
     interface App {
-        start?: Start;
-        stop?: Stop;
-        render?: Render;
-        history?: CH.NativeHistory;
-        subscribe?: Subscribe;
+        start: Start;
+        stop: Stop;
+        render: Render;
+        history: CH.NativeHistory;
+        subscribe: Subscribe;
     }
     interface Subscribe {
         (listener: Listener): () => void;
