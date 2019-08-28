@@ -32,8 +32,8 @@ declare namespace CA {
   type AppElement = BaseTypes.AppElement
 
   export interface App {
-    render?: Render
-    history?: CH.NativeHistory
+    render: Render
+    history: CH.NativeHistory
   }
 
   export interface Render {

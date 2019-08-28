@@ -55,11 +55,11 @@ declare namespace CA {
   }
 
   interface App {
-    start?: Start
-    stop?: Stop
-    render?: Render
-    history?: CH.NativeHistory
-    subscribe?: Subscribe
+    start: Start
+    stop: Stop
+    render: Render
+    history: CH.NativeHistory
+    subscribe: Subscribe
   }
 
   interface Subscribe {
