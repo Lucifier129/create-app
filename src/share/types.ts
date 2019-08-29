@@ -187,8 +187,8 @@ declare namespace CA {
   export interface ViewEngineRender<E = string> {
     (
       element: E,
-      container: Element | null,
-      controller?: Controller
+      controller?: Controller,
+      container?: Element | null
     ): AppElement
   }
 }

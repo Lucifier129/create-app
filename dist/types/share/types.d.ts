@@ -16,7 +16,7 @@ declare namespace CA {
     interface Matches {
         path: pathToRegexp.Path;
         params: Params;
-        controller: ControllerConstructor;
+        controller: ControllerConstructor | string;
     }
     interface Matcher {
         (pathname: string): Matches;
@@ -136,6 +136,6 @@ declare namespace CA {
     }
     type AppElement = Element | OtherElement | string | number | boolean | null | undefined;
     interface ViewEngineRender<E = string> {
-        (element: E, container: Element | null, controller?: Controller): AppElement;
+        (element: E, controller?: Controller, container?: Element | null): AppElement;
     }
 }

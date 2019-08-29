@@ -188,7 +188,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
 
   const renderToContainer: CA.RenderToContainer<E> = (element: E, controller?: CA.Controller) => {
     saveControllerToCache(controller)
-    return (viewEngine.render as CA.ViewEngineRender<E>)(element, getContainer(), controller)
+    return (viewEngine.render as CA.ViewEngineRender<E>)(element, controller, getContainer())
   }
 
   const clearContainer: CA.ClearContainer = () => {

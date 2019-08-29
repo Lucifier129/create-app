@@ -28,7 +28,7 @@ var createMatcher = function (routes) {
             return {
                 path: route.path,
                 params: params,
-                controller: controller,
+                controller: controller
             };
         }
     };

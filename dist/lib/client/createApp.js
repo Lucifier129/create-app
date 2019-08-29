@@ -189,7 +189,7 @@ var createApp = function (appSettings) {
     };
     var renderToContainer = function (element, controller) {
         saveControllerToCache(controller);
-        return viewEngine.render(element, getContainer(), controller);
+        return viewEngine.render(element, controller, getContainer());
     };
     var clearContainer = function () {
         if (viewEngine.clear) {

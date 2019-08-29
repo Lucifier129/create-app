@@ -145,7 +145,7 @@ var createApp = function (appSettings) {
         return WrapperController;
     };
     var renderToString = function (element, controller) {
-        return viewEngine.render(element, undefined, controller);
+        return viewEngine.render(element, controller);
     };
     return {
         render: render,

@@ -143,7 +143,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
   }
 
   const renderToString: CA.RenderToString<E> = (element: E, controller?: CA.Controller) => {
-    return (viewEngine.render as CA.ViewEngineRender<E>)(element, undefined, controller)
+    return (viewEngine.render as CA.ViewEngineRender<E>)(element, controller)
   }
 
   return {

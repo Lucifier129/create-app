@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var render = function (html, container) {
+var render = function (html, controller, container) {
     container.innerHTML = html;
     return container;
 };
