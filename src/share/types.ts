@@ -39,8 +39,8 @@ declare namespace CA {
     (container: Element): void
   }
 
-  export interface RenderTo<E = string> {
-    (element: E): any
+  export interface RenderTo<C = string> {
+    (component: C): any
   }
   
   export type CreateHistoryType = 
@@ -76,7 +76,7 @@ declare namespace CA {
   export type Render = Client.Render | Server.Render
   
   export interface WrapController {
-    (IController: ControllerConstructor): any
+    (IController: ControllerConstructor): ControllerConstructor
   }
   
   export type Listener = Function
@@ -109,11 +109,11 @@ declare namespace CA {
     (location?: Location, context?: Context): ControllerConstructor | Promise<ControllerConstructor>
   }
   
-  export interface ControllerConstructor<E = any> {
-    new (location?: Location, context?: Context): Controller<E>;
+  export interface ControllerConstructor<C = any> {
+    new (location?: Location, context?: Context): Controller<C>;
   }
   
-  export interface Controller<E = any> {
+  export interface Controller<C = any> {
     location?: Location
     context?: Context
     history?: History.NativeHistory
@@ -122,9 +122,9 @@ declare namespace CA {
     routes?: Route[]
     KeepAlive?: boolean
     count?: number
-    restore?(location?: Location, context?: Context): E | Promise<E>
-    init?(): E | Promise<E>
-    render?(): AppElement
+    restore?(location?: Location, context?: Context): C | Promise<C>
+    init(): C | Promise<C>
+    render(): AppElement
     destroy?(): void
     getContainer?(): HTMLElement
     refreshView?()
@@ -184,9 +184,9 @@ declare namespace CA {
 
   type AppElement = Element | OtherElement | string | number | boolean | null | undefined
   
-  export interface ViewEngineRender<E = string> {
+  export interface ViewEngineRender<C = string> {
     (
-      element: E,
+      component: C,
       controller?: Controller,
       container?: Element | null
     ): AppElement

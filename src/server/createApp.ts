@@ -18,7 +18,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return create(settings)
 }
 
-const createApp: CA.CreateApp = <E>(appSettings) => {
+const createApp: CA.CreateApp = <C>(appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -66,22 +66,22 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     if (_.isThenable(controller)) {
       return (<Promise<CA.Controller>>controller).then(initController)
     }
-    let element: E | Promise<E> = (controller as CA.Controller).init && (controller as CA.Controller).init()
+    let component: C | Promise<C> = (controller as CA.Controller).init()
 
-    if (element === null) {
+    if (component === null) {
       return { controller: controller as CA.Controller }
     }
 
-    if (_.isThenable(element)) {
-      return (<Promise<E>>element).then(element => {
-        if (element == null) {
+    if (_.isThenable(component)) {
+      return (<Promise<C>>component).then(component => {
+        if (component == null) {
           return { controller: controller as CA.Controller }
         }
-        let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
+        let content: CA.AppElement = renderToString(component as C, controller as CA.Controller)
         return { content, controller: controller as CA.Controller }
       })
     }
-    let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
+    let content: CA.AppElement = renderToString(component as C, controller as CA.Controller)
     return { content, controller: controller as CA.Controller}
   }
 
@@ -142,8 +142,8 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     return WrapperController
   }
 
-  const renderToString: CA.RenderToString<E> = (element: E, controller?: CA.Controller) => {
-    return (viewEngine.render as CA.ViewEngineRender<E>)(element, controller)
+  const renderToString: CA.RenderToString<C> = (component: C, controller?: CA.Controller) => {
+    return (viewEngine.render as CA.ViewEngineRender<C>)(component, controller)
   }
 
   return {

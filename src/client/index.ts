@@ -24,9 +24,9 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo<E = string> extends BaseTypes.RenderTo<E> {}
+  interface RenderTo<C = string> extends BaseTypes.RenderTo<C> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
-  interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {}
+  interface ViewEngineRender<C = string> extends BaseTypes.ViewEngineRender<C> {}
 
   type CreateHistoryType = BaseTypes.CreateHistoryType
   type AppElement = BaseTypes.AppElement
@@ -76,9 +76,9 @@ declare namespace CA {
     (location: Location): InitController
   }
 
-  interface RenderToContainer<E> extends RenderTo<E> {
+  interface RenderToContainer<C> extends RenderTo<C> {
     (
-      element: E,
+      component: C,
       controller?: Controller
     ): BaseTypes.AppElement
   }
