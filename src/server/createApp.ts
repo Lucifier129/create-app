@@ -18,7 +18,7 @@ const createHistory: CA.CreateHistory = (settings) => {
   return create(settings)
 }
 
-const createApp: CA.CreateApp = <E>(appSettings) => {
+const createApp: CA.CreateApp = <C>(appSettings) => {
   let finalAppSettings: CA.Settings = _.extend({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   _.extend(finalAppSettings, appSettings)
@@ -66,22 +66,22 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     if (_.isThenable(controller)) {
       return (<Promise<CA.Controller>>controller).then(initController)
     }
-    let element: E | Promise<E> = (controller as CA.Controller).init && (controller as CA.Controller).init()
+    let component: C | Promise<C> = (controller as CA.Controller).init()
 
-    if (element === null) {
+    if (component === null) {
       return { controller: controller as CA.Controller }
     }
 
-    if (_.isThenable(element)) {
-      return (<Promise<E>>element).then(element => {
-        if (element == null) {
+    if (_.isThenable(component)) {
+      return (<Promise<C>>component).then(component => {
+        if (component == null) {
           return { controller: controller as CA.Controller }
         }
-        let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
+        let content: CA.AppElement = renderToString(component as C, controller as CA.Controller)
         return { content, controller: controller as CA.Controller }
       })
     }
-    let content: CA.AppElement = renderToString(element as E, controller as CA.Controller)
+    let content: CA.AppElement = renderToString(component as C, controller as CA.Controller)
     return { content, controller: controller as CA.Controller}
   }
 
@@ -90,9 +90,7 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
     let matches: CA.Matches = matcher(location.pathname)
 
     if (!matches) {
-      let error = new Error(`Did not match any route with path:${requestPath}`)
-      // @ts-ignore
-      error.status = 404
+      let error = new _.ReqError(`Did not match any route with path:${requestPath}`, 404)
       return Promise.reject(error)
     }
 
@@ -120,8 +118,8 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
   }
 
 
-  let controllers: CA.AppMap<CA.ControllerConstructor, CA.Controller>
-    = _.createMap<CA.ControllerConstructor, CA.Controller>()
+  let controllers: CA.AppMap<CA.ControllerConstructor, CA.ControllerConstructor>
+    = _.createMap<CA.ControllerConstructor, CA.ControllerConstructor>()
 
   const wrapController: CA.WrapController = (iController) => {
     if (controllers.has(iController)) {
@@ -140,12 +138,12 @@ const createApp: CA.CreateApp = <E>(appSettings) => {
       }
     }
 
-    controllers.set(iController, WrapperController as CA.Controller)
+    controllers.set(iController, WrapperController)
     return WrapperController
   }
 
-  const renderToString: CA.RenderToString<E> = (element: E, controller?: CA.Controller) => {
-    return (viewEngine.render as CA.ViewEngineRender<E>)(element, undefined, controller)
+  const renderToString: CA.RenderToString<C> = (component: C, controller?: CA.Controller) => {
+    return (viewEngine.render as CA.ViewEngineRender<C>)(component, controller)
   }
 
   return {

@@ -24,16 +24,16 @@ declare namespace CA {
   interface ControllerConstructor extends BaseTypes.ControllerConstructor {}
   interface LoadController extends BaseTypes.LoadController {}
   interface WrapController extends BaseTypes.WrapController {}
-  interface RenderTo<E>  extends BaseTypes.RenderTo<E> {}
+  interface RenderTo<C= string>  extends BaseTypes.RenderTo<C> {}
   interface ViewEngine extends BaseTypes.ViewEngine {}
-  interface ViewEngineRender<E = string> extends BaseTypes.ViewEngineRender<E> {}
+  interface ViewEngineRender<C = string> extends BaseTypes.ViewEngineRender<C> {}
   
   type CreateHistoryType = BaseTypes.CreateHistoryType
   type AppElement = BaseTypes.AppElement
 
   export interface App {
-    render?: Render
-    history?: CH.NativeHistory
+    render: Render
+    history: CH.NativeHistory
   }
 
   export interface Render {
@@ -54,7 +54,7 @@ declare namespace CA {
   }
 
   interface InitController {
-    <E>(
+    (
       c: Controller | Promise<Controller>
     ): InitControllerReturn | Promise<InitControllerReturn>
   }
@@ -70,9 +70,9 @@ declare namespace CA {
     ): any
   }
 
-  export interface RenderToString<E> extends RenderTo<E> {
+  export interface RenderToString<C> extends RenderTo<C> {
     (
-      element: E,
+      component: C,
       controller?: Controller
     ): BaseTypes.AppElement
   }

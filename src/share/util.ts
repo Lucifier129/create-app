@@ -20,6 +20,14 @@ export const extend: CA.Extend = (to, from) => {
   return to
 }
 
+export class ReqError extends Error {
+  status?: number
+  constructor(message?: string, status?: number) {
+    super(message)
+    this.status = status
+  }
+}
+
 export const createCache: CA.CreateCache = <T>(amount = 10) => {
   let cache: CA.CacheStorage<T> = {}
 
