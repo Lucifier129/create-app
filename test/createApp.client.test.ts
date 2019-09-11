@@ -9,7 +9,6 @@ let context: createApp.Context
 const createTest = () => {
 
     it('should get container by controller.getContainer', () => {
-        // console.log(getController())
         let container = getController().getContainer()
         expect(container).toBe(document.querySelector('body'))
     })
