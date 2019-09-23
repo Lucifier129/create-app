@@ -1,7 +1,7 @@
 /**
  * createApp at client
  */
-import History, { Location } from 'create-history'
+import History from 'create-history'
 import defaultViewEngine from './viewEngine'
 import * as _ from '../share/util'
 import createMatcher from '../share/createMatcher'
@@ -10,13 +10,11 @@ import createController from '../share/createController'
 import CA from './index'
 
 const createHistory: CA.CreateHistory = (settings) => {
-  let historyCreater: History.CreateHistory = History[settings.type]
+  let chInit: History.CreateHistory<'NORMAL'> = History[settings.type]
   if (settings.basename) {
-    historyCreater = History.useBasename(historyCreater)
+    return History.useQueries(History.useBeforeUnload(History.useBasename(chInit)))(settings)
   }
-  historyCreater = History.useBeforeUnload(historyCreater)
-  historyCreater = History.useQueries(historyCreater)
-  return historyCreater(settings)
+  return History.useQueries(History.useBeforeUnload(chInit))(settings)
 }
 
 const createApp: CA.CreateApp = <C>(appSettings) => {

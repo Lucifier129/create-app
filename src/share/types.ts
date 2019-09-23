@@ -1,7 +1,7 @@
 /*
   key/value configs
 */
-import History, { Location as HistoryLocation } from 'create-history'
+import History, { NLWithBQ as HistoryNativeLocation, BLWithBQ as HistoryBaseLocation } from 'create-history'
 import pathToRegexp from 'path-to-regexp'
 import Client from '../client'
 import Server from '../server'
@@ -91,7 +91,7 @@ declare namespace CA {
     [propName: string]: any
   }
   
-  export interface Location extends HistoryLocation {
+  export interface Location extends HistoryBaseLocation {
     raw?: string
     pattern?: pathToRegexp.Path
     params?: Params

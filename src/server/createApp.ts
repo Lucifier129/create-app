@@ -10,12 +10,11 @@ import createController from '../share/createController'
 import CA from './index'
 
 const createHistory: CA.CreateHistory = (settings) => {
-  let create: History.CreateHistory = History.createMemoryHistory
+  let chInit: History.CreateHistory<'NORMAL'> = History.createMemoryHistory
   if (settings.basename) {
-    create = History.useBasename(create)
+    return History.useQueries(History.useBasename(chInit))(settings)
   }
-  create = History.useQueries(create)
-  return create(settings)
+  return History.useQueries(chInit)(settings)
 }
 
 const createApp: CA.CreateApp = <C>(appSettings) => {
