@@ -45,6 +45,6 @@
   },
   "dependencies": {
     "create-history": "^2.0.2",
-    "path-to-regexp": "^1.5.3"
+    "path-to-regexp": "^3.1.0"
   }
 }
