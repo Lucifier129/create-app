@@ -10,6 +10,7 @@ export {
 
 export {
   Route,
+  Settings,
   CreateHistoryType,
   Params,
   Matches,

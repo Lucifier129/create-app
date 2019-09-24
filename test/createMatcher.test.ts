@@ -1,6 +1,5 @@
 import createMatcher from '../src/share/createMatcher'
 
-
 let matcher
 
 describe('createMatcher', () => {

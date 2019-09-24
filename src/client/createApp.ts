@@ -1,12 +1,11 @@
 /**
  * createApp at client
  */
-import {
+import CreateHistoryMap, {
   useBasename,
   useBeforeUnload,
   useQueries,
-  CreateHistory,
-  NativeHistory
+  CreateHistory
 } from 'create-history'
 import defaultViewEngine from './viewEngine'
 import { createCache, createMap, ReqError } from '../share/util'
@@ -46,7 +45,7 @@ import {
 } from './type'
 
 const createHistory: CreateHistoryInCA = (settings) => {
-  let chInit: CreateHistory<'NORMAL'> = History[settings.type]
+  let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[settings.type]
   if (settings.basename) {
     return useQueries(useBeforeUnload(useBasename(chInit)))(settings)
   }

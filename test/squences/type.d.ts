@@ -1,7 +1,7 @@
-import CA from '../../src/share/types'
+import { HistoryBaseLocation } from '../../src/client'
 
 export interface Step {
-  (location?: Location): void
+  (location?: HistoryBaseLocation): void
 }
 
 export interface Done {

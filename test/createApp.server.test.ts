@@ -1,7 +1,7 @@
 import { Home, List, Detail, NotFound } from './squences/classes'
-import createApp from '../src/server';
+import createApp, { App } from '../src/server';
 
-let app: createApp.App
+let app: App
 
 describe('createApp-server', () => {
     describe('result', () => {
