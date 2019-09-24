@@ -1,2 +1,1 @@
-import Client from './dist/types/client'
-export = Client
+export * from './dist/types/client'
