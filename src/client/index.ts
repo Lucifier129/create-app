@@ -30,3 +30,7 @@ export {
   AppMap,
   AppElement
 } from '../share/type'
+
+export {
+  Actions
+} from 'create-history'
