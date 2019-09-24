@@ -20,6 +20,7 @@ export {
   ViewEngineClear,
   RenderTo,
   Loader,
+  LoadController,
   Context,
   HistoryBaseLocation,
   HistoryNativeLocation,
