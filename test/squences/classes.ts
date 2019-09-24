@@ -3,7 +3,7 @@ export let getController = () => controller
 
 let controller
 
-export class Home implements CA.Controller {
+export class Home implements Controller {
   constructor() {
     controller = this
   }
@@ -19,7 +19,7 @@ export class Home implements CA.Controller {
   }
 }
 
-export class List implements CA.Controller {
+export class List implements Controller {
   constructor() {
     controller = this
   }
@@ -35,7 +35,7 @@ export class List implements CA.Controller {
   }
 }
 
-export class Detail implements CA.Controller {
+export class Detail implements Controller {
   constructor() {
     controller = this
   }
@@ -47,7 +47,7 @@ export class Detail implements CA.Controller {
   }
 }
 
-export class NotFound implements CA.Controller {
+export class NotFound implements Controller {
   constructor() {
     controller = this
   }
@@ -59,7 +59,7 @@ export class NotFound implements CA.Controller {
   }
 }
 
-export class Restore implements CA.Controller {
+export class Restore implements Controller {
   KeepAlive: boolean
   count: number
   constructor() {

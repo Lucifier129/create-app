@@ -1,21 +1,21 @@
 import pathToRegexp from 'path-to-regexp'
 import * as _ from './util'
-import CA from './types'
+import { Route, Matcher, Params, ControllerConstructor } from './type'
 
 
-const createMatcher: (routes: CA.Route[]) => CA.Matcher = (routes) => {
-  const finalRoutes: CA.Route[] = routes.map(createRoute)
+const createMatcher: (routes: Route[]) => Matcher = (routes) => {
+  const finalRoutes: Route[] = routes.map(createRoute)
   const routeLength: number = finalRoutes.length
-  const matcher: CA.Matcher = (pathname) => {
+  const matcher: Matcher = (pathname) => {
     let finalPathname = cleanPath(pathname)
     for (let i = 0; i < routeLength; i++) {
-      let route: CA.Route = finalRoutes[i]
+      let route: Route = finalRoutes[i]
       let strMatches: RegExpExecArray = route.regexp.exec(finalPathname)
       if (!strMatches) {
         continue
       }
-      let params: CA.Params = getParams(strMatches, route.keys)
-      let controller: CA.ControllerConstructor | string = route.controller
+      let params: Params = getParams(strMatches, route.keys)
+      let controller: ControllerConstructor | string = route.controller
       return {
         path: route.path,
         params,
@@ -29,15 +29,15 @@ const createMatcher: (routes: CA.Route[]) => CA.Matcher = (routes) => {
 
 export default createMatcher
 
-const createRoute: (route: CA.Route) => CA.Route = (route) => {
-  let finalRoute: CA.Route = _.extend({}, route)
+const createRoute: (route: Route) => Route = (route) => {
+  let finalRoute: Route = Object.assign({}, route)
   let keys: pathToRegexp.Key[] = finalRoute.keys = []
   finalRoute.regexp = pathToRegexp(finalRoute.path, keys)
   return finalRoute
 }
 
-const getParams: (strMatches: RegExpExecArray, keys: pathToRegexp.Key[]) => CA.Params = (matches, keys) => {
-  let params: CA.Params = {}
+const getParams: (strMatches: RegExpExecArray, keys: pathToRegexp.Key[]) => Params = (matches, keys) => {
+  let params: Params = {}
   for (let i = 1, len = matches.length; i < len; i++) {
     let key = keys[i - 1]
     if (key) {

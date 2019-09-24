@@ -1,7 +1,7 @@
 import CA from '../../src/share/types'
 
 export interface Step {
-  (location?: CA.Location): void
+  (location?: Location): void
 }
 
 export interface Done {

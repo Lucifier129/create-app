@@ -1,14 +1,14 @@
 /**
  * default view engine for client
  */
-import CA from './index'
+import { ViewEngineRender, ViewEngine } from '../share/type'
 
-const render: CA.ViewEngineRender<string> = (html, controller, container) => {
+const render: ViewEngineRender<string> = (html, controller, container) => {
 	container.innerHTML = html
 	return container
 }
 
-const viewEngine: CA.ViewEngine = {
+const viewEngine: ViewEngine = {
 	render
 }
 
