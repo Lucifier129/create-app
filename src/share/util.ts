@@ -16,7 +16,7 @@ export class ReqError extends Error {
   }
 }
 
-export const createCache: CreateCache = <T>(amount = 10) => {
+export const createCache: CreateCache = <T>(amount: number = 10) => {
   let cache: CacheStorage<T> = {}
 
   const keys = () => {
@@ -65,7 +65,7 @@ export const createMap: CreateMap = <K, V>() => {
     return result.length > 0
   }
 
-  const get: (key: K) => V = (key) => {
+  const get: (key: K) => V | undefined = (key) => {
     let result = find(key)
     return result.length ? result[0].value : undefined
   }

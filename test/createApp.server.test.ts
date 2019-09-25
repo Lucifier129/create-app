@@ -15,7 +15,7 @@ describe('createApp-server', () => {
         })
     })
 
-    let initApp = settings => {
+    let initApp = (settings: any) => {
         app = createApp({
             ...settings,
         })
@@ -85,8 +85,8 @@ describe('createApp-server', () => {
 
         describe('sync mode', () => {
             beforeEach(() => {
-                let loader = (controller) => {
-                    let Controller
+                let loader = (controller: string) => {
+                    let Controller: any
                     switch (controller) {
                         case 'home':
                             Controller = Home
@@ -112,8 +112,8 @@ describe('createApp-server', () => {
 
         describe('async mode', () => {
             beforeEach(() => {
-                let loader = (controller) => {
-                    let Controller
+                let loader = (controller: string) => {
+                    let Controller: any
                     switch (controller) {
                         case 'home':
                             Controller = Home
@@ -153,23 +153,23 @@ function createTest() {
                 done()
             }
         }
-        app.render('/', {}, (error, {content}) => {
+        app.render('/', {}, (error: any, {content}: any) => {
             expect(content).toEqual('home')
             cleanup()
         })
-        app.render('/list', (error, {content}) => {
+        app.render('/list', (error: any, {content}: any) => {
             expect(content).toEqual('list')
             cleanup()
         })
-        app.render('/detail', (error, {content}) => {
+        app.render('/detail', (error: any, {content}: any) => {
             expect(content).toEqual('detail')
             cleanup()
         })
-        app.render('/notfound', (error, {content}) => {
+        app.render('/notfound', (error: any, {content}: any) => {
             expect(content).toEqual('not found')
             cleanup()
         })
-        app.render(`/random-${Math.random().toString(36).substr(2)}`, (error, {content}) => {
+        app.render(`/random-${Math.random().toString(36).substr(2)}`, (error: any, {content}: any) => {
             expect(content).toEqual('not found')
             cleanup()
         })
