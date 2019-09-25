@@ -1,18 +1,18 @@
 /**
  * default view engine for server
  */
-import { ViewEngineRender, ViewEngine } from '../share/type'
+import { ViewEngineRender, ViewEngine, AppElement } from '../share/type'
 
 interface ToString {
-  toString()
+  toString(): string
   [propName: string ]: any
   [propName: number ]: any
 }
-const render: ViewEngineRender<string | ToString> = html => {
+const render: ViewEngineRender = html => {
 	if (typeof html === 'string') {
     return html
   } else {
-    return html.toString()    
+    return (html as ToString).toString()    
   }
 }
 

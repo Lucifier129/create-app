@@ -20,8 +20,15 @@ export interface CreateHistoryInCA {
 export interface Route {
   keys?: pathToRegexp.Key[]
   regexp?: RegExp
-  path?: pathToRegexp.Path
-  controller?: ControllerConstructor | string
+  path: pathToRegexp.Path
+  controller: ControllerConstructor | LoadController | string
+}
+
+export interface IntactRoute {
+  keys: pathToRegexp.Key[]
+  regexp: RegExp
+  path: pathToRegexp.Path
+  controller: ControllerConstructor | LoadController | string
 }
 
 export interface Params {
@@ -31,15 +38,15 @@ export interface Params {
 export interface Matches {
   path: pathToRegexp.Path
   params: Params
-  controller: ControllerConstructor | string
+  controller: ControllerConstructor | LoadController | string
 }
 
 export interface Matcher {
-  (pathname: string): Matches
+  (pathname: string): Matches | null
 }
 
 export interface ViewEngine {
-  render: ViewEngineRender<any> | RenderTo<any>
+  render: ViewEngineRender
   clear?: ViewEngineClear
 }
 
@@ -47,27 +54,23 @@ export interface ViewEngineClear {
   (container: Element): void
 }
 
-export interface RenderTo<C = string> {
-  (component: C): any
-}
-
 export interface Settings extends HistoryOptions {
-  container?: string | HTMLElement
-  basename?: string
-  context?: Context
-  type?: CreateHistoryType
-  loader?: Loader
+  container: string | HTMLElement
+  basename: string
+  context: Context
+  type: CreateHistoryType
+  loader: Loader
   cacheAmount?: number
   routes?: Route[]
   viewEngine?: ViewEngine
 }
 
-export interface ControllerCacheFunc {
-  (controller: Controller): void
+export interface ControllerCacheFunc<C = Controller> {
+  (controller: C): void
 }
 
-export interface WrapController {
-  (IController: ControllerConstructor): ControllerConstructor
+export interface WrapController<C = Controller> {
+  (IController: ControllerConstructor): ControllerConstructor<C>
 }
 
 export type Listener = Function
@@ -89,29 +92,29 @@ export interface HistoryBaseLocation extends BLWithBQ {
 }
 
 export interface HistoryNativeLocation extends NLWithBQ {
-  raw?: string
-  pattern?: pathToRegexp.Path
-  params?: Params
+  raw: string
+  pattern: pathToRegexp.Path
+  params: Params
 }
 
 export interface Loader {
   (
     controller: ControllerConstructor | LoadController | string,
-    location?: HistoryBaseLocation,
+    location?: HistoryNativeLocation,
     context?: Context
   ): ControllerConstructor | Promise<ControllerConstructor>
 }
 
 export interface LoadController {
-  (location?: HistoryBaseLocation, context?: Context): ControllerConstructor | Promise<ControllerConstructor>
+  (location?: HistoryNativeLocation, context?: Context): ControllerConstructor | Promise<ControllerConstructor>
 }
 
-export interface ControllerConstructor<C = any> {
-  new(location?: HistoryBaseLocation, context?: Context): Controller<C>;
+export interface ControllerConstructor<C = Controller> {
+  new(location: HistoryNativeLocation, context: Context): C;
 }
 
-export interface Controller<C = any> {
-  location?: HistoryBaseLocation
+export interface Controller {
+  location?: HistoryNativeLocation
   context?: Context
   history?: NativeHistory
   matcher?: Matcher
@@ -119,16 +122,17 @@ export interface Controller<C = any> {
   routes?: Route[]
   KeepAlive?: boolean
   count?: number
-  restore?(location?: HistoryBaseLocation, context?: Context): C | Promise<C>
-  init(): C | Promise<C>
+  restore?(location?: HistoryNativeLocation, context?: Context): AppElement | Promise<AppElement>
+  init(): AppElement | Promise<AppElement>
   render(): AppElement
   destroy?(): void
-  getContainer?(): HTMLElement
-  refreshView?()
+  getContainer?(): HTMLElement | null
+  refreshView?(): void
 }
 
-export interface CreateController {
-  (c: ControllerConstructor, location: HistoryBaseLocation, context: Context): Controller
+
+export interface CreateController<C = Controller> {
+  (c: ControllerConstructor<C>, location: HistoryNativeLocation, context: Context): C
 }
 
 export interface Cache<T> {
@@ -167,12 +171,12 @@ export interface OtherElement {
   [propName: string]: any
 }
 
-export type AppElement = Element | OtherElement | string | number | boolean | null | undefined
+export type AppElement = Element | string | number | boolean | null | undefined
 
-export interface ViewEngineRender<C = string> {
+export interface ViewEngineRender<C = Controller> {
   (
-    component: C,
-    controller?: Controller,
+    element: AppElement,
+    controller?: C,
     container?: Element | null
   ): AppElement
 }

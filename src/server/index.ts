@@ -4,8 +4,7 @@ export default createApp
 
 export {
   App,
-  Render,
-  RenderToString
+  Render
 } from './type'
 
 export {
@@ -18,7 +17,6 @@ export {
   ViewEngine,
   ViewEngineRender,
   ViewEngineClear,
-  RenderTo,
   Loader,
   LoadController,
   Context,

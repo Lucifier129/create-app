@@ -5,10 +5,28 @@ import {
   Settings,
   AppElement,
   Controller,
-  RenderTo,
+  Matcher,
+  Loader,
+  Route,
   HistoryNativeLocation,
   HistoryBaseLocation
 } from '../share/type'
+
+export interface ServerController {
+  location: HistoryNativeLocation
+  context: Context
+  matcher: Matcher
+  loader: Loader
+  routes: Route[]
+  KeepAlive?: boolean
+  count?: number
+  restore?(location?: HistoryNativeLocation, context?: Context): AppElement | Promise<AppElement>
+  init(): AppElement | Promise<AppElement>
+  render(): AppElement
+  destroy?(): void
+  getContainer?(): HTMLElement | null
+  refreshView?(): void
+}
 
 export interface App {
   render: Render
@@ -18,24 +36,24 @@ export interface App {
 export interface Render {
   (
     requestPath: string,
-    injectContext?: Context,
+    injectContext?: Context | null,
     callback?: Callback
   ): any
 }
 
 interface CreateApp {
-  (settings: Settings): App
+  (settings: Partial<Settings>): App
 }
 
 interface InitControllerReturn {
   content?: AppElement
-  controller: Controller
+  controller: ServerController
 }
 
 interface InitController {
   (
-    c: Controller | Promise<Controller>
-  ): InitControllerReturn | Promise<InitControllerReturn>
+    c: ServerController
+  ): InitControllerReturn | Promise<InitControllerReturn> | null
 }
 
 interface CreateInitController {
@@ -45,13 +63,6 @@ interface CreateInitController {
 export interface FetchController {
   (
     requestPath: string,
-    injectContext: Context
+    injectContext?: Context | null
   ): any
-}
-
-export interface RenderToString<C> extends RenderTo<C> {
-  (
-    component: C,
-    controller?: Controller
-  ): AppElement
 }

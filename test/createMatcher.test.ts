@@ -35,11 +35,11 @@ describe('createMatcher', () => {
             expect(Object.keys(result)).toEqual(['path', 'params', 'controller'])
         })
 
-        it('should return undefined when matched no route', () => {
+        it('should return null when matched no route', () => {
             let matcher = createMatcher([])
             let result = matcher('/test/path')
 
-            expect(result).toBe(undefined)
+            expect(result).toBeNull()
         })
 
         it('should match dynamic path and filled params', () => {

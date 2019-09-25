@@ -11,7 +11,7 @@ const defaultAppSettings: Settings = {
 		isClient
 	},
 	type: 'createHashHistory',
-	loader: (value: ControllerConstructor) => value
+	loader: (value) => value as ControllerConstructor
 }
 
 export default defaultAppSettings

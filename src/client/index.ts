@@ -3,8 +3,7 @@ import createApp from './createApp'
 export default createApp
 
 export {
-  App,
-  RenderToContainer
+  App
 } from './type'
 
 export {
@@ -17,7 +16,6 @@ export {
   ViewEngine,
   ViewEngineRender,
   ViewEngineClear,
-  RenderTo,
   Loader,
   LoadController,
   Context,

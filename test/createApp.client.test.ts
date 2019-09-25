@@ -277,7 +277,7 @@ const createTest = () => {
 }
 
 const describeTest: (type: CreateHistoryType) => void = (type) => {
-    const initApp: (settings: Settings) => Promise<{}> = (settings) => {
+    const initApp: (settings: Partial<Settings>) => Promise<{}> = (settings) => {
         // clear app and document.body
         if (app) {
             app.stop()

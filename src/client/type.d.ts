@@ -1,4 +1,4 @@
-import { NativeHistory } from 'create-history'
+import { NativeHistory, NLWithBQ } from 'create-history'
 import {
   Context,
   Callback,
@@ -6,24 +6,48 @@ import {
   AppElement,
   Controller,
   ControllerConstructor,
-  RenderTo,
   Listener,
   HistoryNativeLocation,
-  HistoryBaseLocation
+  HistoryBaseLocation,
+  Matcher,
+  Route,
+  Loader
 } from '../share/type'
+
+export interface ClientController {
+  location: HistoryNativeLocation
+  context: Context
+  history: NativeHistory
+  matcher: Matcher
+  loader: Loader
+  routes: Route[]
+  KeepAlive?: boolean
+  count?: number
+  restore?(location?: HistoryNativeLocation, context?: Context): AppElement | Promise<AppElement>
+  init(): AppElement | Promise<AppElement>
+  render(): AppElement
+  destroy?(): void
+  getContainer?(): HTMLElement | null
+  refreshView?(): void
+}
+
 interface CreateApp {
-  (settings: Settings): App
+  (settings: Partial<Settings>): App
 }
 
 interface Render {
-  (targetPath: string | HistoryNativeLocation): any
+  (targetPath: string | NLWithBQ): any
+}
+
+interface Stop {
+  (): void
 }
 
 interface Start {
   (
     callback?: Callback,
     shouldRenderWithCurrentLocation?: boolean
-  ): () => void
+  ): Stop | null
 }
 
 interface Stop {
@@ -31,7 +55,7 @@ interface Stop {
 }
 
 interface Publish {
-  (location: HistoryNativeLocation): void
+  (location: NLWithBQ): void
 }
 
 interface App {
@@ -49,18 +73,11 @@ interface Subscribe {
 interface InitController {
   (
     c: ControllerConstructor | Promise<ControllerConstructor>
-  ): AppElement
+  ): AppElement | Promise<AppElement>
 }
 
 interface CreateInitController {
   (location: HistoryNativeLocation): InitController
-}
-
-interface RenderToContainer<C> extends RenderTo<C> {
-  (
-    component: C,
-    controller?: Controller
-  ): AppElement
 }
 
 interface ClearContainer {
@@ -72,9 +89,9 @@ interface DestoryContainer {
 }
 
 interface GetContainer {
-  (): HTMLElement
+  (): HTMLElement | null
 }
 
 interface GetControllerByLocation {
-  (location: HistoryNativeLocation): Controller
+  (location: HistoryNativeLocation): ClientController
 }

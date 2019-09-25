@@ -1,10 +1,14 @@
 /**
  * default view engine for client
  */
-import { ViewEngineRender, ViewEngine } from '../share/type'
+import { ViewEngineRender, ViewEngine, AppElement } from '../share/type'
 
-const render: ViewEngineRender<string> = (html, controller, container) => {
-	container.innerHTML = html
+const render: ViewEngineRender = (html, controller, container) => {
+	if (container) {
+		container.innerHTML = html as string
+	} else {
+		throw new Error(`container is null`)
+	}
 	return container
 }
 
