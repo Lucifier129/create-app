@@ -50,11 +50,16 @@ import {
 } from './type'
 
 export const createHistory: CreateHistoryInCA<ClientController> = (settings) => {
-  let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[settings.type]
-  if (settings.basename) {
-    return useBeforeUnload(useQueries(useBasename(chInit)))(settings)
+  let finalAppSettings: Settings<ClientController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  finalAppSettings = Object.assign(finalAppSettings, settings)
+
+  let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[finalAppSettings.type]
+
+  if (finalAppSettings.basename) {
+    return useBeforeUnload(useQueries(useBasename(chInit)))(finalAppSettings)
   }
-  return useBeforeUnload(useQueries(chInit))(settings)
+
+  return useBeforeUnload(useQueries(chInit))(finalAppSettings)
 }
 
 const createApp: CreateApp = (settings) => {

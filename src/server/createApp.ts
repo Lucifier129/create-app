@@ -38,17 +38,22 @@ import {
 } from './type'
 
 export const createHistory: CreateHistoryInCA<ServerController> = (settings) => {
+  let finalAppSettings: Settings<ServerController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  finalAppSettings = Object.assign(finalAppSettings, settings)
+
   let chInit: CreateHistory<'NORMAL'> = createMemoryHistory
-  if (settings.basename) {
-    return useQueries(useBasename(chInit))(settings)
+
+  if (finalAppSettings.basename) {
+    return useQueries(useBasename(chInit))(finalAppSettings)
   }
-  return useQueries(chInit)(settings)
+  
+  return useQueries(chInit)(finalAppSettings)
 }
 
 const createApp: CreateApp = (settings) => {
   let finalAppSettings: Settings<ServerController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
-  Object.assign(finalAppSettings, settings)
+  finalAppSettings = Object.assign(finalAppSettings, settings)
 
   let {
     routes,

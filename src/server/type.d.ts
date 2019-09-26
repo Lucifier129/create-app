@@ -69,5 +69,5 @@ export interface FetchController {
 }
 
 export interface CreateHistoryInCA<C extends Controller> {
-  (setting: Settings<C>): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
+  (setting?: Settings<C>): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
 }

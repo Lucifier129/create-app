@@ -99,5 +99,5 @@ interface GetControllerByLocation {
 }
 
 export interface CreateHistoryInCA<C extends Controller> {
-  (setting: Settings<C>): NativeHistoryWithBFOL<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
+  (setting?: Settings<C>): NativeHistoryWithBFOL<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
 }
