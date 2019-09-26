@@ -1,4 +1,10 @@
-import { NativeHistory, NLWithBQ, BLWithBQ } from 'create-history'
+import {
+  NativeHistory,
+  NLWithBQ,
+  BLWithBQ,
+  NativeHistoryWithBFOL,
+  LocationTypeMap
+} from 'create-history'
 import {
   Context,
   Callback,
@@ -90,4 +96,8 @@ interface GetContainer {
 
 interface GetControllerByLocation {
   (location: HistoryNativeLocation): ClientController
+}
+
+export interface CreateHistoryInCA<C extends Controller> {
+  (setting: Settings<C>): NativeHistoryWithBFOL<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
 }

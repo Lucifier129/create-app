@@ -16,17 +16,13 @@ import createMatcher from '../share/createMatcher'
 import defaultAppSettings from '../share/defaultSettings'
 import createController from './createController'
 import {
-  CreateHistoryInCA,
   Settings,
   Matcher,
   Context,
   ControllerConstructor,
   Cache,
   ControllerCacheFunc,
-  Matches,
-  HistoryBaseLocation,
   HistoryNativeLocation,
-  AppMap,
   ViewEngineRender,
   Listener,
   AppElement,
@@ -36,6 +32,7 @@ import {
   WrapController
 } from '../share/type'
 import {
+  CreateHistoryInCA,
   CreateApp,
   GetControllerByLocation,
   GetContainer,
@@ -52,12 +49,12 @@ import {
   ClientControllerConstructor
 } from './type'
 
-const createHistory: CreateHistoryInCA<ClientController> = (settings) => {
+export const createHistory: CreateHistoryInCA<ClientController> = (settings) => {
   let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[settings.type]
   if (settings.basename) {
-    return useQueries(useBeforeUnload(useBasename(chInit)))(settings)
+    return useBeforeUnload(useQueries(useBasename(chInit)))(settings)
   }
-  return useQueries(useBeforeUnload(chInit))(settings)
+  return useBeforeUnload(useQueries(chInit))(settings)
 }
 
 const createApp: CreateApp = (settings) => {

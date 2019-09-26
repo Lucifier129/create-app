@@ -1,4 +1,4 @@
-import { NativeHistory } from 'create-history'
+import { NativeHistory, LocationTypeMap } from 'create-history'
 import {
   Context,
   Callback,
@@ -66,4 +66,8 @@ export interface FetchController {
     requestPath: string,
     injectContext?: Context | null
   ): ServerController | Promise<ServerController>
+}
+
+export interface CreateHistoryInCA<C extends Controller> {
+  (setting: Settings<C>): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
 }

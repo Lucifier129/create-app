@@ -5,7 +5,6 @@ import {
   useBasename,
   useQueries,
   CreateHistory,
-  NativeHistory,
   createMemoryHistory,
   NLWithBQ
 } from 'create-history'
@@ -15,13 +14,10 @@ import createMatcher from '../share/createMatcher'
 import defaultAppSettings from '../share/defaultSettings'
 import createController from './createController'
 import {
-  CreateHistoryInCA,
   Settings,
   Context,
   ControllerConstructor,
-  Matches,
   HistoryNativeLocation,
-  AppMap,
   WrapController,
   ViewEngineRender,
   AppElement,
@@ -31,10 +27,10 @@ import {
   Controller
 } from '../share/type'
 import {
+  CreateHistoryInCA,
   CreateApp,
   Render,
   InitController,
-  CreateInitController,
   FetchController,
   InitControllerReturn,
   ServerController,

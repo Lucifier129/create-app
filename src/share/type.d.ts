@@ -7,15 +7,13 @@ import createHistoryMap, {
   NLWithBQ,
   BLWithBQ,
   CreateHistory,
-  LocationTypeMap
+  LocationTypeMap,
+  NativeHistoryWithBFOL
 } from 'create-history'
 import pathToRegexp from 'path-to-regexp'
 
 export type CreateHistoryType = keyof typeof createHistoryMap
 
-export interface CreateHistoryInCA<C extends Controller> {
-  (setting: Settings<C>): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
-}
 
 export interface Route {
   keys?: pathToRegexp.Key[]
