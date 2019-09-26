@@ -2,6 +2,8 @@ import createApp from './createApp'
 
 export default createApp
 
+export { createHistory } from './createApp'
+
 export {
   App,
   ServerController

@@ -37,7 +37,7 @@ import {
   ServerControllerConstructor
 } from './type'
 
-const createHistory: CreateHistoryInCA<ServerController> = (settings) => {
+export const createHistory: CreateHistoryInCA<ServerController> = (settings) => {
   let chInit: CreateHistory<'NORMAL'> = createMemoryHistory
   if (settings.basename) {
     return useQueries(useBasename(chInit))(settings)
