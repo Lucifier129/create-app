@@ -1,9 +1,9 @@
-import { Settings, ControllerConstructor } from './type'
+import { Settings, ControllerConstructor, Controller } from './type'
 
 export const isClient: boolean = typeof window !== 'undefined'
 export const isServer: boolean = !isClient
 
-const defaultAppSettings: Settings = {
+const defaultAppSettings: Settings<Controller> = {
 	container: '#container',
 	basename: '',
 	context: {
