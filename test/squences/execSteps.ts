@@ -8,12 +8,12 @@ const execSteps: (
   let index: number = 0
   let unsubscribe: Function
 
-  const cleanup = (...args) => {
+  const cleanup = (...args: any[]) => {
     unsubscribe()
     done(...args)
   }
 
-  const execNextStep = (...args) => {
+  const execNextStep = (...args: any[]) => {
     try {
       steps[index++](...args)
 
