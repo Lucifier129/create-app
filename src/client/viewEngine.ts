@@ -1,9 +1,10 @@
 /**
  * default view engine for client
  */
-import { ViewEngineRender, ViewEngine, AppElement } from '../share/type'
+import { ViewEngineRender, ViewEngine } from '../share/type'
+import { MidController } from './type'
 
-const render: ViewEngineRender = (html, controller, container) => {
+const render: ViewEngineRender<MidController> = (html, controller, container) => {
 	if (container) {
 		container.innerHTML = html as string
 	} else {
@@ -12,7 +13,7 @@ const render: ViewEngineRender = (html, controller, container) => {
 	return container
 }
 
-const viewEngine: ViewEngine = {
+const viewEngine: ViewEngine<MidController> = {
 	render
 }
 

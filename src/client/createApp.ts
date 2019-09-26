@@ -7,7 +7,8 @@ import CreateHistoryMap, {
   useQueries,
   CreateHistory,
   NLWithBQ,
-  NativeHistory
+  NativeHistory,
+  BLWithBQ
 } from 'create-history'
 import defaultViewEngine from './viewEngine'
 import { createCache, createMap, ReqError } from '../share/util'
@@ -23,14 +24,16 @@ import {
   Cache,
   ControllerCacheFunc,
   Matches,
+  HistoryBaseLocation,
   HistoryNativeLocation,
   AppMap,
-  WrapController,
   ViewEngineRender,
   Listener,
   AppElement,
   Loader,
-  Route
+  Route,
+  Controller,
+  WrapController
 } from '../share/type'
 import {
   CreateApp,
@@ -45,10 +48,12 @@ import {
   Start,
   Stop,
   Publish,
-  ClientController
+  MidController,
+  IntactController,
+  IntactControllerConstructor
 } from './type'
 
-const createHistory: CreateHistoryInCA = (settings: Settings) => {
+const createHistory: CreateHistoryInCA<MidController> = (settings) => {
   let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[settings.type]
   if (settings.basename) {
     return useQueries(useBeforeUnload(useBasename(chInit)))(settings)
@@ -56,8 +61,8 @@ const createHistory: CreateHistoryInCA = (settings: Settings) => {
   return useQueries(useBeforeUnload(chInit))(settings)
 }
 
-const createApp: CreateApp = (settings: Partial<Settings>) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+const createApp: CreateApp = (settings) => {
+  let finalAppSettings: Settings<MidController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
@@ -77,14 +82,14 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
 
   let history = createHistory(finalAppSettings)
   let matcher: Matcher = createMatcher(routes || [])
-  let currentController: ClientController | null = null
+  let currentController: IntactController | null = null
   let currentLocation: HistoryNativeLocation | null = null
   let unlisten: Function | null = null
   let finalContainer: HTMLElement | null = null
 
-  let cache: Cache<ClientController> = createCache(cacheAmount)
+  let cache: Cache<IntactController> = createCache(cacheAmount)
 
-  const saveControllerToCache: ControllerCacheFunc<ClientController> = (controller) => {
+  const saveControllerToCache: ControllerCacheFunc<IntactController> = (controller) => {
     cache.set(controller.location.raw, controller)
   }
 
@@ -92,7 +97,7 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     return cache.get(location.raw)
   }
 
-  const removeControllerFromCache: ControllerCacheFunc<ClientController> = (controller) => {
+  const removeControllerFromCache: ControllerCacheFunc<IntactController> = (controller) => {
     cache.remove(controller.location.raw)
   }
 
@@ -111,7 +116,7 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     let location: NLWithBQ = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
     context.prevLocation = currentLocation
 
-    let matches: Matches | null = matcher(location.pathname)
+    let matches = matcher(location.pathname)
 
     if (!matches) {
       throw new ReqError(`Did not match any route with pathname:${location.pathname}`, 404)
@@ -137,10 +142,10 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     }
   }
 
-  let controllers: AppMap<ControllerConstructor, ControllerConstructor<ClientController>>
-    = createMap<ControllerConstructor, ControllerConstructor<ClientController>>()
+  let controllers: AppMap<ControllerConstructor, IntactControllerConstructor>
+    = createMap<ControllerConstructor, IntactControllerConstructor>()
 
-  const wrapController: WrapController<ClientController> = (IController) => {
+  const wrapController: WrapController<MidController, IntactControllerConstructor> = (IController) => {
     if (controllers.has(IController)) {
       return controllers.get(IController)
     }
@@ -148,7 +153,7 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     class WrapperController extends IController {
       location: HistoryNativeLocation
       context: Context
-      history: NativeHistory
+      history: NativeHistory<BLWithBQ, NLWithBQ>
       matcher: Matcher
       loader: Loader
       routes: Route[]
@@ -188,7 +193,7 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
 
     controllers.set(IController, WrapperController)
 
-    return WrapperController
+    return WrapperController as IntactControllerConstructor
   }
 
   const createInitController: CreateInitController = (location) => {
@@ -199,7 +204,7 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
 
       destroyController()
 
-      let controller: ClientController = currentController = getControllerFromCache(location)
+      let controller = currentController = getControllerFromCache(location)
       let element: AppElement | Promise<AppElement> = null
 
       if (!!controller) {
@@ -234,8 +239,10 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     return initController
   }
 
-  const renderToContainer: ViewEngineRender<ClientController> = (element: AppElement, controller?: ClientController) => {
-    saveControllerToCache(controller as ClientController)
+  const renderToContainer: ViewEngineRender<IntactController> = (element, controller) => {
+    if (controller) {
+      saveControllerToCache(controller)
+    }
 
     if (!viewEngine) {
       return null as AppElement

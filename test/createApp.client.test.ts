@@ -1,5 +1,5 @@
 import execSteps from './squences/execSteps'
-import createApp, { App, Context, Settings, CreateHistoryType, Route, ControllerConstructor, Loader } from '../src/client'
+import createApp, { App, Context, Settings, CreateHistoryType, Route, ControllerConstructor, Loader, Controller } from '../src/client'
 import { getController, Home, List, Detail, Restore, NotFound } from './squences/classes'
 import { Step } from './squences/type'
 
@@ -284,7 +284,7 @@ const createTest = () => {
 }
 
 const describeTest: (type: CreateHistoryType) => void = (type) => {
-    const initApp: (settings: Partial<Settings>) => Promise<{}> = (settings) => {
+    const initApp: (settings: Partial<Settings<Controller>>) => Promise<{}> = (settings) => {
         // clear app and document.body
         if (app) {
             app.stop()
@@ -314,7 +314,7 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
     
     describe('works without custom loader', () => {
         beforeEach(() => {
-            let routes: Route[] = [{
+            let routes: Route<Controller>[] = [{
                 path: '/(home|debug.html)?',
                 controller: Home,
             }, {
@@ -358,8 +358,8 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
 
         describe('sync mode', () => {
             beforeEach(() => {
-                let loader: Loader = (controller) => {
-                    let iController: ControllerConstructor
+                let loader: Loader<Controller> = (controller) => {
+                    let iController: ControllerConstructor<Controller>
                     switch (controller) {
                         case 'home':
                           iController = Home

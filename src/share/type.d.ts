@@ -13,8 +13,8 @@ import pathToRegexp from 'path-to-regexp'
 
 export type CreateHistoryType = keyof typeof createHistoryMap
 
-export interface CreateHistoryInCA {
-  (setting: Settings): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
+export interface CreateHistoryInCA<C extends Controller> {
+  (setting: Settings<C>): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
 }
 
 export interface Route {
@@ -35,18 +35,18 @@ export interface Params {
   [propName: string]: any
 }
 
-export interface Matches {
+export interface Matches<C> {
   path: pathToRegexp.Path
   params: Params
   controller: ControllerConstructor | LoadController | string
 }
 
 export interface Matcher {
-  (pathname: string): Matches | null
+  <C extends Controller>(pathname: string): Matches<C> | null
 }
 
-export interface ViewEngine {
-  render: ViewEngineRender
+export interface ViewEngine<C extends Controller> {
+  render: ViewEngineRender<C>
   clear?: ViewEngineClear
 }
 
@@ -54,7 +54,7 @@ export interface ViewEngineClear {
   (container: Element): void
 }
 
-export interface Settings extends HistoryOptions {
+export interface Settings<C extends Controller> extends HistoryOptions {
   container: string | HTMLElement
   basename: string
   context: Context
@@ -62,15 +62,7 @@ export interface Settings extends HistoryOptions {
   loader: Loader
   cacheAmount?: number
   routes?: Route[]
-  viewEngine?: ViewEngine
-}
-
-export interface ControllerCacheFunc<C = Controller> {
-  (controller: C): void
-}
-
-export interface WrapController<C = Controller> {
-  (IController: ControllerConstructor): ControllerConstructor<C>
+  viewEngine?: ViewEngine<C>
 }
 
 export type Listener = Function
@@ -98,7 +90,7 @@ export interface HistoryNativeLocation extends NLWithBQ {
 }
 
 export interface Loader {
-  (
+  <C extends Controller>(
     controller: ControllerConstructor | LoadController | string,
     location?: HistoryNativeLocation,
     context?: Context
@@ -109,17 +101,7 @@ export interface LoadController {
   (location?: HistoryNativeLocation, context?: Context): ControllerConstructor | Promise<ControllerConstructor>
 }
 
-export interface ControllerConstructor<C = Controller> {
-  new(location: HistoryNativeLocation, context: Context): C;
-}
-
 export interface Controller {
-  location?: HistoryNativeLocation
-  context?: Context
-  history?: NativeHistory
-  matcher?: Matcher
-  loader?: Function
-  routes?: Route[]
   KeepAlive?: boolean
   count?: number
   restore?(location?: HistoryNativeLocation, context?: Context): AppElement | Promise<AppElement>
@@ -130,9 +112,20 @@ export interface Controller {
   refreshView?(): void
 }
 
+export interface ControllerConstructor<C extends Controller = Controller> {
+  new(location?: HistoryNativeLocation, context?: Context): C
+}
 
-export interface CreateController<C = Controller> {
-  (c: ControllerConstructor<C>, location: HistoryNativeLocation, context: Context): C
+export interface WrapController<C extends Controller, CC> {
+  (IController: ControllerConstructor): CC
+}
+
+export interface CreateController<C extends Controller, CC = ControllerConstructor<C>> {
+  (c: CC, location: HistoryNativeLocation, context: Context): C
+}
+
+export interface ControllerCacheFunc<C extends Controller> {
+  (controller: C): void
 }
 
 export interface Cache<T> {
@@ -171,9 +164,9 @@ export interface OtherElement {
   [propName: string]: any
 }
 
-export type AppElement = Element | string | number | boolean | null | undefined
+export type AppElement = Element | OtherElement | string | number | boolean | null | undefined
 
-export interface ViewEngineRender<C = Controller> {
+export interface ViewEngineRender<C extends Controller> {
   (
     element: AppElement,
     controller?: C,

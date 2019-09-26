@@ -1,7 +1,7 @@
 import { CreateController } from '../share/type'
-import { ClientController } from './type'
+import { IntactController, IntactControllerConstructor } from './type'
 
-const createController: CreateController<ClientController> = (c, location, context) => {
+const createController: CreateController<IntactController, IntactControllerConstructor> = (c, location, context) => {
   return new c(location, context)
 }
 export default createController

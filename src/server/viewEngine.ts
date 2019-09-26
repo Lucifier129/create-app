@@ -1,7 +1,7 @@
 /**
  * default view engine for server
  */
-import { ViewEngineRender, ViewEngine, AppElement } from '../share/type'
+import { ViewEngineRender, ViewEngine } from '../share/type'
 
 interface ToString {
   toString(): string

@@ -13,12 +13,11 @@ import { createMap, ReqError } from '../share/util'
 import defaultViewEngine from './viewEngine'
 import createMatcher from '../share/createMatcher'
 import defaultAppSettings from '../share/defaultSettings'
-import createController from './createController'
+import createController from '../client/createController'
 import {
   CreateHistoryInCA,
   Settings,
   Context,
-  Controller,
   ControllerConstructor,
   Matches,
   HistoryNativeLocation,
@@ -28,7 +27,8 @@ import {
   AppElement,
   Matcher,
   Loader,
-  Route
+  Route,
+  Controller
 } from '../share/type'
 import {
   CreateApp,
@@ -36,8 +36,7 @@ import {
   InitController,
   CreateInitController,
   FetchController,
-  InitControllerReturn,
-  ServerController
+  InitControllerReturn
 } from './type'
 
 const createHistory: CreateHistoryInCA = (settings) => {
@@ -48,7 +47,7 @@ const createHistory: CreateHistoryInCA = (settings) => {
   return useQueries(chInit)(settings)
 }
 
-const createApp: CreateApp = (settings: Partial<Settings>) => {
+const createApp: CreateApp = (settings) => {
   let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   Object.assign(finalAppSettings, settings)
@@ -79,7 +78,7 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     try {
       let controller = fetchController(requestPath, injectContext)
       if (Promise.resolve(controller) == controller) {
-        result = (<Promise<ServerController>>controller).then(initController)
+        result = (<Promise<Controller>>controller).then(initController)
       } else {
         result = initController(controller)
       }
@@ -98,32 +97,32 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     return result
   }
 
-  const initController: InitController = (controller: ServerController) => {
-    let component: AppElement | Promise<AppElement> = (controller as ServerController).init()
+  const initController: InitController = (controller) => {
+    let component: AppElement | Promise<AppElement> = controller.init()
 
     if (component === null) {
       return { controller: controller }
     }
     if (Promise.resolve(component) == component) {
-      return component.then(component => {
+      return component.then((component: AppElement) => {
         if (component == null) {
-          return { controller: controller as ServerController }
+          return { controller: controller }
         }
         return {
-          content: renderToString(component, controller as ServerController),
-          controller: controller as ServerController
+          content: renderToString(component, controller ),
+          controller: controller
         }
       }) as Promise<InitControllerReturn>
     }
     return {
-      content: renderToString(component as AppElement, controller as ServerController),
-      controller: controller as ServerController
+      content: renderToString(component, controller),
+      controller: controller
     }
   }
 
   const fetchController: FetchController = (requestPath, injectContext) => {
     let location: NLWithBQ = history.createLocation(requestPath)
-    let matches: Matches | null = matcher(location.pathname)
+    let matches = matcher(location.pathname)
 
     if (!matches) {
       let error = new ReqError(`Did not match any route with path:${requestPath}`, 404)
@@ -156,10 +155,10 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
   }
 
 
-  let controllers: AppMap<ControllerConstructor, ControllerConstructor<ServerController>>
-    = createMap<ControllerConstructor, ControllerConstructor<ServerController>>()
+  let controllers: AppMap<ControllerConstructor, ControllerConstructor>
+    = createMap<ControllerConstructor, ControllerConstructor>()
 
-  const wrapController: WrapController<ServerController> = (iController) => {
+  const wrapController: WrapController = (iController) => {
     if (controllers.has(iController)) {
       return controllers.get(iController)
     }
@@ -185,7 +184,7 @@ const createApp: CreateApp = (settings: Partial<Settings>) => {
     return WrapperController
   }
 
-  const renderToString: ViewEngineRender = (component: AppElement, controller?: Controller) => {
+  const renderToString: ViewEngineRender = (component, controller) => {
     if (!viewEngine) {
       return null
     }

@@ -1,38 +1,39 @@
-import { NativeHistory, NLWithBQ } from 'create-history'
+import { NativeHistory, NLWithBQ, BLWithBQ } from 'create-history'
 import {
   Context,
   Callback,
   Settings,
   AppElement,
-  Controller,
   ControllerConstructor,
   Listener,
   HistoryNativeLocation,
   HistoryBaseLocation,
   Matcher,
   Route,
-  Loader
+  Loader,
+  Controller
 } from '../share/type'
 
-export interface ClientController {
-  location: HistoryNativeLocation
-  context: Context
-  history: NativeHistory
+export interface MidController extends Controller {
+  location?: HistoryNativeLocation
+  context?: Context
+  history: NativeHistory<BLWithBQ, NLWithBQ>
   matcher: Matcher
   loader: Loader
   routes: Route[]
-  KeepAlive?: boolean
-  count?: number
-  restore?(location?: HistoryNativeLocation, context?: Context): AppElement | Promise<AppElement>
-  init(): AppElement | Promise<AppElement>
-  render(): AppElement
-  destroy?(): void
-  getContainer?(): HTMLElement | null
-  refreshView?(): void
+}
+
+export interface IntactController extends MidController {
+  location: HistoryNativeLocation
+  context: Context
+}
+
+export interface IntactControllerConstructor {
+  new(location: HistoryNativeLocation, context: Context): IntactController
 }
 
 interface CreateApp {
-  (settings: Partial<Settings>): App
+  (settings: Partial<Settings<IntactController>>): App
 }
 
 interface Render {
@@ -93,5 +94,5 @@ interface GetContainer {
 }
 
 interface GetControllerByLocation {
-  (location: HistoryNativeLocation): ClientController
+  (location: HistoryNativeLocation): IntactController
 }

@@ -3,8 +3,7 @@ import createApp from './createApp'
 export default createApp
 
 export {
-  App,
-  Render
+  App
 } from './type'
 
 export {
@@ -22,8 +21,8 @@ export {
   Context,
   HistoryBaseLocation,
   HistoryNativeLocation,
-  ControllerConstructor,
   Controller,
+  ControllerConstructor,
   Cache,
   CacheStorage,
   AppMap,

@@ -1,7 +1,6 @@
-import { CreateController } from '../share/type'
-import { ServerController } from './type'
+import { CreateController } from './type'
 
-const createController: CreateController<ServerController> = (c, location, context) => {
+const createController: CreateController = (c, location, context) => {
   return new c(location, context)
 }
 export default createController

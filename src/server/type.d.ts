@@ -4,28 +4,29 @@ import {
   Callback,
   Settings,
   AppElement,
-  Controller,
   Matcher,
   Loader,
   Route,
   HistoryNativeLocation,
-  HistoryBaseLocation
+  HistoryBaseLocation,
+  Controller
 } from '../share/type'
 
-export interface ServerController {
-  location: HistoryNativeLocation
-  context: Context
+export interface MidController extends Controller {
+  location?: HistoryNativeLocation
+  context?: Context
   matcher: Matcher
   loader: Loader
   routes: Route[]
-  KeepAlive?: boolean
-  count?: number
-  restore?(location?: HistoryNativeLocation, context?: Context): AppElement | Promise<AppElement>
-  init(): AppElement | Promise<AppElement>
-  render(): AppElement
-  destroy?(): void
-  getContainer?(): HTMLElement | null
-  refreshView?(): void
+}
+
+export interface IntactController extends MidController {
+  location: HistoryNativeLocation
+  context: Context
+}
+
+export interface IntactControllerConstructor<C extends Controller = Controller> {
+  new(location: HistoryNativeLocation, context: Context): C
 }
 
 export interface App {
@@ -47,12 +48,12 @@ interface CreateApp {
 
 interface InitControllerReturn {
   content?: AppElement
-  controller: ServerController
+  controller: Controller
 }
 
 interface InitController {
   (
-    c: ServerController
+    c: Controller
   ): InitControllerReturn | Promise<InitControllerReturn> | null
 }
 
