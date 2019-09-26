@@ -2,13 +2,14 @@
  * default view engine for server
  */
 import { ViewEngineRender, ViewEngine } from '../share/type'
+import { ServerController } from './type'
 
 interface ToString {
   toString(): string
   [propName: string ]: any
   [propName: number ]: any
 }
-const render: ViewEngineRender = html => {
+const render: ViewEngineRender<ServerController> = html => {
 	if (typeof html === 'string') {
     return html
   } else {
@@ -16,7 +17,7 @@ const render: ViewEngineRender = html => {
   }
 }
 
-const viewEngine: ViewEngine = {
+const viewEngine: ViewEngine<ServerController> = {
   render
 }
 export default viewEngine

@@ -13,7 +13,7 @@ import { createMap, ReqError } from '../share/util'
 import defaultViewEngine from './viewEngine'
 import createMatcher from '../share/createMatcher'
 import defaultAppSettings from '../share/defaultSettings'
-import createController from '../client/createController'
+import createController from './createController'
 import {
   CreateHistoryInCA,
   Settings,
@@ -36,10 +36,12 @@ import {
   InitController,
   CreateInitController,
   FetchController,
-  InitControllerReturn
+  InitControllerReturn,
+  ServerController,
+  ServerControllerConstructor
 } from './type'
 
-const createHistory: CreateHistoryInCA = (settings) => {
+const createHistory: CreateHistoryInCA<ServerController> = (settings) => {
   let chInit: CreateHistory<'NORMAL'> = createMemoryHistory
   if (settings.basename) {
     return useQueries(useBasename(chInit))(settings)
@@ -48,7 +50,7 @@ const createHistory: CreateHistoryInCA = (settings) => {
 }
 
 const createApp: CreateApp = (settings) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings<ServerController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   Object.assign(finalAppSettings, settings)
 
@@ -78,9 +80,9 @@ const createApp: CreateApp = (settings) => {
     try {
       let controller = fetchController(requestPath, injectContext)
       if (Promise.resolve(controller) == controller) {
-        result = (<Promise<Controller>>controller).then(initController)
+        result = (<Promise<ServerController>>controller).then(initController)
       } else {
-        result = initController(controller)
+        result = initController(controller as ServerController)
       }
     } catch (error) {
       callback && callback(error)
@@ -155,10 +157,9 @@ const createApp: CreateApp = (settings) => {
   }
 
 
-  let controllers: AppMap<ControllerConstructor, ControllerConstructor>
-    = createMap<ControllerConstructor, ControllerConstructor>()
+  let controllers = createMap<ControllerConstructor, ServerControllerConstructor>()
 
-  const wrapController: WrapController = (iController) => {
+  const wrapController: WrapController<Controller, ServerControllerConstructor> = (iController) => {
     if (controllers.has(iController)) {
       return controllers.get(iController)
     }
@@ -184,7 +185,7 @@ const createApp: CreateApp = (settings) => {
     return WrapperController
   }
 
-  const renderToString: ViewEngineRender = (component, controller) => {
+  const renderToString: ViewEngineRender<ServerController> = (component, controller) => {
     if (!viewEngine) {
       return null
     }

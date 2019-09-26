@@ -2,9 +2,9 @@
  * default view engine for client
  */
 import { ViewEngineRender, ViewEngine } from '../share/type'
-import { MidController } from './type'
+import { ClientController } from './type'
 
-const render: ViewEngineRender<MidController> = (html, controller, container) => {
+const render: ViewEngineRender<ClientController> = (html, controller, container) => {
 	if (container) {
 		container.innerHTML = html as string
 	} else {
@@ -13,7 +13,7 @@ const render: ViewEngineRender<MidController> = (html, controller, container) =>
 	return container
 }
 
-const viewEngine: ViewEngine<MidController> = {
+const viewEngine: ViewEngine<ClientController> = {
 	render
 }
 

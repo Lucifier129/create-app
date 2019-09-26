@@ -20,13 +20,13 @@ export interface MidController extends Controller {
   routes: Route[]
 }
 
-export interface IntactController extends MidController {
+export interface ServerController extends MidController {
   location: HistoryNativeLocation
   context: Context
 }
 
-export interface IntactControllerConstructor<C extends Controller = Controller> {
-  new(location: HistoryNativeLocation, context: Context): C
+export interface ServerControllerConstructor {
+  new(location: HistoryNativeLocation, context: Context): ServerController
 }
 
 export interface App {
@@ -43,7 +43,7 @@ export interface Render {
 }
 
 interface CreateApp {
-  (settings: Partial<Settings>): App
+  (settings: Partial<Settings<ServerController>>): App
 }
 
 interface InitControllerReturn {
@@ -53,7 +53,7 @@ interface InitControllerReturn {
 
 interface InitController {
   (
-    c: Controller
+    c: ServerController
   ): InitControllerReturn | Promise<InitControllerReturn> | null
 }
 
@@ -65,5 +65,5 @@ export interface FetchController {
   (
     requestPath: string,
     injectContext?: Context | null
-  ): any
+  ): ServerController | Promise<ServerController>
 }

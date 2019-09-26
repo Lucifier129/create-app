@@ -48,12 +48,11 @@ import {
   Start,
   Stop,
   Publish,
-  MidController,
-  IntactController,
-  IntactControllerConstructor
+  ClientController,
+  ClientControllerConstructor
 } from './type'
 
-const createHistory: CreateHistoryInCA<MidController> = (settings) => {
+const createHistory: CreateHistoryInCA<ClientController> = (settings) => {
   let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[settings.type]
   if (settings.basename) {
     return useQueries(useBeforeUnload(useBasename(chInit)))(settings)
@@ -62,7 +61,7 @@ const createHistory: CreateHistoryInCA<MidController> = (settings) => {
 }
 
 const createApp: CreateApp = (settings) => {
-  let finalAppSettings: Settings<MidController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings<ClientController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
@@ -82,14 +81,14 @@ const createApp: CreateApp = (settings) => {
 
   let history = createHistory(finalAppSettings)
   let matcher: Matcher = createMatcher(routes || [])
-  let currentController: IntactController | null = null
+  let currentController: ClientController | null = null
   let currentLocation: HistoryNativeLocation | null = null
   let unlisten: Function | null = null
   let finalContainer: HTMLElement | null = null
 
-  let cache: Cache<IntactController> = createCache(cacheAmount)
+  let cache: Cache<ClientController> = createCache(cacheAmount)
 
-  const saveControllerToCache: ControllerCacheFunc<IntactController> = (controller) => {
+  const saveControllerToCache: ControllerCacheFunc<ClientController> = (controller) => {
     cache.set(controller.location.raw, controller)
   }
 
@@ -97,7 +96,7 @@ const createApp: CreateApp = (settings) => {
     return cache.get(location.raw)
   }
 
-  const removeControllerFromCache: ControllerCacheFunc<IntactController> = (controller) => {
+  const removeControllerFromCache: ControllerCacheFunc<ClientController> = (controller) => {
     cache.remove(controller.location.raw)
   }
 
@@ -142,10 +141,9 @@ const createApp: CreateApp = (settings) => {
     }
   }
 
-  let controllers: AppMap<ControllerConstructor, IntactControllerConstructor>
-    = createMap<ControllerConstructor, IntactControllerConstructor>()
+  let controllers = createMap<ControllerConstructor, ClientControllerConstructor>()
 
-  const wrapController: WrapController<MidController, IntactControllerConstructor> = (IController) => {
+  const wrapController: WrapController<Controller, ClientControllerConstructor> = (IController) => {
     if (controllers.has(IController)) {
       return controllers.get(IController)
     }
@@ -193,7 +191,7 @@ const createApp: CreateApp = (settings) => {
 
     controllers.set(IController, WrapperController)
 
-    return WrapperController as IntactControllerConstructor
+    return WrapperController as ClientControllerConstructor
   }
 
   const createInitController: CreateInitController = (location) => {
@@ -239,7 +237,7 @@ const createApp: CreateApp = (settings) => {
     return initController
   }
 
-  const renderToContainer: ViewEngineRender<IntactController> = (element, controller) => {
+  const renderToContainer: ViewEngineRender<ClientController> = (element, controller) => {
     if (controller) {
       saveControllerToCache(controller)
     }

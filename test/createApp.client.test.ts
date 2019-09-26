@@ -314,7 +314,7 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
     
     describe('works without custom loader', () => {
         beforeEach(() => {
-            let routes: Route<Controller>[] = [{
+            let routes: Route[] = [{
                 path: '/(home|debug.html)?',
                 controller: Home,
             }, {
@@ -358,7 +358,7 @@ const describeTest: (type: CreateHistoryType) => void = (type) => {
 
         describe('sync mode', () => {
             beforeEach(() => {
-                let loader: Loader<Controller> = (controller) => {
+                let loader: Loader = (controller) => {
                     let iController: ControllerConstructor<Controller>
                     switch (controller) {
                         case 'home':

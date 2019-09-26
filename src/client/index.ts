@@ -3,7 +3,8 @@ import createApp from './createApp'
 export default createApp
 
 export {
-  App
+  App,
+  ClientController
 } from './type'
 
 export {

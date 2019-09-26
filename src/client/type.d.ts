@@ -14,26 +14,21 @@ import {
   Controller
 } from '../share/type'
 
-export interface MidController extends Controller {
-  location?: HistoryNativeLocation
-  context?: Context
+export interface ClientController extends Controller {
+  location: HistoryNativeLocation
+  context: Context
   history: NativeHistory<BLWithBQ, NLWithBQ>
   matcher: Matcher
   loader: Loader
   routes: Route[]
 }
 
-export interface IntactController extends MidController {
-  location: HistoryNativeLocation
-  context: Context
-}
-
-export interface IntactControllerConstructor {
-  new(location: HistoryNativeLocation, context: Context): IntactController
+export interface ClientControllerConstructor {
+  new(location: HistoryNativeLocation, context: Context): ClientController
 }
 
 interface CreateApp {
-  (settings: Partial<Settings<IntactController>>): App
+  (settings: Partial<Settings<ClientController>>): App
 }
 
 interface Render {
@@ -94,5 +89,5 @@ interface GetContainer {
 }
 
 interface GetControllerByLocation {
-  (location: HistoryNativeLocation): IntactController
+  (location: HistoryNativeLocation): ClientController
 }
