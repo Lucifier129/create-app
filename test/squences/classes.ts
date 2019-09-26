@@ -1,7 +1,7 @@
 import { Controller, ClientController } from '../../src/client'
 export let getController = () => controller
 
-let controller: ClientController
+let controller: any
 
 export class Home implements Controller {
   constructor() {
