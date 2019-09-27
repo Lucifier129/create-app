@@ -108,6 +108,7 @@ export interface Controller {
   destroy?(): void
   getContainer?(): HTMLElement | null
   refreshView?(): void
+  [x: string]: any
 }
 
 export interface ControllerConstructor<C extends Controller = Controller> {
