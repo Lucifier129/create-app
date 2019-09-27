@@ -43,8 +43,8 @@ export interface Matcher {
   <C extends Controller>(pathname: string): Matches<C> | null
 }
 
-export interface ViewEngine<C extends Controller> {
-  render: ViewEngineRender<C>
+export interface ViewEngine<E = AppElement, C extends Controller = Controller> {
+  render: ViewEngineRender<E, C>
   clear?: ViewEngineClear
 }
 
@@ -164,7 +164,7 @@ export interface OtherElement {
 
 export type AppElement = Element | OtherElement | string | number | boolean | null | undefined
 
-export interface ViewEngineRender<C extends Controller> {
+export interface ViewEngineRender<E = AppElement, C extends Controller = Controller> {
   (
     element: AppElement,
     controller?: C,

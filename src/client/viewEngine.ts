@@ -1,10 +1,10 @@
 /**
  * default view engine for client
  */
-import { ViewEngineRender, ViewEngine } from '../share/type'
+import { ViewEngineRender, ViewEngine, AppElement } from '../share/type'
 import { ClientController } from './type'
 
-const render: ViewEngineRender<ClientController> = (html, controller, container) => {
+const render: ViewEngineRender<AppElement, ClientController> = (html, controller, container) => {
 	if (container) {
 		container.innerHTML = html as string
 	} else {
@@ -13,7 +13,7 @@ const render: ViewEngineRender<ClientController> = (html, controller, container)
 	return container
 }
 
-const viewEngine: ViewEngine<ClientController> = {
+const viewEngine: ViewEngine<AppElement, ClientController> = {
 	render
 }
 

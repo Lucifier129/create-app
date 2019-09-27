@@ -239,7 +239,7 @@ const createApp: CreateApp = (settings) => {
     return initController
   }
 
-  const renderToContainer: ViewEngineRender<ClientController> = (element, controller) => {
+  const renderToContainer: ViewEngineRender<AppElement, ClientController> = (element, controller) => {
     if (controller) {
       saveControllerToCache(controller)
     }
