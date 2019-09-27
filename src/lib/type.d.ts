@@ -43,7 +43,7 @@ export interface Matcher {
   <C extends Controller>(pathname: string): Matches<C> | null
 }
 
-export interface ViewEngine<E = AppElement, C extends Controller = Controller> {
+export interface ViewEngine<E = string, C extends Controller = Controller> {
   render: ViewEngineRender<E, C>
   clear?: ViewEngineClear
 }
@@ -102,9 +102,9 @@ export interface LoadController {
 export interface Controller {
   KeepAlive?: boolean
   count?: number
-  restore?(location?: HistoryNativeLocation, context?: Context): AppElement | Promise<AppElement>
-  init(): AppElement | Promise<AppElement>
-  render(): AppElement
+  restore?(location?: HistoryNativeLocation, context?: Context): any
+  init(): any
+  render(): any
   destroy?(): void
   getContainer?(): HTMLElement | null
   refreshView?(): void
@@ -162,12 +162,10 @@ export interface OtherElement {
   [propName: string]: any
 }
 
-export type AppElement = Element | OtherElement | string | number | boolean | null | undefined
-
-export interface ViewEngineRender<E = AppElement, C extends Controller = Controller> {
+export interface ViewEngineRender<E = string, C extends Controller = Controller> {
   (
     element: E,
     controller?: C,
     container?: Element | null
-  ): AppElement
+  ): any
 }

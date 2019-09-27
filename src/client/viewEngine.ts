@@ -1,7 +1,7 @@
 /**
  * default view engine for client
  */
-import { ViewEngineRender, ViewEngine, AppElement } from '../lib/type'
+import { ViewEngineRender, ViewEngine } from '../lib/type'
 import { ClientController } from './type'
 
 const render: ViewEngineRender<string, ClientController> = (html, controller, container) => {

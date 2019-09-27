@@ -25,7 +25,6 @@ import {
   HistoryNativeLocation,
   ViewEngineRender,
   Listener,
-  AppElement,
   Loader,
   Route,
   Controller,
@@ -205,7 +204,7 @@ const createApp: CreateApp = (settings) => {
       destroyController()
 
       let controller = currentController = getControllerFromCache(location)
-      let element: AppElement | Promise<AppElement> = null
+      let element: any | Promise<any> = null
 
       if (!!controller) {
         if (controller.restore) {
@@ -227,28 +226,28 @@ const createApp: CreateApp = (settings) => {
       }
 
       if (Promise.resolve(element) == element) {
-        return (element as Promise<AppElement>).then(result => {
+        return (element as Promise<any>).then(result => {
           if (currentLocation !== location || result == null) {
             return null
           }
           return renderToContainer(result, controller)
         })
       }
-      return renderToContainer(element as AppElement, controller)
+      return renderToContainer(element, controller)
     }
     return initController
   }
 
-  const renderToContainer: ViewEngineRender<AppElement, ClientController> = (element, controller) => {
+  const renderToContainer: ViewEngineRender<any, ClientController> = (element, controller) => {
     if (controller) {
       saveControllerToCache(controller)
     }
 
     if (!viewEngine) {
-      return null as AppElement
+      return null
     }
 
-    return viewEngine.render(element, controller, getContainer()) as AppElement
+    return viewEngine.render(element, controller, getContainer())
   }
 
   const clearContainer: ClearContainer = () => {

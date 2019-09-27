@@ -9,7 +9,6 @@ import {
   Context,
   Callback,
   Settings,
-  AppElement,
   ControllerConstructor,
   Listener,
   HistoryNativeLocation,
@@ -75,7 +74,7 @@ interface Subscribe {
 interface InitController {
   (
     c: ControllerConstructor | Promise<ControllerConstructor>
-  ): AppElement | Promise<AppElement>
+  ): any
 }
 
 interface CreateInitController {

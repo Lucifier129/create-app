@@ -3,7 +3,6 @@ import {
   Context,
   Callback,
   Settings,
-  AppElement,
   Matcher,
   Loader,
   Route,
@@ -39,7 +38,7 @@ export interface Render {
     requestPath: string,
     injectContext?: Context | null,
     callback?: Callback
-  ): any
+  ): InitControllerReturn | Promise<InitControllerReturn | null> | null
 }
 
 interface CreateApp {
@@ -47,14 +46,14 @@ interface CreateApp {
 }
 
 interface InitControllerReturn {
-  content?: AppElement
+  content?: any
   controller: Controller
 }
 
 interface InitController {
   (
     c: ServerController
-  ): InitControllerReturn | Promise<InitControllerReturn> | null
+  ): InitControllerReturn | Promise<InitControllerReturn>
 }
 
 interface CreateInitController {

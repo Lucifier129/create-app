@@ -28,8 +28,7 @@ export {
   ControllerConstructor,
   Cache,
   CacheStorage,
-  AppMap,
-  AppElement
+  AppMap
 } from '../lib/type'
 
 export {

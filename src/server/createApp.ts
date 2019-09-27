@@ -20,7 +20,6 @@ import {
   HistoryNativeLocation,
   WrapController,
   ViewEngineRender,
-  AppElement,
   Matcher,
   Loader,
   Route,
@@ -71,7 +70,7 @@ const createApp: CreateApp = (settings) => {
   let history = createHistory(finalAppSettings)
 
   const render: Render = (requestPath, injectContext, callback) => {
-    let result = null
+    let result: InitControllerReturn | Promise<InitControllerReturn> | null = null
 
     if (typeof injectContext === 'function') {
       callback = injectContext
@@ -90,7 +89,7 @@ const createApp: CreateApp = (settings) => {
       return Promise.reject(error)
     }
     if (Promise.resolve(result) == result) {
-      if (typeof callback !== 'undefined') {
+      if (callback) {
         let cb: Function = callback
         result.then(result => cb(null, result), reason => cb(reason))
       }
@@ -101,13 +100,13 @@ const createApp: CreateApp = (settings) => {
   }
 
   const initController: InitController = (controller) => {
-    let component: AppElement | Promise<AppElement> = controller.init()
+    let component: any = controller.init()
 
     if (component === null) {
       return { controller: controller }
     }
     if (Promise.resolve(component) == component) {
-      return component.then((component: AppElement) => {
+      return component.then((component: any) => {
         if (component == null) {
           return { controller: controller }
         }
