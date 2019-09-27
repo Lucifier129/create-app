@@ -8,7 +8,7 @@ const render: ViewEngineRender<ClientController> = (html, controller, container)
 	if (container) {
 		container.innerHTML = html as string
 	} else {
-		throw new Error(`container is null`)
+		throw new Error(`container is inexistent`)
 	}
 	return container
 }
