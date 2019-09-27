@@ -37,8 +37,8 @@ import {
   ServerControllerConstructor
 } from './type'
 
-export const createHistory: CreateHistoryInCA<ServerController> = (settings) => {
-  let finalAppSettings: Settings<ServerController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+export const createHistory: CreateHistoryInCA = (settings) => {
+  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
   let chInit: CreateHistory<'NORMAL'> = createMemoryHistory
@@ -51,7 +51,7 @@ export const createHistory: CreateHistoryInCA<ServerController> = (settings) => 
 }
 
 const createApp: CreateApp = (settings) => {
-  let finalAppSettings: Settings<ServerController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
@@ -186,7 +186,7 @@ const createApp: CreateApp = (settings) => {
     return WrapperController
   }
 
-  const renderToString: ViewEngineRender<ServerController> = (component, controller) => {
+  const renderToString: ViewEngineRender<any, ServerController> = (component, controller) => {
     if (!viewEngine) {
       return null
     }

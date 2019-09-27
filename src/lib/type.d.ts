@@ -52,7 +52,7 @@ export interface ViewEngineClear {
   (container: Element): void
 }
 
-export interface Settings<C extends Controller> extends HistoryOptions {
+export interface Settings extends HistoryOptions {
   container: string | HTMLElement
   basename: string
   context: Context
@@ -60,7 +60,7 @@ export interface Settings<C extends Controller> extends HistoryOptions {
   loader: Loader
   cacheAmount?: number
   routes?: Route[]
-  viewEngine?: ViewEngine<C>
+  viewEngine?: ViewEngine<any, Controller>
 }
 
 export type Listener = Function
@@ -166,7 +166,7 @@ export type AppElement = Element | OtherElement | string | number | boolean | nu
 
 export interface ViewEngineRender<E = AppElement, C extends Controller = Controller> {
   (
-    element: AppElement,
+    element: E,
     controller?: C,
     container?: Element | null
   ): AppElement

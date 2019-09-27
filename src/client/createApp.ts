@@ -49,8 +49,8 @@ import {
   ClientControllerConstructor
 } from './type'
 
-export const createHistory: CreateHistoryInCA<ClientController> = (settings) => {
-  let finalAppSettings: Settings<ClientController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+export const createHistory: CreateHistoryInCA = (settings) => {
+  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
   let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[finalAppSettings.type]
@@ -63,7 +63,7 @@ export const createHistory: CreateHistoryInCA<ClientController> = (settings) => 
 }
 
 const createApp: CreateApp = (settings) => {
-  let finalAppSettings: Settings<ClientController> = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   finalAppSettings = Object.assign(finalAppSettings, settings)
 

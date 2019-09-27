@@ -9,7 +9,7 @@ interface ToString {
   [propName: string ]: any
   [propName: number ]: any
 }
-const render: ViewEngineRender<ServerController> = html => {
+const render: ViewEngineRender<string | ToString, ServerController> = html => {
 	if (typeof html === 'string') {
     return html
   } else {
@@ -17,7 +17,7 @@ const render: ViewEngineRender<ServerController> = html => {
   }
 }
 
-const viewEngine: ViewEngine<ServerController> = {
+const viewEngine: ViewEngine<string | ToString, ServerController> = {
   render
 }
 export default viewEngine

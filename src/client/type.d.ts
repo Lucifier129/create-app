@@ -34,7 +34,7 @@ export interface ClientControllerConstructor {
 }
 
 interface CreateApp {
-  (settings: Partial<Settings<ClientController>>): App
+  (settings: Partial<Settings>): App
 }
 
 interface Render {
@@ -98,6 +98,6 @@ interface GetControllerByLocation {
   (location: HistoryNativeLocation): ClientController
 }
 
-export interface CreateHistoryInCA<C extends Controller> {
-  (setting?: Settings<C>): NativeHistoryWithBFOL<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
+export interface CreateHistoryInCA {
+  (setting?: Settings): NativeHistoryWithBFOL<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
 }

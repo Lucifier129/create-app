@@ -43,7 +43,7 @@ export interface Render {
 }
 
 interface CreateApp {
-  (settings: Partial<Settings<ServerController>>): App
+  (settings: Partial<Settings>): App
 }
 
 interface InitControllerReturn {
@@ -68,6 +68,6 @@ export interface FetchController {
   ): ServerController | Promise<ServerController>
 }
 
-export interface CreateHistoryInCA<C extends Controller> {
-  (setting?: Settings<C>): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
+export interface CreateHistoryInCA {
+  (setting?: Settings): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
 }

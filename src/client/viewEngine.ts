@@ -4,7 +4,7 @@
 import { ViewEngineRender, ViewEngine, AppElement } from '../lib/type'
 import { ClientController } from './type'
 
-const render: ViewEngineRender<AppElement, ClientController> = (html, controller, container) => {
+const render: ViewEngineRender<string, ClientController> = (html, controller, container) => {
 	if (container) {
 		container.innerHTML = html as string
 	} else {
@@ -13,7 +13,7 @@ const render: ViewEngineRender<AppElement, ClientController> = (html, controller
 	return container
 }
 
-const viewEngine: ViewEngine<AppElement, ClientController> = {
+const viewEngine: ViewEngine<string, ClientController> = {
 	render
 }
 
