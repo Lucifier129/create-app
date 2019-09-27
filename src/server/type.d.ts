@@ -38,7 +38,7 @@ export interface Render {
     requestPath: string,
     injectContext?: Context | null,
     callback?: Callback
-  ): InitControllerReturn | Promise<InitControllerReturn | null> | null
+  ): InitControllerReturn | Promise<InitControllerReturn>
 }
 
 interface CreateApp {
