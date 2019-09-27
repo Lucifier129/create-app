@@ -30,7 +30,7 @@ export {
   CacheStorage,
   AppMap,
   AppElement
-} from '../share/type'
+} from '../lib/type'
 
 export {
   Actions

@@ -1,4 +1,4 @@
-import createMatcher from '../src/share/createMatcher'
+import createMatcher from '../src/lib/createMatcher'
 
 let matcher = createMatcher([])
 

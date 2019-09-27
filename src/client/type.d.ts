@@ -18,7 +18,7 @@ import {
   Route,
   Loader,
   Controller
-} from '../share/type'
+} from '../lib/type'
 
 export interface ClientController extends Controller {
   location: HistoryNativeLocation
