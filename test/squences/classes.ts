@@ -1,9 +1,9 @@
-import CA from '../../src/share/types'
+import { Controller, ClientController } from '../../src/client'
 export let getController = () => controller
 
-let controller
+let controller: any
 
-export class Home implements CA.Controller {
+export class Home implements Controller {
   constructor() {
     controller = this
   }
@@ -19,12 +19,12 @@ export class Home implements CA.Controller {
   }
 }
 
-export class List implements CA.Controller {
+export class List implements Controller {
   constructor() {
     controller = this
   }
   init() {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       setTimeout(() => {
         resolve(this.render())
       }, 50)
@@ -35,7 +35,7 @@ export class List implements CA.Controller {
   }
 }
 
-export class Detail implements CA.Controller {
+export class Detail implements Controller {
   constructor() {
     controller = this
   }
@@ -47,7 +47,7 @@ export class Detail implements CA.Controller {
   }
 }
 
-export class NotFound implements CA.Controller {
+export class NotFound implements Controller {
   constructor() {
     controller = this
   }
@@ -59,7 +59,7 @@ export class NotFound implements CA.Controller {
   }
 }
 
-export class Restore implements CA.Controller {
+export class Restore implements Controller {
   KeepAlive: boolean
   count: number
   constructor() {

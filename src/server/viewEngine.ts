@@ -1,21 +1,23 @@
 /**
  * default view engine for server
  */
-import CA from './index'
+import { ViewEngineRender, ViewEngine } from '../lib/type'
+import { ServerController } from './type'
+
 interface ToString {
-  toString()
+  toString(): string
   [propName: string ]: any
   [propName: number ]: any
 }
-const render: CA.ViewEngineRender<string | ToString> = html => {
+const render: ViewEngineRender<string | ToString, ServerController> = html => {
 	if (typeof html === 'string') {
     return html
   } else {
-    return html.toString()    
+    return (html as ToString).toString()    
   }
 }
 
-const viewEngine: CA.ViewEngine = {
+const viewEngine: ViewEngine<string | ToString, ServerController> = {
   render
 }
 export default viewEngine

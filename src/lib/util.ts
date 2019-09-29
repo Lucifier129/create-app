@@ -1,24 +1,12 @@
 // util
-import CA from './types'
-export const isThenable: CA.IsThenable = (obj) => {
-  return obj !== undefined && obj !== null && typeof obj.then === 'function'
-}
-
-export const identity: CA.Identity = (obj) => {
-  return obj
-}
-
-export const extend: CA.Extend = (to, from) => {
-  if (!from) {
-    return to
-  }
-  let keys: string[] = Object.keys(from)
-  let i: number = keys.length
-  while (i--) {
-    to[keys[i]] = from[keys[i]]
-  }
-  return to
-}
+import {
+  CreateCache,
+  CacheStorage,
+  Cache,
+  CreateMap,
+  MapItem,
+  AppMap
+} from './type'
 
 export class ReqError extends Error {
   status?: number
@@ -28,8 +16,8 @@ export class ReqError extends Error {
   }
 }
 
-export const createCache: CA.CreateCache = <T>(amount = 10) => {
-  let cache: CA.CacheStorage<T> = {}
+export const createCache: CreateCache = <T>(amount: number = 10) => {
+  let cache: CacheStorage<T> = {}
 
   const keys = () => {
     return Object.keys(cache)
@@ -58,17 +46,17 @@ export const createCache: CA.CreateCache = <T>(amount = 10) => {
     }
   }
 
-  const getAll: () => CA.CacheStorage<T> = () => {
+  const getAll: () => CacheStorage<T> = () => {
     return cache
   }
 
-  return { keys, get, set, remove, getAll } as CA.Cache<T>
+  return { keys, get, set, remove, getAll } as Cache<T>
 }
 
-export const createMap: CA.CreateMap = <K, V>() => {
-  let list: CA.MapItem<K, V>[] = []
+export const createMap: CreateMap = <K, V>() => {
+  let list: MapItem<K, V>[] = []
 
-  const find: (key: K) => CA.MapItem<K, V>[] = (key) => {
+  const find: (key: K) => MapItem<K, V>[] = (key) => {
     return list.filter(item => item.key === key)
   }
 
@@ -77,7 +65,7 @@ export const createMap: CA.CreateMap = <K, V>() => {
     return result.length > 0
   }
 
-  const get: (key: K) => V = (key) => {
+  const get: (key: K) => V | undefined = (key) => {
     let result = find(key)
     return result.length ? result[0].value : undefined
   }
@@ -97,9 +85,5 @@ export const createMap: CA.CreateMap = <K, V>() => {
     list = list.filter(item => item.key !== key)
   }
 
-  return { get, set, has, remove } as CA.AppMap<K, V>
-}
-
-if (!Object.freeze) {
-  Object.freeze = <{ <T>(a: T[]): ReadonlyArray<T>; <T extends Function>(f: T): T; <T>(o: T): Readonly<T>; }>identity
+  return { get, set, has, remove } as AppMap<K, V>
 }

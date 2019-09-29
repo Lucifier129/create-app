@@ -1,14 +1,19 @@
 /**
  * default view engine for client
  */
-import CA from './index'
+import { ViewEngineRender, ViewEngine } from '../lib/type'
+import { ClientController } from './type'
 
-const render: CA.ViewEngineRender<string> = (html, controller, container) => {
-	container.innerHTML = html
+const render: ViewEngineRender<string, ClientController> = (html, controller, container) => {
+	if (container) {
+		container.innerHTML = html as string
+	} else {
+		throw new Error(`container is inexistent`)
+	}
 	return container
 }
 
-const viewEngine: CA.ViewEngine = {
+const viewEngine: ViewEngine<string, ClientController> = {
 	render
 }
 

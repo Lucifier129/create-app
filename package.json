@@ -7,15 +7,13 @@
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll",
     "prebuild": "rimraf dist",
-    "build": "tsc"
+    "build": "tsc",
+    "postbuild": "ts-node move.ts"
   },
   "files": [
-    "dist",
-    "index.js",
-    "server.js",
-    "server.d.ts",
-    "client.js",
-    "client.d.ts"
+    "share",
+    "client",
+    "index.js"
   ],
   "repository": {
     "type": "git",
@@ -34,8 +32,10 @@
   },
   "homepage": "https://github.com/Lucifier129/create-app#readme",
   "devDependencies": {
+    "@types/fs-extra": "^8.0.0",
     "@types/jest": "^23.0.1",
     "@types/node": "^12.6.9",
+    "fs-extra": "^8.1.0",
     "jest": "^23.0.1",
     "rimraf": "^2.6.3",
     "ts-jest": "^23.0.1",
@@ -45,6 +45,6 @@
   },
   "dependencies": {
     "create-history": "^2.0.2",
-    "path-to-regexp": "^1.5.3"
+    "path-to-regexp": "^1.7.0"
   }
 }

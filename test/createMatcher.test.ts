@@ -1,7 +1,6 @@
-import createMatcher from '../src/share/createMatcher'
+import createMatcher from '../src/lib/createMatcher'
 
-
-let matcher
+let matcher = createMatcher([])
 
 describe('createMatcher', () => {
 
@@ -30,35 +29,35 @@ describe('createMatcher', () => {
             let result = matcher('/test/path')
 
             expect(typeof result).toBe('object')
-            expect(result.path).toEqual('/test/path')
-            expect(result.params).toEqual({})
-            expect(result.controller).toEqual('test normal string')
-            expect(Object.keys(result)).toEqual(['path', 'params', 'controller'])
+            expect(result && result.path).toEqual('/test/path')
+            expect(result && result.params).toEqual({})
+            expect(result && result.controller).toEqual('test normal string')
+            expect(result && Object.keys(result)).toEqual(['path', 'params', 'controller'])
         })
 
-        it('should return undefined when matched no route', () => {
+        it('should return null when matched no route', () => {
             let matcher = createMatcher([])
             let result = matcher('/test/path')
 
-            expect(result).toBe(undefined)
+            expect(result).toBeNull()
         })
 
         it('should match dynamic path and filled params', () => {
             let result = matcher('/param/404')
 
-            expect(result.path).toEqual('/param/:id')
-            expect(result.controller).toEqual('test string with a id param')
-            expect(result.params.id).toEqual('404')
+            expect(result && result.path).toEqual('/param/:id')
+            expect(result && result.controller).toEqual('test string with a id param')
+            expect(result && result.params.id).toEqual('404')
         })
 
         it('should return a default route', () => {
             let result = matcher('/anything')
 
-            expect(result.path).toBe('*')
-            expect(result.params).toEqual({
+            expect(result && result.path).toBe('*')
+            expect(result && result.params).toEqual({
                 0: '/anything'
             })
-            expect(result.controller).toBe('default route')
+            expect(result && result.controller).toBe('default route')
         })
     })
 })
