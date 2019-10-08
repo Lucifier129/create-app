@@ -44,7 +44,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "create-history": "^2.0.2",
+    "create-history": "^2.0.3",
     "path-to-regexp": "^1.7.0"
   }
 }
