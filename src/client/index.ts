@@ -23,7 +23,7 @@ export {
   LoadController,
   Context,
   HistoryBaseLocation,
-  HistoryNativeLocation,
+  HistoryLocation,
   Controller,
   ControllerConstructor,
   Cache,

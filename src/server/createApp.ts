@@ -6,7 +6,7 @@ import {
   useQueries,
   CreateHistory,
   createMemoryHistory,
-  NLWithBQ
+  ILWithBQ
 } from 'create-history'
 import { createMap, ReqError } from '../share/util'
 import defaultViewEngine from './viewEngine'
@@ -17,7 +17,7 @@ import {
   Settings,
   Context,
   ControllerConstructor,
-  HistoryNativeLocation,
+  HistoryLocation,
   WrapController,
   ViewEngineRender,
   Matcher,
@@ -123,7 +123,7 @@ const createApp: CreateApp = (settings) => {
   }
 
   const fetchController: FetchController = (requestPath, injectContext) => {
-    let location: NLWithBQ = history.createLocation(requestPath)
+    let location: ILWithBQ = history.createLocation(requestPath)
     let matches = matcher(location.pathname)
 
     if (!matches) {
@@ -133,7 +133,7 @@ const createApp: CreateApp = (settings) => {
 
     let { path, params, controller } = matches
 
-    let finalLocation: HistoryNativeLocation = Object.assign({
+    let finalLocation: HistoryLocation = Object.assign({
       pattern: path,
       params,
       raw: location.pathname + location.search
@@ -166,12 +166,12 @@ const createApp: CreateApp = (settings) => {
 
     // implement the controller's life-cycle and useful methods
     class WrapperController extends iController {
-      location: HistoryNativeLocation
+      location: HistoryLocation
       context: Context
       matcher: Matcher
       loader: Loader
       routes: Route[]
-      constructor(location: HistoryNativeLocation, context: Context) {
+      constructor(location: HistoryLocation, context: Context) {
         super(location, context)
         this.location = location
         this.context = context

@@ -1,4 +1,4 @@
-import { NativeHistory, LocationTypeMap } from 'create-history'
+import { History, LocationTypeMap } from 'create-history'
 import {
   Context,
   Callback,
@@ -6,13 +6,13 @@ import {
   Matcher,
   Loader,
   Route,
-  HistoryNativeLocation,
+  HistoryLocation,
   HistoryBaseLocation,
   Controller
 } from '../share/type'
 
 export interface MidController extends Controller {
-  location?: HistoryNativeLocation
+  location?: HistoryLocation
   context?: Context
   matcher: Matcher
   loader: Loader
@@ -20,17 +20,17 @@ export interface MidController extends Controller {
 }
 
 export interface ServerController extends MidController {
-  location: HistoryNativeLocation
+  location: HistoryLocation
   context: Context
 }
 
 export interface ServerControllerConstructor {
-  new(location: HistoryNativeLocation, context: Context): ServerController
+  new(location: HistoryLocation, context: Context): ServerController
 }
 
 export interface App {
   render: Render
-  history: NativeHistory
+  history: History
 }
 
 export interface Render {
@@ -68,5 +68,5 @@ export interface FetchController {
 }
 
 export interface CreateHistoryInCA {
-  (setting?: Settings): NativeHistory<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
+  (setting?: Settings): History<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Intact']>
 }

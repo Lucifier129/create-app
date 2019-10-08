@@ -6,8 +6,8 @@ import CreateHistoryMap, {
   useBeforeUnload,
   useQueries,
   CreateHistory,
-  NLWithBQ,
-  NativeHistory,
+  ILWithBQ,
+  History,
   BLWithBQ
 } from 'create-history'
 import defaultViewEngine from './viewEngine'
@@ -22,7 +22,7 @@ import {
   ControllerConstructor,
   Cache,
   ControllerCacheFunc,
-  HistoryNativeLocation,
+  HistoryLocation,
   ViewEngineRender,
   Listener,
   Loader,
@@ -83,7 +83,7 @@ const createApp: CreateApp = (settings) => {
   let history = createHistory(finalAppSettings)
   let matcher: Matcher = createMatcher(routes || [])
   let currentController: ClientController | null = null
-  let currentLocation: HistoryNativeLocation | null = null
+  let currentLocation: HistoryLocation | null = null
   let unlisten: Function | null = null
   let finalContainer: HTMLElement | null = null
 
@@ -113,7 +113,7 @@ const createApp: CreateApp = (settings) => {
   }
 
   const render: Render = (targetPath) => {
-    let location: NLWithBQ = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+    let location: ILWithBQ = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
     context.prevLocation = currentLocation
 
     let matches = matcher(location.pathname)
@@ -124,7 +124,7 @@ const createApp: CreateApp = (settings) => {
 
     let { path, params, controller } = matches
 
-    let finalLocation: HistoryNativeLocation = Object.assign({
+    let finalLocation: HistoryLocation = Object.assign({
       pattern: path,
       params,
       raw: location.pathname + location.search
@@ -150,13 +150,13 @@ const createApp: CreateApp = (settings) => {
     }
     // implement the controller's life-cycle and useful methods
     class WrapperController extends IController {
-      location: HistoryNativeLocation
+      location: HistoryLocation
       context: Context
-      history: NativeHistory<BLWithBQ, NLWithBQ>
+      history: History<BLWithBQ, ILWithBQ>
       matcher: Matcher
       loader: Loader
       routes: Route[]
-      constructor(location: HistoryNativeLocation, context: Context) {
+      constructor(location: HistoryLocation, context: Context) {
         super(location, context)
         this.location = location
         this.context = context
@@ -291,7 +291,7 @@ const createApp: CreateApp = (settings) => {
   }
 
   const start: Start = (callback, shouldRenderWithCurrentLocation) => {
-    let listener: (location: NLWithBQ) => void = location => {
+    let listener: (location: ILWithBQ) => void = location => {
       let result = render(location)
       if (Promise.resolve(result) == result) {
         result.then(() => {
