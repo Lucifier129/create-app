@@ -6,11 +6,11 @@ import fse from 'fs-extra'
   // await fse.move('dist/server', './server')
   // console.log('Move success!\n')
 
-  await fse.copyFile('src/lib/type.d.ts', 'dist/lib/type.d.ts');
+  await fse.copyFile('src/share/type.d.ts', 'dist/share/type.d.ts');
   await fse.copyFile('src/client/type.d.ts', 'dist/client/type.d.ts');
   await fse.copyFile('src/server/type.d.ts', 'dist/server/type.d.ts');
   console.log(`File copied:
-    lib/type.d.ts
+    share/type.d.ts
     client/type.d.ts
     server/type.d.ts
   `);
