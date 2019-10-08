@@ -17,7 +17,10 @@ export interface ServerController extends Controller {
 }
 
 export interface ServerControllerConstructor {
-  new(location: HistoryLocation, context: Context): ServerController
+  new(
+    location: HistoryLocation,
+    context: Context
+  ): ServerController
 }
 
 export interface App {
@@ -60,5 +63,8 @@ export interface FetchController {
 }
 
 export interface CreateHistoryInCA {
-  (setting?: Settings): History<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Intact']>
+  (setting?: Settings): History<
+    LocationTypeMap['BQ']['Base'],
+    LocationTypeMap['BQ']['Intact']
+  >
 }

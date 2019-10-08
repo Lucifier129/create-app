@@ -11,7 +11,10 @@ export interface CreateRoute {
 }
 
 export interface GetParams {
-  (strMatches: RegExpExecArray, keys: pathToRegexp.Key[]): Params
+  (
+    strMatches: RegExpExecArray,
+    keys: pathToRegexp.Key[]
+  ): Params
 }
 
 export interface CleanPath {

@@ -49,7 +49,8 @@ import {
 } from './type'
 
 export const createHistory: CreateHistoryInCA = (settings) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings =
+    Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
   let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[finalAppSettings.type]
@@ -62,7 +63,8 @@ export const createHistory: CreateHistoryInCA = (settings) => {
 }
 
 const createApp: CreateApp = (settings) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings =
+    Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
@@ -89,7 +91,8 @@ const createApp: CreateApp = (settings) => {
 
   let cache: Cache<ClientController> = createCache(cacheAmount)
 
-  const saveControllerToCache: ControllerCacheFunc<ClientController> = (controller) => {
+  const saveControllerToCache: ControllerCacheFunc<ClientController> =
+    (controller) => {
     cache.set(controller.location.raw, controller)
   }
 
@@ -97,7 +100,8 @@ const createApp: CreateApp = (settings) => {
     return cache.get(location.raw)
   }
 
-  const removeControllerFromCache: ControllerCacheFunc<ClientController> = (controller) => {
+  const removeControllerFromCache: ControllerCacheFunc<ClientController> =
+    (controller) => {
     cache.remove(controller.location.raw)
   }
 
@@ -113,7 +117,10 @@ const createApp: CreateApp = (settings) => {
   }
 
   const render: Render = (targetPath) => {
-    let location: ILWithBQ = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+    let location: ILWithBQ = typeof targetPath === 'string'
+      ? history.createLocation(targetPath)
+      : targetPath
+
     context.prevLocation = currentLocation
 
     let matches = matcher(location.pathname)
@@ -133,7 +140,8 @@ const createApp: CreateApp = (settings) => {
     currentLocation = finalLocation
 
     let initController: InitController = createInitController(finalLocation)
-    let iController: ControllerConstructor | Promise<ControllerConstructor> = loader(controller, finalLocation, context)
+    let iController: ControllerConstructor | Promise<ControllerConstructor> =
+      loader(controller, finalLocation, context)
 
     if (Promise.resolve(iController) == iController) {
       return (<Promise<ControllerConstructor>>iController).then(initController)
@@ -144,7 +152,8 @@ const createApp: CreateApp = (settings) => {
 
   let controllers = createMap<ControllerConstructor, ClientControllerConstructor>()
 
-  const wrapController: WrapController<Controller, ClientControllerConstructor> = (IController) => {
+  const wrapController: WrapController<Controller, ClientControllerConstructor> =
+    (IController) => {
     if (controllers.has(IController)) {
       return controllers.get(IController)
     }
@@ -216,7 +225,9 @@ const createApp: CreateApp = (settings) => {
         controller.context = context
       } else {
         let FinalController = wrapController(iController as ControllerConstructor)
-        controller = currentController = createController(FinalController, location, context)
+        controller = currentController =
+          createController(FinalController, location, context)
+
         element = controller.init()
       }
 
@@ -238,7 +249,8 @@ const createApp: CreateApp = (settings) => {
     return initController
   }
 
-  const renderToContainer: ViewEngineRender<any, ClientController> = (element, controller) => {
+  const renderToContainer: ViewEngineRender<any, ClientController> =
+    (element, controller) => {
     if (controller) {
       saveControllerToCache(controller)
     }

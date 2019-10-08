@@ -37,7 +37,8 @@ import {
 } from './type'
 
 export const createHistory: CreateHistoryInCA = (settings) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings =
+    Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
   let chInit: CreateHistory<'NORMAL'> = createMemoryHistory
@@ -50,7 +51,8 @@ export const createHistory: CreateHistoryInCA = (settings) => {
 }
 
 const createApp: CreateApp = (settings) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings =
+    Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
@@ -127,7 +129,8 @@ const createApp: CreateApp = (settings) => {
     let matches = matcher(location.pathname)
 
     if (!matches) {
-      let error = new ReqError(`Did not match any route with path:${requestPath}`, 404)
+      let error =
+        new ReqError(`Did not match any route with path:${requestPath}`, 404)
       return Promise.reject(error)
     }
 
@@ -143,7 +146,8 @@ const createApp: CreateApp = (settings) => {
       ...context,
       ...injectContext,
     }
-    let iController: ControllerConstructor | Promise<ControllerConstructor> = loader(controller, finalLocation, finalContext)
+    let iController: ControllerConstructor | Promise<ControllerConstructor> =
+      loader(controller, finalLocation, finalContext)
 
     if (Promise.resolve(iController) == iController) {
       return (<Promise<ControllerConstructor>>iController).then(iController => {
@@ -159,7 +163,8 @@ const createApp: CreateApp = (settings) => {
 
   let controllers = createMap<ControllerConstructor, ServerControllerConstructor>()
 
-  const wrapController: WrapController<Controller, ServerControllerConstructor> = (iController) => {
+  const wrapController: WrapController<Controller, ServerControllerConstructor> =
+    (iController) => {
     if (controllers.has(iController)) {
       return controllers.get(iController)
     }
@@ -185,7 +190,8 @@ const createApp: CreateApp = (settings) => {
     return WrapperController
   }
 
-  const renderToString: ViewEngineRender<any, ServerController> = (component, controller) => {
+  const renderToString: ViewEngineRender<any, ServerController> =
+    (component, controller) => {
     if (!viewEngine) {
       return null
     }

@@ -1,4 +1,4 @@
-import { Settings, ControllerConstructor, Controller } from './type'
+import { Settings, ControllerConstructor } from './type'
 
 export const isClient: boolean = typeof window !== 'undefined'
 export const isServer: boolean = !isClient

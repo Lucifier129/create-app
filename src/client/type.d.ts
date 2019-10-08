@@ -29,7 +29,10 @@ export interface ClientController extends Controller {
 }
 
 export interface ClientControllerConstructor {
-  new(location: HistoryLocation, context: Context): ClientController
+  new(
+    location: HistoryLocation,
+    context: Context
+  ): ClientController
 }
 
 interface CreateApp {
@@ -98,5 +101,8 @@ interface GetControllerByLocation {
 }
 
 export interface CreateHistoryInCA {
-  (setting?: Settings): HistoryWithBFOL<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Intact']>
+  (setting?: Settings): HistoryWithBFOL<
+    LocationTypeMap['BQ']['Base'],
+    LocationTypeMap['BQ']['Intact']
+  >
 }
