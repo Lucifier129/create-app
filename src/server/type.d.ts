@@ -11,15 +11,7 @@ import {
   Controller
 } from '../share/type'
 
-export interface MidController extends Controller {
-  location?: HistoryLocation
-  context?: Context
-  matcher: Matcher
-  loader: Loader
-  routes: Route[]
-}
-
-export interface ServerController extends MidController {
+export interface ServerController extends Controller {
   location: HistoryLocation
   context: Context
 }
