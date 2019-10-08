@@ -11,9 +11,9 @@ import CreateHistoryMap, {
   BLWithBQ
 } from 'create-history'
 import defaultViewEngine from './viewEngine'
-import { createCache, createMap, ReqError } from '../lib/util'
-import createMatcher from '../lib/createMatcher'
-import defaultAppSettings from '../lib/defaultSettings'
+import { createCache, createMap, ReqError } from '../share/util'
+import createMatcher from '../share/createMatcher'
+import defaultAppSettings from '../share/defaultSettings'
 import createController from './createController'
 import {
   Settings,
@@ -29,7 +29,7 @@ import {
   Route,
   Controller,
   WrapController
-} from '../lib/type'
+} from '../share/type'
 import {
   CreateHistoryInCA,
   CreateApp,

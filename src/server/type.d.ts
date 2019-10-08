@@ -9,7 +9,7 @@ import {
   HistoryNativeLocation,
   HistoryBaseLocation,
   Controller
-} from '../lib/type'
+} from '../share/type'
 
 export interface MidController extends Controller {
   location?: HistoryNativeLocation

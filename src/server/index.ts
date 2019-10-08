@@ -29,7 +29,7 @@ export {
   Cache,
   CacheStorage,
   AppMap
-} from '../lib/type'
+} from '../share/type'
 
 export {
   Actions

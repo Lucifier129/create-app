@@ -1,4 +1,4 @@
-import { CreateController } from '../lib/type'
+import { CreateController } from '../share/type'
 import { ClientController, ClientControllerConstructor } from './type'
 
 const createController: CreateController<ClientController, ClientControllerConstructor> = (c, location, context) => {

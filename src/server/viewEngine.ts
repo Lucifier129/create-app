@@ -1,7 +1,7 @@
 /**
  * default view engine for server
  */
-import { ViewEngineRender, ViewEngine } from '../lib/type'
+import { ViewEngineRender, ViewEngine } from '../share/type'
 import { ServerController } from './type'
 
 interface ToString {

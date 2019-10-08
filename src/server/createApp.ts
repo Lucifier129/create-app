@@ -8,10 +8,10 @@ import {
   createMemoryHistory,
   NLWithBQ
 } from 'create-history'
-import { createMap, ReqError } from '../lib/util'
+import { createMap, ReqError } from '../share/util'
 import defaultViewEngine from './viewEngine'
-import createMatcher from '../lib/createMatcher'
-import defaultAppSettings from '../lib/defaultSettings'
+import createMatcher from '../share/createMatcher'
+import defaultAppSettings from '../share/defaultSettings'
 import createController from './createController'
 import {
   Settings,
@@ -24,7 +24,7 @@ import {
   Loader,
   Route,
   Controller
-} from '../lib/type'
+} from '../share/type'
 import {
   CreateHistoryInCA,
   CreateApp,
