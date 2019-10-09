@@ -1,4 +1,4 @@
-import {createCache} from '../src/lib/util'
+import { createCache } from '../src/share/util'
 
 describe('createCache', () => {
 

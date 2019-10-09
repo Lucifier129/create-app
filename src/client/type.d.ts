@@ -1,8 +1,8 @@
 import {
-  NativeHistory,
-  NLWithBQ,
+  History,
+  ILWithBQ,
   BLWithBQ,
-  NativeHistoryWithBFOL,
+  HistoryWithBFOL,
   LocationTypeMap
 } from 'create-history'
 import {
@@ -11,25 +11,28 @@ import {
   Settings,
   ControllerConstructor,
   Listener,
-  HistoryNativeLocation,
+  HistoryLocation,
   HistoryBaseLocation,
   Matcher,
   Route,
   Loader,
   Controller
-} from '../lib/type'
+} from '../share/type'
 
 export interface ClientController extends Controller {
-  location: HistoryNativeLocation
+  location: HistoryLocation
   context: Context
-  history: NativeHistory<BLWithBQ, NLWithBQ>
+  history: History<BLWithBQ, ILWithBQ>
   matcher: Matcher
   loader: Loader
   routes: Route[]
 }
 
 export interface ClientControllerConstructor {
-  new(location: HistoryNativeLocation, context: Context): ClientController
+  new(
+    location: HistoryLocation,
+    context: Context
+  ): ClientController
 }
 
 interface CreateApp {
@@ -37,7 +40,7 @@ interface CreateApp {
 }
 
 interface Render {
-  (targetPath: string | NLWithBQ): any
+  (targetPath: string | ILWithBQ): any
 }
 
 interface Stop {
@@ -56,14 +59,14 @@ interface Stop {
 }
 
 interface Publish {
-  (location: NLWithBQ): void
+  (location: ILWithBQ): void
 }
 
 interface App {
   start: Start
   stop: Stop
   render: Render
-  history: NativeHistory
+  history: History
   subscribe: Subscribe
 }
 
@@ -78,7 +81,7 @@ interface InitController {
 }
 
 interface CreateInitController {
-  (location: HistoryNativeLocation): InitController
+  (location: HistoryLocation): InitController
 }
 
 interface ClearContainer {
@@ -94,9 +97,12 @@ interface GetContainer {
 }
 
 interface GetControllerByLocation {
-  (location: HistoryNativeLocation): ClientController
+  (location: HistoryLocation): ClientController
 }
 
 export interface CreateHistoryInCA {
-  (setting?: Settings): NativeHistoryWithBFOL<LocationTypeMap['BQ']['Base'], LocationTypeMap['BQ']['Native']>
+  (setting?: Settings): HistoryWithBFOL<
+    LocationTypeMap['BQ']['Base'],
+    LocationTypeMap['BQ']['Intact']
+  >
 }

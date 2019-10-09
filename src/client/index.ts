@@ -23,13 +23,13 @@ export {
   LoadController,
   Context,
   HistoryBaseLocation,
-  HistoryNativeLocation,
+  HistoryLocation,
   Controller,
   ControllerConstructor,
   Cache,
   CacheStorage,
   AppMap
-} from '../lib/type'
+} from '../share/type'
 
 export {
   Actions

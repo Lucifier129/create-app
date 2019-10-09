@@ -1,4 +1,4 @@
-import { createMap } from '../src/lib/util'
+import { createMap } from '../src/share/util'
 
 describe('createMap', () => {
   it('return an object', () => {

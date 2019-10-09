@@ -2,18 +2,17 @@
   key/value configs
 */
 import createHistoryMap, {
-  NativeHistory,
+  History,
   HistoryOptions,
-  NLWithBQ,
+  ILWithBQ,
   BLWithBQ,
   CreateHistory,
   LocationTypeMap,
-  NativeHistoryWithBFOL
+  HistoryWithBFOL
 } from 'create-history'
 import pathToRegexp from 'path-to-regexp'
 
 export type CreateHistoryType = keyof typeof createHistoryMap
-
 
 export interface Route {
   keys?: pathToRegexp.Key[]
@@ -43,7 +42,10 @@ export interface Matcher {
   <C extends Controller>(pathname: string): Matches<C> | null
 }
 
-export interface ViewEngine<E = string, C extends Controller = Controller> {
+export interface ViewEngine<
+  E = string,
+  C extends Controller = Controller
+> {
   render: ViewEngineRender<E, C>
   clear?: ViewEngineClear
 }
@@ -81,7 +83,7 @@ export interface HistoryBaseLocation extends BLWithBQ {
   params?: Params
 }
 
-export interface HistoryNativeLocation extends NLWithBQ {
+export interface HistoryLocation extends ILWithBQ {
   raw: string
   pattern: pathToRegexp.Path
   params: Params
@@ -90,19 +92,22 @@ export interface HistoryNativeLocation extends NLWithBQ {
 export interface Loader {
   <C extends Controller>(
     controller: ControllerConstructor | LoadController | string,
-    location?: HistoryNativeLocation,
+    location?: HistoryLocation,
     context?: Context
   ): ControllerConstructor | Promise<ControllerConstructor>
 }
 
 export interface LoadController {
-  (location?: HistoryNativeLocation, context?: Context): ControllerConstructor | Promise<ControllerConstructor>
+  (
+    location?: HistoryLocation,
+    context?: Context
+  ): ControllerConstructor | Promise<ControllerConstructor>
 }
 
 export interface Controller {
   KeepAlive?: boolean
   count?: number
-  restore?(location?: HistoryNativeLocation, context?: Context): any
+  restore?(location?: HistoryLocation, context?: Context): any
   init(): any
   render(): any
   destroy?(): void
@@ -112,15 +117,25 @@ export interface Controller {
 }
 
 export interface ControllerConstructor<C extends Controller = Controller> {
-  new(location?: HistoryNativeLocation, context?: Context): C
+  new(
+    location?: HistoryLocation,
+    context?: Context
+  ): C
 }
 
 export interface WrapController<C extends Controller, CC> {
   (IController: ControllerConstructor): CC
 }
 
-export interface CreateController<C extends Controller, CC = ControllerConstructor<C>> {
-  (c: CC, location: HistoryNativeLocation, context: Context): C
+export interface CreateController<
+  C extends Controller,
+  CC = ControllerConstructor<C>
+> {
+  (
+    c: CC,
+    location: HistoryLocation,
+    context: Context
+  ): C
 }
 
 export interface ControllerCacheFunc<C extends Controller> {
@@ -163,7 +178,10 @@ export interface OtherElement {
   [propName: string]: any
 }
 
-export interface ViewEngineRender<E = string, C extends Controller = Controller> {
+export interface ViewEngineRender<
+  E = string,
+  C extends Controller = Controller
+> {
   (
     element: E,
     controller?: C,

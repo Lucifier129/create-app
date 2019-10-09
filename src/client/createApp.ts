@@ -6,14 +6,14 @@ import CreateHistoryMap, {
   useBeforeUnload,
   useQueries,
   CreateHistory,
-  NLWithBQ,
-  NativeHistory,
+  ILWithBQ,
+  History,
   BLWithBQ
 } from 'create-history'
 import defaultViewEngine from './viewEngine'
-import { createCache, createMap, ReqError } from '../lib/util'
-import createMatcher from '../lib/createMatcher'
-import defaultAppSettings from '../lib/defaultSettings'
+import { createCache, createMap, ReqError } from '../share/util'
+import createMatcher from '../share/createMatcher'
+import defaultAppSettings from '../share/defaultSettings'
 import createController from './createController'
 import {
   Settings,
@@ -22,14 +22,14 @@ import {
   ControllerConstructor,
   Cache,
   ControllerCacheFunc,
-  HistoryNativeLocation,
+  HistoryLocation,
   ViewEngineRender,
   Listener,
   Loader,
   Route,
   Controller,
   WrapController
-} from '../lib/type'
+} from '../share/type'
 import {
   CreateHistoryInCA,
   CreateApp,
@@ -49,7 +49,8 @@ import {
 } from './type'
 
 export const createHistory: CreateHistoryInCA = (settings) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings =
+    Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
   let chInit: CreateHistory<'NORMAL'> = CreateHistoryMap[finalAppSettings.type]
@@ -62,7 +63,8 @@ export const createHistory: CreateHistoryInCA = (settings) => {
 }
 
 const createApp: CreateApp = (settings) => {
-  let finalAppSettings: Settings = Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
+  let finalAppSettings: Settings =
+    Object.assign({ viewEngine: defaultViewEngine }, defaultAppSettings)
 
   finalAppSettings = Object.assign(finalAppSettings, settings)
 
@@ -83,13 +85,14 @@ const createApp: CreateApp = (settings) => {
   let history = createHistory(finalAppSettings)
   let matcher: Matcher = createMatcher(routes || [])
   let currentController: ClientController | null = null
-  let currentLocation: HistoryNativeLocation | null = null
+  let currentLocation: HistoryLocation | null = null
   let unlisten: Function | null = null
   let finalContainer: HTMLElement | null = null
 
   let cache: Cache<ClientController> = createCache(cacheAmount)
 
-  const saveControllerToCache: ControllerCacheFunc<ClientController> = (controller) => {
+  const saveControllerToCache: ControllerCacheFunc<ClientController> =
+    (controller) => {
     cache.set(controller.location.raw, controller)
   }
 
@@ -97,7 +100,8 @@ const createApp: CreateApp = (settings) => {
     return cache.get(location.raw)
   }
 
-  const removeControllerFromCache: ControllerCacheFunc<ClientController> = (controller) => {
+  const removeControllerFromCache: ControllerCacheFunc<ClientController> =
+    (controller) => {
     cache.remove(controller.location.raw)
   }
 
@@ -113,7 +117,10 @@ const createApp: CreateApp = (settings) => {
   }
 
   const render: Render = (targetPath) => {
-    let location: NLWithBQ = typeof targetPath === 'string' ? history.createLocation(targetPath) : targetPath
+    let location: ILWithBQ = typeof targetPath === 'string'
+      ? history.createLocation(targetPath)
+      : targetPath
+
     context.prevLocation = currentLocation
 
     let matches = matcher(location.pathname)
@@ -124,7 +131,7 @@ const createApp: CreateApp = (settings) => {
 
     let { path, params, controller } = matches
 
-    let finalLocation: HistoryNativeLocation = Object.assign({
+    let finalLocation: HistoryLocation = Object.assign({
       pattern: path,
       params,
       raw: location.pathname + location.search
@@ -133,7 +140,8 @@ const createApp: CreateApp = (settings) => {
     currentLocation = finalLocation
 
     let initController: InitController = createInitController(finalLocation)
-    let iController: ControllerConstructor | Promise<ControllerConstructor> = loader(controller, finalLocation, context)
+    let iController: ControllerConstructor | Promise<ControllerConstructor> =
+      loader(controller, finalLocation, context)
 
     if (Promise.resolve(iController) == iController) {
       return (<Promise<ControllerConstructor>>iController).then(initController)
@@ -144,19 +152,20 @@ const createApp: CreateApp = (settings) => {
 
   let controllers = createMap<ControllerConstructor, ClientControllerConstructor>()
 
-  const wrapController: WrapController<Controller, ClientControllerConstructor> = (IController) => {
+  const wrapController: WrapController<Controller, ClientControllerConstructor> =
+    (IController) => {
     if (controllers.has(IController)) {
       return controllers.get(IController)
     }
     // implement the controller's life-cycle and useful methods
     class WrapperController extends IController {
-      location: HistoryNativeLocation
+      location: HistoryLocation
       context: Context
-      history: NativeHistory<BLWithBQ, NLWithBQ>
+      history: History<BLWithBQ, ILWithBQ>
       matcher: Matcher
       loader: Loader
       routes: Route[]
-      constructor(location: HistoryNativeLocation, context: Context) {
+      constructor(location: HistoryLocation, context: Context) {
         super(location, context)
         this.location = location
         this.context = context
@@ -216,7 +225,9 @@ const createApp: CreateApp = (settings) => {
         controller.context = context
       } else {
         let FinalController = wrapController(iController as ControllerConstructor)
-        controller = currentController = createController(FinalController, location, context)
+        controller = currentController =
+          createController(FinalController, location, context)
+
         element = controller.init()
       }
 
@@ -238,7 +249,8 @@ const createApp: CreateApp = (settings) => {
     return initController
   }
 
-  const renderToContainer: ViewEngineRender<any, ClientController> = (element, controller) => {
+  const renderToContainer: ViewEngineRender<any, ClientController> =
+    (element, controller) => {
     if (controller) {
       saveControllerToCache(controller)
     }
@@ -291,7 +303,7 @@ const createApp: CreateApp = (settings) => {
   }
 
   const start: Start = (callback, shouldRenderWithCurrentLocation) => {
-    let listener: (location: NLWithBQ) => void = location => {
+    let listener: (location: ILWithBQ) => void = location => {
       let result = render(location)
       if (Promise.resolve(result) == result) {
         result.then(() => {
